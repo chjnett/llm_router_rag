@@ -27,6 +27,7 @@
 - [x] prediction cache
 - [x] 300-page sample run
 - [x] Cheap/Strong aligned P0 comparison
+- [x] PubTables row/column shape diagnostic (245 mapped pages)
 - [ ] official GriTS 또는 동등한 구조 품질 평가
 
 ### Gate

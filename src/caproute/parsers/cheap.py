@@ -10,6 +10,7 @@ class PyMuPDFParser(DocumentParser):
     name = "pymupdf"
     role = "cheap"
     version = getattr(fitz, "VersionBind", "unknown")
+    adapter_version = "2"
 
     def parse(self, item: DocumentInput) -> CanonicalDocument:
         document = fitz.open(item.source_path)
@@ -25,7 +26,14 @@ class PyMuPDFParser(DocumentParser):
             if self.options.get("detect_tables", True) and hasattr(page, "find_tables"):
                 try:
                     for number, table in enumerate(page.find_tables().tables):
-                        blocks.append(Block(f"p{index}-table-{number}", "table", list(table.bbox), "", None))
+                        blocks.append(Block(
+                            f"p{index}-table-{number}", "table", list(table.bbox), "", None,
+                            {
+                                "row_count": int(table.row_count),
+                                "column_count": int(table.col_count),
+                                "cells": table.extract(),
+                            },
+                        ))
                 except Exception as error:
                     # Text extraction remains valid; preserve the optional detector warning.
                     blocks.append(Block(f"p{index}-warning", "unknown", [0, 0, 0, 0], "", None, {"table_error": repr(error)}))

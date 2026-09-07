@@ -7,6 +7,7 @@ from caproute.parsers.base import DocumentInput, DocumentParser
 class DoclingParser(DocumentParser):
     name = "docling"
     role = "strong"
+    adapter_version = "2"
 
     def __init__(self, options=None) -> None:
         super().__init__(options)
@@ -63,7 +64,18 @@ class DoclingParser(DocumentParser):
         for number, table in enumerate(getattr(document, "tables", [])):
             if not belongs_to_target(table):
                 continue
-            blocks.append(Block(f"table-{number}", "table", [0, 0, 0, 0], "", None))
+            table_data = getattr(table, "data", None)
+            cells = list(getattr(table_data, "table_cells", []) or [])
+            row_count = max((getattr(cell, "end_row_offset_idx", 0) for cell in cells), default=0)
+            column_count = max((getattr(cell, "end_col_offset_idx", 0) for cell in cells), default=0)
+            blocks.append(Block(
+                f"table-{number}", "table", [0, 0, 0, 0], "", None,
+                {
+                    "row_count": int(row_count),
+                    "column_count": int(column_count),
+                    "cell_count": len(cells),
+                },
+            ))
         # P0 preserves raw Docling export for later lossless canonical mapping work.
         raw = document.export_to_dict()
         return CanonicalDocument(

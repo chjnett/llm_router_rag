@@ -105,3 +105,28 @@ Strong parser를 25~50페이지 독립 배치로 실행하고 raw prediction cac
 
 ### Consequence
 `PMC6067716`을 설정의 고정 제외 목록에 기록하고 동일 seed에서 다음 유효 문서로 교체했다. 마지막 25-page 배치는 native warmup 불안정성 때문에 warmup 0으로 수행되어 config hash가 다르며, 이를 보고서에 공개한다.
+
+---
+
+## Decision 006
+
+### Date
+2026-09-07
+
+### Trigger
+Table-count proxy만으로는 P0 구조 품질을 판정할 수 없다.
+
+### Decision
+전체 117GB 배포본 대신 공식 PubTables-1M validation structure annotation archive만 추가하고, 행·열 shape diagnostic을 먼저 수행한다.
+
+### Evidence
+- source: `https://huggingface.co/datasets/bsmock/pubtables-1m/resolve/main/PubTables-1M-Structure_Annotations_Val.tar.gz`
+- bytes: `30,264,304`
+- SHA-256: `6B8C4B512E24E1040FA0829935AB9C2D13FC0015F7315CC8F13EF82A8BC95CA4`
+- extracted XML: 94,959 files, 약 0.72GB
+
+### Alternatives
+2.73GB validation image archive와 4.17GB word archive를 즉시 모두 다운로드.
+
+### Consequence
+디스크를 보존하면서 245개 대응 페이지의 row/column shape를 검증한다. 이 진단은 cell span/location/content를 포함하지 않아 GriTS로 보고하지 않으며 P0 Gate는 HOLD로 유지한다.

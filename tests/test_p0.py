@@ -9,6 +9,7 @@ from caproute.datasets.pubtables import PubTablesSample, load_pubtables_subset
 from caproute.datasets.pubtables import _document_id
 from caproute.ir.schema import Block, CanonicalDocument, CanonicalPage
 from caproute.parsers.base import DocumentInput, DocumentParser
+from caproute.evaluation.structure_shape import shape_similarity
 
 
 class FakeParser(DocumentParser):
@@ -73,6 +74,13 @@ def test_cache_and_harness_reuse_raw_prediction(tmp_path):
 def test_percentile_contract():
     assert percentile([1, 2, 3], 0.5) == 2
     assert percentile([], 0.5) is None
+
+
+def test_structure_shape_similarity_penalizes_missing_and_wrong_shape():
+    truth = [{"row_count": 4, "column_count": 2}]
+    assert shape_similarity(truth, truth) == 1.0
+    assert shape_similarity(truth, []) == 0.0
+    assert shape_similarity(truth, [{"row_count": 2, "column_count": 2}]) == 0.75
 
 
 def test_official_pubtables_filename_identity():

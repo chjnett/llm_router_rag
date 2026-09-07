@@ -64,15 +64,18 @@ English born-digital scientific paper PDF에서 Cheap/Strong document processing
 | Metric | Cheap | Strong |
 |---|---:|---:|
 | Table-count F1 proxy | 0.280 | 0.976 |
-| p50 latency | 87.45 ms | 667.22 ms |
-| p95 latency | 178.28 ms | 1,921.27 ms |
-| p50 Strong/Cheap | 1.00x | 7.63x |
-| p95 Strong/Cheap | 1.00x | 10.78x |
+| p50 latency | 91.75 ms | 667.22 ms |
+| p95 latency | 207.24 ms | 1,921.27 ms |
+| p50 Strong/Cheap | 1.00x | 7.27x |
+| p95 Strong/Cheap | 1.00x | 9.27x |
+| Row/column shape similarity | 0.225 | 0.964 |
 | Peak CUDA allocation | 0 | 약 603~628 MB/batch |
 
-Strong은 Cheap보다 table-count proxy가 높지만 p50 7.63배, p95 10.78배 느렸다. 이는 선택적 문서 처리의 비용-품질 이질성이 존재한다는 screening 신호다. 그러나 table-count proxy는 셀 구조, spanning cell, 읽기 순서 및 텍스트 정확도를 평가하지 않으므로 capability label이나 논문 성능 수치로 사용하지 않는다.
+Strong은 Cheap보다 두 진단 품질이 높지만 p50 7.27배, p95 9.27배 느렸다. 이는 선택적 문서 처리의 비용-품질 이질성이 존재한다는 screening 신호다. 그러나 table-count proxy는 셀 구조, spanning cell, 읽기 순서 및 텍스트 정확도를 평가하지 않으므로 capability label이나 논문 성능 수치로 사용하지 않는다.
 
 동일 key 300개가 정렬되었고 그중 proxy가 양쪽 모두 정의된 299개에서 Strong 우세 214개, 동률 85개, Cheap 우세 0개였다. 이 비교 역시 count proxy 진단 결과일 뿐 capability 정답표가 아니다.
+
+추가로 공식 validation structure XML을 문서 내 table 순서로 연결했다. 완전 대응된 245페이지에서 행·열 개수 기반 shape similarity는 Cheap 0.225, Strong 0.964였다. 나머지 55페이지는 대응 structure XML이 없어 제외했다. 이 지표는 cell span, cell location, content를 평가하지 않는 자체 진단이며 GriTS가 아니다.
 
 ## Gate
 
@@ -92,6 +95,7 @@ Strong은 Cheap보다 table-count proxy가 높지만 p50 7.63배, p95 10.78배 �
 - Docling은 일부 표에서 orphan cell recovery/drop 경고를 냈다. 공식 구조 metric 전에는 이 경고가 실제 품질에 미치는 영향을 판단할 수 없다.
 - 전력 수치는 시스템 전체 GPU 샘플 기반 gross 값이라 parser별 순수 에너지로 해석하지 않는다.
 - 현 table-count F1은 smoke-test proxy이며 공식 GriTS가 아니다.
+- row/column shape 진단은 245/300페이지만 평가 가능했고 GriTS의 topology/location/content 정렬을 대체하지 못한다.
 
 ## Decision
 
