@@ -6,6 +6,7 @@ from caproute.benchmark.harness import percentile, run_parser
 from caproute.cache import PredictionCache
 from caproute.core.config import config_hash
 from caproute.datasets.pubtables import PubTablesSample, load_pubtables_subset
+from caproute.datasets.pubtables import _document_id
 from caproute.ir.schema import Block, CanonicalDocument, CanonicalPage
 from caproute.parsers.base import DocumentInput, DocumentParser
 
@@ -63,9 +64,36 @@ def test_cache_and_harness_reuse_raw_prediction(tmp_path):
     assert not failures and not first[0]["cache_hit"]
     assert second[0]["cache_hit"]
     assert metrics["measured_uncached_items"] == 1
+    assert metrics["gpu_seconds_per_page"] is None
+    assert metrics["wall_seconds_per_page"] is not None
+    assert metrics["warmup_completed"] == 0
     assert second_metrics["measured_uncached_items"] == 0
 
 
 def test_percentile_contract():
     assert percentile([1, 2, 3], 0.5) == 2
     assert percentile([], 0.5) is None
+
+
+def test_official_pubtables_filename_identity():
+    assert _document_id("PMC4504083_6.jpg") == "PMC4504083"
+
+
+def test_pubtables_loader_supports_recorded_exclusions(tmp_path):
+    images = tmp_path / "images"
+    images.mkdir()
+    annotations = tmp_path / "val"
+    annotations.mkdir()
+    split = tmp_path / "val_filelist.txt"
+    rows = []
+    for document_id in ("PMC1", "PMC2"):
+        name = f"{document_id}_0.jpg"
+        (images / name).write_bytes(b"x")
+        xml = annotations / f"{document_id}_0.xml"
+        xml.write_text(f"<annotation><filename>{name}</filename></annotation>", encoding="utf-8")
+        rows.append(f"val/{document_id}_0.xml")
+    split.write_text("\n".join(rows), encoding="utf-8")
+    result = load_pubtables_subset(
+        tmp_path, split, images, None, 2, 42, True, {"PMC1"}
+    )
+    assert [row.item.document_id for row in result] == ["PMC2"]

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import fitz
+import pymupdf as fitz
 
 from caproute.ir.schema import Block, CanonicalDocument, CanonicalPage
 from caproute.parsers.base import DocumentInput, DocumentParser
@@ -34,4 +34,3 @@ class PyMuPDFParser(DocumentParser):
             item.document_id, str(item.source_path), self.name, self.version,
             "cheap", pages, {"requested_page": item.page_index},
         )
-

@@ -43,8 +43,8 @@ def environment_metadata() -> dict[str, Any]:
         "logical_cpu_count": os.cpu_count(),
     }
     try:
-        import fitz
-        result["pymupdf"] = getattr(fitz, "version", None)
+        import pymupdf
+        result["pymupdf"] = getattr(pymupdf, "version", None)
     except ImportError:
         result["pymupdf"] = None
     try:

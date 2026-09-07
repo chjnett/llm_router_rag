@@ -23,6 +23,7 @@ def percentile(values: list[float], fraction: float) -> float | None:
 def run_parser(
     parser: DocumentParser, samples: list[PubTablesSample], cache: PredictionCache,
     refresh_cache: bool = False, power_interval_seconds: float = 0.5,
+    warmup: int = 0,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
     predictions, failures, latencies, quality_rows = [], [], [], []
     peak_before = peak_after = 0
@@ -30,6 +31,15 @@ def run_parser(
     if torch is not None and torch.cuda.is_available():
         torch.cuda.reset_peak_memory_stats()
         peak_before = torch.cuda.max_memory_allocated()
+    warmup_started = time.perf_counter()
+    warmup_completed = 0
+    for sample in samples[:warmup]:
+        try:
+            parser.parse(sample.item)
+            warmup_completed += 1
+        except Exception:
+            pass
+    warmup_seconds = time.perf_counter() - warmup_started
     power = PowerSampler(power_interval_seconds)
     power.start()
     started_all = time.perf_counter()
@@ -39,23 +49,36 @@ def run_parser(
             document = None if refresh_cache else cache.get(key)
             cached = document is not None
             started = time.perf_counter()
+            item_latency_ms = None
             if document is None:
                 if torch is not None and torch.cuda.is_available():
                     torch.cuda.synchronize()
                 document = parser.parse(sample.item)
                 if torch is not None and torch.cuda.is_available():
                     torch.cuda.synchronize()
-                latencies.append(1000 * (time.perf_counter() - started))
+                item_latency_ms = 1000 * (time.perf_counter() - started)
+                latencies.append(item_latency_ms)
                 cache.put(key, document)
             quality = evaluate_document(document, sample.ground_truth)
             quality_rows.append(quality)
-            predictions.append({"document": document.to_dict(), "cache_key": key, "cache_hit": cached, "quality": quality})
+            predictions.append({
+                "document": document.to_dict(),
+                "cache_key": key,
+                "cache_hit": cached,
+                "latency_ms": item_latency_ms,
+                "quality": quality,
+            })
         except Exception as error:
             failures.append({"document_id": sample.item.document_id, "source_path": str(sample.item.source_path), "error": repr(error)})
     elapsed = time.perf_counter() - started_all
     energy = power.stop(elapsed)
     if torch is not None and torch.cuda.is_available():
         peak_after = torch.cuda.max_memory_allocated()
+    cuda_measured = (
+        parser.role == "strong"
+        and torch is not None
+        and torch.cuda.is_available()
+    )
     metrics = {
         **aggregate_quality(quality_rows),
         "attempted": len(samples),
@@ -63,10 +86,15 @@ def run_parser(
         "failed": len(failures),
         "cache_hits": sum(bool(row["cache_hit"]) for row in predictions),
         "measured_uncached_items": len(latencies),
+        "warmup_requested": warmup,
+        "warmup_completed": warmup_completed,
+        "warmup_seconds": warmup_seconds,
         "latency_ms_p50": percentile(latencies, 0.5),
         "latency_ms_p95": percentile(latencies, 0.95),
         "elapsed_seconds": elapsed,
-        "gpu_seconds_per_page": elapsed / len(latencies) if latencies else None,
+        "wall_seconds_per_page": elapsed / len(latencies) if latencies else None,
+        "gpu_seconds_per_page": elapsed / len(latencies) if latencies and cuda_measured else None,
+        "gpu_timing_method": "wall clock around CUDA-synchronized parser call" if cuda_measured else None,
         "peak_vram_allocated_bytes": max(0, peak_after - peak_before),
         **energy,
     }

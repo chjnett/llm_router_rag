@@ -1,0 +1,23 @@
+seed: 42
+dataset:
+  name: pubtables1m
+  annotations: data/raw/pubtables/PubTables-1M-Image_Page_Detection_PASCAL_VOC
+  split_file: data/raw/pubtables/PubTables-1M-Image_Page_Detection_PASCAL_VOC/preflight_filelist.txt
+  image_root: data/raw/pubtables/PubTables-1M-Image_Page_Detection_PASCAL_VOC/images
+  pdf_root: data/raw/pubtables/pdfs
+  split: preflight
+  sample_size: 20
+  document_level_sampling: true
+  require_source_pdf: true
+parsers:
+  - name: pymupdf
+    role: cheap
+    options:
+      detect_tables: true
+benchmark:
+  warmup: 2
+  power_interval_seconds: 0.1
+cache:
+  root: cache/parsers
+outputs:
+  root: outputs/p0_preflight

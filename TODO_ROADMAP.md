@@ -25,10 +25,14 @@
 - [x] latency harness
 - [x] VRAM measurement hook
 - [x] prediction cache
-- [ ] 300~500 sample run
+- [x] 300-page sample run
+- [x] Cheap/Strong aligned P0 comparison
+- [ ] official GriTS 또는 동등한 구조 품질 평가
 
 ### Gate
 Cheap / Strong 품질과 실제 비용비를 신뢰할 수 있게 측정했는가?
+
+**현재 판정: HOLD.** 비용비는 측정했으나 품질은 table-count proxy뿐이므로 P1을 시작하지 않는다.
 
 ---
 

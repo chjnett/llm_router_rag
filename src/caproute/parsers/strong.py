@@ -12,14 +12,39 @@ class DoclingParser(DocumentParser):
         super().__init__(options)
         try:
             import docling
-            from docling.document_converter import DocumentConverter
+            from docling.datamodel.accelerator_options import AcceleratorDevice, AcceleratorOptions
+            from docling.datamodel.base_models import InputFormat
+            from docling.datamodel.pipeline_options import PdfPipelineOptions
+            from docling.document_converter import DocumentConverter, PdfFormatOption
         except ImportError as error:
             raise RuntimeError("Docling is optional; install with: pip install -e .[strong]") from error
         self.version = getattr(docling, "__version__", "unknown")
-        self._converter = DocumentConverter()
+        pipeline = PdfPipelineOptions()
+        requested_device = str(self.options.get("device", "cuda")).lower()
+        devices = {
+            "cuda": AcceleratorDevice.CUDA,
+            "cpu": AcceleratorDevice.CPU,
+            "auto": AcceleratorDevice.AUTO,
+        }
+        if requested_device not in devices:
+            raise ValueError(f"Unsupported Docling device: {requested_device}")
+        pipeline.accelerator_options = AcceleratorOptions(
+            num_threads=int(self.options.get("num_threads", 4)),
+            device=devices[requested_device],
+        )
+        pipeline.do_ocr = bool(self.options.get("do_ocr", False))
+        pipeline.do_table_structure = bool(self.options.get("do_table_structure", True))
+        self._converter = DocumentConverter(
+            format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline)}
+        )
 
     def parse(self, item: DocumentInput) -> CanonicalDocument:
-        converted = self._converter.convert(str(item.source_path))
+        page_range = (
+            (item.page_index + 1, item.page_index + 1)
+            if item.page_index is not None
+            else (1, 2**31 - 1)
+        )
+        converted = self._converter.convert(str(item.source_path), page_range=page_range)
         document = converted.document
         target_page_no = item.page_index + 1 if item.page_index is not None else None
 
