@@ -78,8 +78,9 @@ caproute-rag/
 - Cheap baseline: PyMuPDF 1.28.2
 - Strong baseline: Docling 2.126.0 / CUDA
 - Canonical IR, raw prediction cache, latency/VRAM/power harness 구현
-- PubTables validation structure shape 진단 완료
-- offline test: `8 passed`
-- P0 Gate: **HOLD** — 비용 차이는 확인했으며 official GriTS 연결 전 P1은 시작하지 않음
+- PubTables validation GriTS-Top/Loc 평가 및 Microsoft 공식 코드 교차검증 완료
+- GriTS-Top: Cheap `0.190`, Strong `0.904` (245 pages / 291 tables)
+- offline test: `9 passed`
+- P0 Gate: **HOLD** — GriTS-Loc cell bbox 의미 통일 전 P1은 시작하지 않음
 
 실행 경로와 완료 조건은 `P0_IMPLEMENTATION_PLAN.md`, 현재 판단은 `docs/P0_PHASE_REPORT.md`를 따른다.

@@ -10,6 +10,7 @@ from caproute.datasets.pubtables import _document_id
 from caproute.ir.schema import Block, CanonicalDocument, CanonicalPage
 from caproute.parsers.base import DocumentInput, DocumentParser
 from caproute.evaluation.structure_shape import shape_similarity
+from caproute.evaluation.grits import grits_loc, grits_top
 
 
 class FakeParser(DocumentParser):
@@ -81,6 +82,16 @@ def test_structure_shape_similarity_penalizes_missing_and_wrong_shape():
     assert shape_similarity(truth, truth) == 1.0
     assert shape_similarity(truth, []) == 0.0
     assert shape_similarity(truth, [{"row_count": 2, "column_count": 2}]) == 0.75
+
+
+def test_grits_identity_and_missing_table_contract():
+    cells = [
+        {"row_nums": [0], "column_nums": [0], "bbox": [0.0, 0.0, 0.5, 1.0]},
+        {"row_nums": [0], "column_nums": [1], "bbox": [0.5, 0.0, 1.0, 1.0]},
+    ]
+    assert grits_top(cells, cells)[0] == 1.0
+    assert grits_loc(cells, cells)[0] == 1.0
+    assert grits_top(cells, [])[0] == 0.0
 
 
 def test_official_pubtables_filename_identity():

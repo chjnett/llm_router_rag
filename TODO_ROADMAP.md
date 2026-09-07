@@ -28,12 +28,15 @@
 - [x] 300-page sample run
 - [x] Cheap/Strong aligned P0 comparison
 - [x] PubTables row/column shape diagnostic (245 mapped pages)
-- [ ] official GriTS 또는 동등한 구조 품질 평가
+- [x] GriTS-Top/Loc factored 2D-MSS 구현 및 공식 코드 교차검증
+- [x] GriTS-Top 245-page screening
+- [ ] parser 간 cell bbox 의미 통일 후 GriTS-Loc 확정
+- [ ] GriTS-Con용 word/content annotation 연결
 
 ### Gate
 Cheap / Strong 품질과 실제 비용비를 신뢰할 수 있게 측정했는가?
 
-**현재 판정: HOLD.** 비용비는 측정했으나 품질은 table-count proxy뿐이므로 P1을 시작하지 않는다.
+**현재 판정: HOLD.** GriTS-Top은 유효한 신호를 보였으나 cell bbox 의미가 달라 GriTS-Loc을 확정할 수 없으므로 P1을 시작하지 않는다.
 
 ---
 

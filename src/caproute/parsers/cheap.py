@@ -32,6 +32,10 @@ class PyMuPDFParser(DocumentParser):
                                 "row_count": int(table.row_count),
                                 "column_count": int(table.col_count),
                                 "cells": table.extract(),
+                                "grid_cell_bboxes": [
+                                    [list(cell) if cell is not None else None for cell in row.cells]
+                                    for row in table.rows
+                                ],
                             },
                         ))
                 except Exception as error:

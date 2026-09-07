@@ -149,30 +149,30 @@
     <h1>과학 논문 PDF를 언제 빠르게, 언제 강하게 처리할 것인가</h1>
     <p class="lead">Cheap 문서 처리와 Strong 문서 처리의 품질·비용 차이를 먼저 증명한 뒤, 필요한 문서만 Strong으로 보내는 연구입니다. 현재는 라우터를 만들기 전 P0 품질 검증 단계입니다.</p>
     <div class="hero-meta">
-      <span>마지막 실험: <strong>2026-09-07 20:48 KST</strong></span>
+      <span>마지막 실험: <strong>2026-09-08 KST</strong></span>
       <span>표본: <strong>300 pages / 300 documents</strong></span>
       <span>GPU: <strong>RTX 3090 24GB</strong></span>
-      <span>Git: <strong>0b9f1e5 · main</strong></span>
+      <span>Git: <strong>main · synced</strong></span>
     </div>
 
     <div class="status-row">
       <article class="panel verdict">
         <span class="badge hold">P0 GATE · HOLD</span>
-        <strong>방향성은 강하다. 아직 라우터 학습은 이르다.</strong>
-        <p>Strong은 구조 진단에서 크게 우세하지만 p50 기준 7.27배 느립니다. 선택적 처리의 이유는 충분히 보였지만, 현재 품질 지표는 <span class="term" tabindex="0" data-tip="표의 행·열·셀 구조를 정렬해 비교하는 공식 평가 계열입니다.">GriTS</span>가 아니므로 P1으로 넘어가지 않습니다.</p>
+        <strong>GriTS-Top 차이는 확인했다. 위치 좌표 의미를 바로잡아야 한다.</strong>
+        <p>Strong은 GriTS-Top 0.904로 Cheap 0.190보다 크게 우세하면서 p50 기준 7.28배 느립니다. 다만 <span class="term" tabindex="0" data-tip="셀 영역의 위치가 얼마나 겹치는지 비교하는 GriTS 지표입니다.">GriTS-Loc</span> 입력 bbox의 의미가 parser마다 달라 P1으로 아직 넘어가지 않습니다.</p>
       </article>
       <aside class="panel next">
         <span class="eyebrow">Next action</span>
-        <div class="step">GriTS Top / Loc</div>
-        <p>기존 parser cache를 활용해 구조 topology와 위치 품질을 공식 방식으로 평가합니다. Strong GPU 추론을 다시 돌리는 작업이 우선은 아닙니다.</p>
+        <div class="step">Cell-region bbox</div>
+        <p>Docling의 tight text bbox를 실제 cell region으로 재구성한 뒤 GriTS-Loc을 다시 계산합니다. Strong GPU 추론을 다시 돌리는 작업은 아직 필요하지 않습니다.</p>
       </aside>
     </div>
 
     <div class="metrics" aria-label="핵심 지표">
-      <div class="metric"><small>Strong / Cheap p50 비용비</small><strong>7.27×</strong><span>차이가 클수록 routing 여지 증가</span></div>
-      <div class="metric"><small>Strong shape 품질</small><strong>0.964</strong><span>245개 완전 대응 페이지</span></div>
-      <div class="metric"><small>Cheap shape 품질</small><strong>0.225</strong><span>행·열 형태 자체 진단</span></div>
-      <div class="metric"><small>테스트 상태</small><strong>8 / 8</strong><span>모든 자동화 테스트 통과</span></div>
+      <div class="metric"><small>Strong / Cheap p50 비용비</small><strong>7.28×</strong><span>차이가 클수록 routing 여지 증가</span></div>
+      <div class="metric"><small>Strong GriTS-Top</small><strong>0.904</strong><span>245 pages · 291 tables</span></div>
+      <div class="metric"><small>Cheap GriTS-Top</small><strong>0.190</strong><span>공식 2D-MSS 방식</span></div>
+      <div class="metric"><small>테스트 상태</small><strong>9 / 9</strong><span>공식 코드 교차검증 포함</span></div>
     </div>
 
     <section id="results">
@@ -181,19 +181,21 @@
         <table>
           <thead><tr><th>평가 항목</th><th class="num">Cheap · PyMuPDF</th><th class="num">Strong · Docling</th><th>해석</th></tr></thead>
           <tbody>
-            <tr><td>p50 latency</td><td class="num">91.75 ms</td><td class="num">667.22 ms</td><td>Strong 7.27배 느림</td></tr>
-            <tr><td>p95 latency</td><td class="num">207.24 ms</td><td class="num">1,921.27 ms</td><td>긴 꼬리에서 9.27배 차이</td></tr>
+            <tr><td>p50 latency</td><td class="num">91.64 ms</td><td class="num">667.22 ms</td><td>Strong 7.28배 느림</td></tr>
+            <tr><td>p95 latency</td><td class="num">212.10 ms</td><td class="num">1,921.27 ms</td><td>긴 꼬리에서 9.06배 차이</td></tr>
             <tr><td>Table-count F1 proxy</td><td class="num">0.280</td><td class="num">0.976</td><td>표 존재·개수 감지의 예비 지표</td></tr>
             <tr><td>Row/column shape</td><td class="num">0.225</td><td class="num">0.964</td><td>245페이지의 행·열 형태 진단</td></tr>
+            <tr><td>GriTS-Top</td><td class="num">0.190</td><td class="num">0.904</td><td>병합 셀을 포함한 topology 품질</td></tr>
+            <tr><td>GriTS-Loc</td><td class="num">0.114</td><td class="num">0.204</td><td>bbox 의미 불일치로 잠정치</td></tr>
             <tr><td>CUDA allocation</td><td class="num">0</td><td class="num">603–628 MB</td><td>Strong만 GPU 사용</td></tr>
             <tr><td>완주</td><td class="num">300 / 300</td><td class="num">300 / 300</td><td>Strong은 배치 복구 후 집계</td></tr>
           </tbody>
         </table>
       </div>
       <div class="bars" style="margin-top:12px" aria-label="품질과 지연시간 비교 그래프">
-        <div class="bar-row"><span>Cheap shape</span><div class="track"><div class="fill" style="width:22.5%"></div></div><span class="bar-value">0.225</span></div>
-        <div class="bar-row"><span>Strong shape</span><div class="track"><div class="fill" style="width:96.4%"></div></div><span class="bar-value">0.964</span></div>
-        <div class="bar-row"><span>Cheap p50</span><div class="track"><div class="fill hatch" style="width:13.75%"></div></div><span class="bar-value">91.75ms</span></div>
+        <div class="bar-row"><span>Cheap GriTS-Top</span><div class="track"><div class="fill" style="width:19%"></div></div><span class="bar-value">0.190</span></div>
+        <div class="bar-row"><span>Strong GriTS-Top</span><div class="track"><div class="fill" style="width:90.4%"></div></div><span class="bar-value">0.904</span></div>
+        <div class="bar-row"><span>Cheap p50</span><div class="track"><div class="fill hatch" style="width:13.73%"></div></div><span class="bar-value">91.64ms</span></div>
         <div class="bar-row"><span>Strong p50</span><div class="track"><div class="fill hatch" style="width:100%"></div></div><span class="bar-value">667.22ms</span></div>
       </div>
       <p class="caption">검은 막대는 품질(1.0 기준), 빗금 막대는 latency(Strong p50 기준)를 각각 정규화했습니다. 서로 다른 단위의 막대 길이를 직접 비교하지 않습니다.</p>
@@ -203,7 +205,7 @@
       <div class="section-head"><div><span class="eyebrow">Research gates</span><h2>현재 어디까지 왔는가</h2></div><p>Gate가 통과되지 않으면 다음 단계로 넘어가지 않는 보수적 실험 순서입니다.</p></div>
       <div class="pipeline">
         <div class="phase complete"><span class="id">P0-A · COMPLETE</span><strong>Harness & Cost</strong><p>Canonical IR, cache, latency, VRAM, power, 300-page 실행 완료.</p></div>
-        <div class="phase active"><span class="id">P0-B · ACTIVE</span><strong>Official Quality</strong><p>GriTS Top/Loc 연결이 현재 작업. Gate는 HOLD.</p></div>
+        <div class="phase active"><span class="id">P0-B · ACTIVE</span><strong>Official Quality</strong><p>GriTS-Top 완료. Loc bbox 의미 통일이 현재 작업.</p></div>
         <div class="phase"><span class="id">P1 · LOCKED</span><strong>Capability / Oracle</strong><p>Cheap sufficient와 이론적 최대 절감률을 계산.</p></div>
         <div class="phase"><span class="id">P2+ · LOCKED</span><strong>Router & RAG</strong><p>분류기, calibration, external dataset, retrieval·QA 평가.</p></div>
       </div>
@@ -215,15 +217,15 @@
         <article class="panel list-panel">
           <h3>연구를 계속할 이유</h3>
           <ul class="clean-list">
-            <li><span class="dot good"></span><div>비용 차이가 충분히 큼<small>p50 7.27×, p95 9.27× — 선택으로 아낄 공간이 존재.</small></div></li>
-            <li><span class="dot good"></span><div>품질 차이도 뚜렷함<small>행·열 shape에서 Strong 0.964, Cheap 0.225.</small></div></li>
+            <li><span class="dot good"></span><div>비용 차이가 충분히 큼<small>p50 7.28×, p95 9.06× — 선택으로 아낄 공간이 존재.</small></div></li>
+            <li><span class="dot good"></span><div>공식 topology 품질 차이가 뚜렷함<small>GriTS-Top에서 Strong 0.904, Cheap 0.190.</small></div></li>
             <li><span class="dot good"></span><div>재실행 비용이 통제됨<small>모든 parser output을 cache하여 평가 코드만 반복 가능.</small></div></li>
           </ul>
         </article>
         <article class="panel list-panel">
           <h3>과장하면 안 되는 부분</h3>
           <ul class="clean-list">
-            <li><span class="dot warn"></span><div>현재 shape 지표는 GriTS가 아님<small>셀 병합, 위치, 텍스트 내용까지 아직 공식 비교하지 않음.</small></div></li>
+            <li><span class="dot warn"></span><div>GriTS-Loc은 아직 잠정치<small>Docling tight text bbox와 정답 cell-region bbox의 의미가 다름.</small></div></li>
             <li><span class="dot warn"></span><div>구조 대응은 245/300<small>55페이지는 structure XML 대응이 없어 shape 진단에서 제외.</small></div></li>
             <li><span class="dot warn"></span><div>Strong native crash 경험<small>PMC6067716 page 7을 고정 제외하고 deterministic replacement 사용.</small></div></li>
           </ul>
@@ -234,6 +236,8 @@
     <section id="log">
       <div class="section-head"><div><span class="eyebrow">Experiment log</span><h2>무슨 일이 있었는가</h2></div><p>실패와 protocol 차이를 포함한 요약 로그입니다.</p></div>
       <div class="log">
+        <div class="log-row"><time>09-08</time><span class="kind">GRITS</span><span>245 pages / 291 tables: Top Cheap 0.190, Strong 0.904. Loc bbox 의미 불일치 발견.</span></div>
+        <div class="log-row"><time>09-08</time><span class="kind">VALIDATE</span><span>병합 셀 합성 표에서 Microsoft 공식 코드와 GriTS Top/Loc 0.75로 일치.</span></div>
         <div class="log-row"><time>09-07 20:48</time><span class="kind">MEASURE</span><span>구조 메타데이터 포함 Cheap 300-page 재측정 완료 — p50 91.75ms.</span></div>
         <div class="log-row"><time>09-07 20:47</time><span class="kind">DATA</span><span>PubTables validation structure XML 94,959개 확보 — 약 0.72GB.</span></div>
         <div class="log-row"><time>09-07 18:52</time><span class="kind">RECOVERY</span><span>Strong 300/300 집계 완료. 25–50 page 독립 배치로 native crash 영향 격리.</span></div>
@@ -247,8 +251,8 @@
       <div class="grid-2">
         <details><summary>Cheap / Strong processing</summary><p>Cheap은 PyMuPDF처럼 빠르고 가벼운 처리를, Strong은 Docling처럼 표 구조를 더 정교하게 분석하지만 더 오래 걸리는 처리를 뜻합니다. 모델 크기가 아니라 실제 capability와 비용으로 구분합니다.</p></details>
         <details><summary>Capability-aware routing</summary><p>모든 PDF에 비싼 처리를 쓰지 않고, Cheap으로도 충분한 문서는 Cheap에 두며 어려운 문서만 Strong으로 보내는 선택 전략입니다.</p></details>
-        <details><summary>GriTS</summary><p>표 셀의 topology, 위치, 텍스트 내용을 grid 정렬로 비교하는 공식 구조 평가입니다. 현재 shape 진단보다 훨씬 엄격합니다.</p></details>
-        <details><summary>P0 Gate가 HOLD인 이유</summary><p>속도 차이와 예비 품질 차이는 확인했지만 공식 구조 품질이 아직 없기 때문입니다. 이 단계에서 라우터를 학습하면 부정확한 capability label을 학습할 위험이 있습니다.</p></details>
+        <details><summary>GriTS</summary><p>표 셀의 topology, 위치, 텍스트 내용을 grid 정렬로 비교하는 공식 구조 평가입니다. Top은 병합 구조, Loc은 셀 영역, Con은 셀 텍스트를 평가합니다.</p></details>
+        <details><summary>P0 Gate가 HOLD인 이유</summary><p>GriTS-Top은 확보했지만 GriTS-Loc의 bbox 의미가 parser마다 다릅니다. 이 상태에서 라우터를 학습하면 잘못된 capability label을 학습할 위험이 있습니다.</p></details>
       </div>
     </section>
   </main>

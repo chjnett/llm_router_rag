@@ -64,11 +64,13 @@ English born-digital scientific paper PDF에서 Cheap/Strong document processing
 | Metric | Cheap | Strong |
 |---|---:|---:|
 | Table-count F1 proxy | 0.280 | 0.976 |
-| p50 latency | 91.75 ms | 667.22 ms |
-| p95 latency | 207.24 ms | 1,921.27 ms |
-| p50 Strong/Cheap | 1.00x | 7.27x |
-| p95 Strong/Cheap | 1.00x | 9.27x |
+| p50 latency | 91.64 ms | 667.22 ms |
+| p95 latency | 212.10 ms | 1,921.27 ms |
+| p50 Strong/Cheap | 1.00x | 7.28x |
+| p95 Strong/Cheap | 1.00x | 9.06x |
 | Row/column shape similarity | 0.225 | 0.964 |
+| GriTS-Top | 0.190 | 0.904 |
+| GriTS-Loc (provisional) | 0.114 | 0.204 |
 | Peak CUDA allocation | 0 | 약 603~628 MB/batch |
 
 Strong은 Cheap보다 두 진단 품질이 높지만 p50 7.27배, p95 9.27배 느렸다. 이는 선택적 문서 처리의 비용-품질 이질성이 존재한다는 screening 신호다. 그러나 table-count proxy는 셀 구조, spanning cell, 읽기 순서 및 텍스트 정확도를 평가하지 않으므로 capability label이나 논문 성능 수치로 사용하지 않는다.
@@ -76,6 +78,8 @@ Strong은 Cheap보다 두 진단 품질이 높지만 p50 7.27배, p95 9.27배 �
 동일 key 300개가 정렬되었고 그중 proxy가 양쪽 모두 정의된 299개에서 Strong 우세 214개, 동률 85개, Cheap 우세 0개였다. 이 비교 역시 count proxy 진단 결과일 뿐 capability 정답표가 아니다.
 
 추가로 공식 validation structure XML을 문서 내 table 순서로 연결했다. 완전 대응된 245페이지에서 행·열 개수 기반 shape similarity는 Cheap 0.225, Strong 0.964였다. 나머지 55페이지는 대응 structure XML이 없어 제외했다. 이 지표는 cell span, cell location, content를 평가하지 않는 자체 진단이며 GriTS가 아니다.
+
+동일 245페이지의 291개 정답 표에 Microsoft 공식 factored 2D-MSS 방식의 GriTS를 적용했다. 병합 셀 합성 예제에서 공식 코드와 Top/Loc `0.75`로 일치했다. GriTS-Top은 Cheap 0.190, Strong 0.904로 구조 우세가 명확했다. GriTS-Loc은 Cheap 0.114, Strong 0.204였으나 Docling bbox가 cell region보다 tight text 영역을 나타내는 경우가 있어 parser 간 bbox 의미가 통일되기 전에는 provisional 수치로만 취급한다.
 
 ## Gate
 
@@ -96,6 +100,7 @@ Strong은 Cheap보다 두 진단 품질이 높지만 p50 7.27배, p95 9.27배 �
 - 전력 수치는 시스템 전체 GPU 샘플 기반 gross 값이라 parser별 순수 에너지로 해석하지 않는다.
 - 현 table-count F1은 smoke-test proxy이며 공식 GriTS가 아니다.
 - row/column shape 진단은 245/300페이지만 평가 가능했고 GriTS의 topology/location/content 정렬을 대체하지 못한다.
+- GriTS-Loc 입력 bbox의 의미가 parser마다 다르다. 좌표 정규화만으로 해결되지 않으며 cell-region 재구성이 필요하다.
 
 ## Decision
 
@@ -105,8 +110,8 @@ Strong은 Cheap보다 두 진단 품질이 높지만 p50 7.27배, p95 9.27배 �
 
 ## Next Phase Recommendation
 
-1. PubTables table-structure annotation을 Canonical IR 평가 형식에 연결한다.
-2. official GriTS 또는 동등한 cell topology/location/content metric을 구현하고 unit test를 추가한다.
-3. 기존 cached raw predictions에 대해 평가만 재실행한다(파서 GPU 재실행 불필요).
-4. 결과가 재현 가능하고 품질 차이를 신뢰할 수 있을 때 P0 Gate를 다시 판정한다.
+1. Docling/PyMuPDF cell bbox를 동일한 cell-region 의미로 재구성한다.
+2. GriTS-Loc을 재계산하고 소수 표를 시각 점검한다.
+3. 필요하면 word annotation subset을 확보해 GriTS-Con을 계산한다.
+4. Top/Loc 결과가 재현 가능할 때 P0 Gate를 다시 판정한다.
 5. PASS일 때만 P1 Oracle/Capability로 이동한다.

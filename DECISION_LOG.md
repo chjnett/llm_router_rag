@@ -130,3 +130,28 @@ Table-count proxy만으로는 P0 구조 품질을 판정할 수 없다.
 
 ### Consequence
 디스크를 보존하면서 245개 대응 페이지의 row/column shape를 검증한다. 이 진단은 cell span/location/content를 포함하지 않아 GriTS로 보고하지 않으며 P0 Gate는 HOLD로 유지한다.
+
+---
+
+## Decision 007
+
+### Date
+2026-09-07
+
+### Trigger
+행·열 shape diagnostic 이후 공식 GriTS topology/location 평가가 필요했다.
+
+### Decision
+Microsoft Table Transformer의 factored 2D-MSS와 relative-span 정의를 동일하게 구현하고, 병합 셀이 있는 합성 표에서 공식 `src/grits.py`와 수치 일치를 확인한다.
+
+### Evidence
+- synthetic merged-cell case: GriTS-Top `0.75`, GriTS-Loc `0.75`로 공식 코드와 일치
+- 245 mapped pages / 291 ground-truth tables
+- GriTS-Top: PyMuPDF `0.190`, Docling `0.904`
+- 초기 GriTS-Loc: PyMuPDF `0.114`, Docling `0.204`
+
+### Alternatives
+Table-count proxy만으로 P0 PASS, 전체 Table Transformer inference pipeline 재실행.
+
+### Consequence
+Topology 차이는 강한 P0 신호로 인정한다. Docling의 tight text bbox와 PubTables cell-region bbox가 의미상 다르므로 Loc 수치는 provisional로 표시하고 Gate를 HOLD한다.
