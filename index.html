@@ -233,6 +233,15 @@
       </div>
     </section>
 
+    <section id="p1-rule">
+      <div class="section-head"><div><span class="eyebrow">P1 frozen rule</span><h2>어떤 페이지를 Cheap으로 충분하다고 보는가</h2></div><p>Oracle 결과를 보기 전에 고정한 기준입니다. 결과에 맞춰 임계값을 바꾸지 않습니다.</p></div>
+      <div class="table-wrap"><table><thead><tr><th>조건</th><th class="num">기준</th><th>이유</th></tr></thead><tbody>
+        <tr><td>표 개수</td><td class="num">정답과 정확히 일치</td><td>표를 하나라도 놓치거나 과검출하면 불충분</td></tr>
+        <tr><td>평균 GriTS-Top</td><td class="num">≥ 0.80</td><td>행·열 및 병합 구조를 보수적으로 유지</td></tr>
+        <tr><td>평균 GriTS-Loc</td><td class="num">≥ 0.50</td><td>셀 영역 위치가 최소 절반 수준 이상 일치</td></tr>
+      </tbody></table></div>
+    </section>
+
     <section id="audit">
       <div class="section-head"><div><span class="eyebrow">Visual audit</span><h2>점수가 실제 구조 차이를 반영하는가</h2></div><p>최악·중앙·최고 GriTS-Loc 사례에서 정답 셀과 Docling 재구성 셀을 비교했습니다.</p></div>
       <div class="panel" style="padding:16px"><img src="docs/figures/grits_loc_visual_audit.png" alt="GriTS-Loc 최악, 중앙, 최고 사례의 정답과 Docling 셀 영역 비교" style="display:block;width:100%;height:auto"></div>

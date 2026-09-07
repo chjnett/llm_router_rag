@@ -44,6 +44,8 @@ Cheap / Strong 품질과 실제 비용비를 신뢰할 수 있게 측정했는�
 
 # Week 2 — P1 Oracle / Capability
 
+Frozen rule: exact table count AND GriTS-Top ≥ 0.80 AND GriTS-Loc ≥ 0.50.
+
 - [ ] capability label
 - [ ] Cheap sufficient coverage
 - [ ] Strong-needed rate
