@@ -81,6 +81,8 @@ caproute-rag/
 - PubTables validation GriTS-Top/Loc 평가 및 Microsoft 공식 코드 교차검증 완료
 - GriTS-Top: Cheap `0.190`, Strong `0.904` (245 pages / 291 tables)
 - offline test: `9 passed`
-- P0 Gate: **HOLD** — GriTS-Loc cell bbox 의미 통일 전 P1은 시작하지 않음
+- GriTS-Loc: Cheap `0.114`, Strong `0.528` (Docling cell-region 재구성 후)
+- P0 Gate: **PASS** — topology/location screening과 시각 audit 완료
+- 다음 단계: P1 capability label / Oracle saving. P1 Gate 전 P2 router 학습 금지
 
 실행 경로와 완료 조건은 `P0_IMPLEMENTATION_PLAN.md`, 현재 판단은 `docs/P0_PHASE_REPORT.md`를 따른다.

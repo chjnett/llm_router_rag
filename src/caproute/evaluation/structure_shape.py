@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import statistics
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any
@@ -124,17 +125,10 @@ def prediction_table_cells(row: dict[str, Any]) -> list[list[dict[str, Any]]]:
     document = row["document"]
     if document.get("source_parser") == "docling":
         tables = document.get("metadata", {}).get("raw_parser_output", {}).get("tables", [])
+        raw_pages = document.get("metadata", {}).get("raw_parser_output", {}).get("pages", {})
         result = []
         for table in tables:
-            cells = []
-            for cell in table.get("data", {}).get("table_cells", []):
-                box = cell.get("bbox") or {}
-                cells.append({
-                    "row_nums": list(range(int(cell.get("start_row_offset_idx", 0)), int(cell.get("end_row_offset_idx", 0)))),
-                    "column_nums": list(range(int(cell.get("start_col_offset_idx", 0)), int(cell.get("end_col_offset_idx", 0)))),
-                    "bbox": [float(box.get(key, 0.0)) for key in ("l", "t", "r", "b")],
-                })
-            result.append(_normalize_cells([cell for cell in cells if cell["row_nums"] and cell["column_nums"]]))
+            result.append(_docling_region_cells(table, raw_pages))
         return result
 
     result = []
@@ -153,6 +147,89 @@ def prediction_table_cells(row: dict[str, Any]) -> list[list[dict[str, Any]]]:
                 })
         result.append(_normalize_cells(cells))
     return result
+
+
+def _axis_boundaries(
+    cells: list[dict[str, Any]],
+    count: int,
+    axis: str,
+    outer_start: float,
+    outer_end: float,
+) -> list[float]:
+    start_key, end_key = (("l", "r") if axis == "column" else ("t", "b"))
+    index_key = "column_nums" if axis == "column" else "row_nums"
+    centers: list[float | None] = []
+    for index in range(count):
+        candidates = []
+        for cell in cells:
+            if cell[index_key] == [index] and _area(cell["bbox"]) > 0:
+                raw = cell["raw_bbox"]
+                candidates.append((float(raw[start_key]) + float(raw[end_key])) / 2)
+        centers.append(statistics.median(candidates) if candidates else None)
+    known = [(index, value) for index, value in enumerate(centers) if value is not None]
+    if not known:
+        return [outer_start + (outer_end - outer_start) * index / count for index in range(count + 1)]
+    for index, value in enumerate(centers):
+        if value is not None:
+            continue
+        left = next(((i, v) for i, v in reversed(known) if i < index), None)
+        right = next(((i, v) for i, v in known if i > index), None)
+        if left and right:
+            centers[index] = left[1] + (right[1] - left[1]) * (index - left[0]) / (right[0] - left[0])
+        elif left:
+            step = (left[1] - outer_start) / max(left[0] + 0.5, 0.5)
+            centers[index] = left[1] + step * (index - left[0])
+        else:
+            step = (outer_end - right[1]) / max(count - right[0] - 0.5, 0.5)
+            centers[index] = right[1] - step * (right[0] - index)
+    numeric = [float(value) for value in centers]
+    boundaries = [outer_start]
+    boundaries.extend((numeric[index] + numeric[index + 1]) / 2 for index in range(count - 1))
+    boundaries.append(outer_end)
+    # Enforce monotonicity when sparse/tight text centers are noisy.
+    epsilon = max((outer_end - outer_start) * 1e-6, 1e-9)
+    for index in range(1, len(boundaries)):
+        boundaries[index] = max(boundaries[index], boundaries[index - 1] + epsilon)
+    boundaries[-1] = max(boundaries[-1], boundaries[-2] + epsilon)
+    return boundaries
+
+
+def _docling_region_cells(table: dict[str, Any], raw_pages: dict[str, Any]) -> list[dict[str, Any]]:
+    cells = []
+    for raw_cell in table.get("data", {}).get("table_cells", []):
+        box = raw_cell.get("bbox") or {}
+        row_nums = list(range(int(raw_cell.get("start_row_offset_idx", 0)), int(raw_cell.get("end_row_offset_idx", 0))))
+        column_nums = list(range(int(raw_cell.get("start_col_offset_idx", 0)), int(raw_cell.get("end_col_offset_idx", 0))))
+        numeric_box = [float(box.get(key, 0.0)) for key in ("l", "t", "r", "b")]
+        if row_nums and column_nums:
+            cells.append({
+                "row_nums": row_nums, "column_nums": column_nums, "bbox": numeric_box,
+                "raw_bbox": {key: float(box.get(key, 0.0)) for key in ("l", "t", "r", "b")},
+            })
+    if not cells:
+        return []
+    row_count = max(max(cell["row_nums"]) for cell in cells) + 1
+    column_count = max(max(cell["column_nums"]) for cell in cells) + 1
+    provenance = (table.get("prov") or [{}])[0]
+    table_box = provenance.get("bbox", {})
+    page_no = str(provenance.get("page_no", ""))
+    page_height = float(raw_pages.get(page_no, {}).get("size", {}).get("height", 0.0))
+    if table_box and page_height and table_box.get("coord_origin") == "BOTTOMLEFT":
+        outer = [float(table_box["l"]), page_height - float(table_box["t"]),
+                 float(table_box["r"]), page_height - float(table_box["b"])]
+    else:
+        valid = [cell["bbox"] for cell in cells if _area(cell["bbox"]) > 0]
+        outer = [min(box[0] for box in valid), min(box[1] for box in valid),
+                 max(box[2] for box in valid), max(box[3] for box in valid)]
+    columns = _axis_boundaries(cells, column_count, "column", outer[0], outer[2])
+    rows = _axis_boundaries(cells, row_count, "row", outer[1], outer[3])
+    regions = [{
+        "row_nums": cell["row_nums"],
+        "column_nums": cell["column_nums"],
+        "bbox": [columns[min(cell["column_nums"])], rows[min(cell["row_nums"])],
+                 columns[max(cell["column_nums"]) + 1], rows[max(cell["row_nums"]) + 1]],
+    } for cell in cells]
+    return _normalize_cells(regions)
 
 
 def prediction_shapes(row: dict[str, Any]) -> list[dict[str, int]]:

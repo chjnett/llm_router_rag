@@ -9,7 +9,7 @@ from caproute.datasets.pubtables import PubTablesSample, load_pubtables_subset
 from caproute.datasets.pubtables import _document_id
 from caproute.ir.schema import Block, CanonicalDocument, CanonicalPage
 from caproute.parsers.base import DocumentInput, DocumentParser
-from caproute.evaluation.structure_shape import shape_similarity
+from caproute.evaluation.structure_shape import _docling_region_cells, shape_similarity
 from caproute.evaluation.grits import grits_loc, grits_top
 
 
@@ -82,6 +82,25 @@ def test_structure_shape_similarity_penalizes_missing_and_wrong_shape():
     assert shape_similarity(truth, truth) == 1.0
     assert shape_similarity(truth, []) == 0.0
     assert shape_similarity(truth, [{"row_count": 2, "column_count": 2}]) == 0.75
+
+
+def test_docling_tight_boxes_expand_to_cell_regions():
+    table = {
+        "prov": [{"page_no": 1, "bbox": {"l": 0, "t": 100, "r": 100, "b": 0, "coord_origin": "BOTTOMLEFT"}}],
+        "data": {"table_cells": [
+            {"start_row_offset_idx": 0, "end_row_offset_idx": 1, "start_col_offset_idx": 0, "end_col_offset_idx": 1,
+             "bbox": {"l": 10, "t": 10, "r": 20, "b": 20}},
+            {"start_row_offset_idx": 0, "end_row_offset_idx": 1, "start_col_offset_idx": 1, "end_col_offset_idx": 2,
+             "bbox": {"l": 60, "t": 10, "r": 70, "b": 20}},
+            {"start_row_offset_idx": 1, "end_row_offset_idx": 2, "start_col_offset_idx": 0, "end_col_offset_idx": 1,
+             "bbox": {"l": 10, "t": 60, "r": 20, "b": 70}},
+            {"start_row_offset_idx": 1, "end_row_offset_idx": 2, "start_col_offset_idx": 1, "end_col_offset_idx": 2,
+             "bbox": {"l": 60, "t": 60, "r": 70, "b": 70}},
+        ]},
+    }
+    cells = _docling_region_cells(table, {"1": {"size": {"height": 100}}})
+    assert cells[0]["bbox"] == [0.0, 0.0, 0.4, 0.4]
+    assert cells[-1]["bbox"] == [0.4, 0.4, 1.0, 1.0]
 
 
 def test_grits_identity_and_missing_table_contract():

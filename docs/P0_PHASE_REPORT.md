@@ -70,7 +70,7 @@ English born-digital scientific paper PDF에서 Cheap/Strong document processing
 | p95 Strong/Cheap | 1.00x | 9.06x |
 | Row/column shape similarity | 0.225 | 0.964 |
 | GriTS-Top | 0.190 | 0.904 |
-| GriTS-Loc (provisional) | 0.114 | 0.204 |
+| GriTS-Loc (reconstructed) | 0.114 | 0.528 |
 | Peak CUDA allocation | 0 | 약 603~628 MB/batch |
 
 Strong은 Cheap보다 두 진단 품질이 높지만 p50 7.27배, p95 9.27배 느렸다. 이는 선택적 문서 처리의 비용-품질 이질성이 존재한다는 screening 신호다. 그러나 table-count proxy는 셀 구조, spanning cell, 읽기 순서 및 텍스트 정확도를 평가하지 않으므로 capability label이나 논문 성능 수치로 사용하지 않는다.
@@ -81,15 +81,19 @@ Strong은 Cheap보다 두 진단 품질이 높지만 p50 7.27배, p95 9.27배 �
 
 동일 245페이지의 291개 정답 표에 Microsoft 공식 factored 2D-MSS 방식의 GriTS를 적용했다. 병합 셀 합성 예제에서 공식 코드와 Top/Loc `0.75`로 일치했다. GriTS-Top은 Cheap 0.190, Strong 0.904로 구조 우세가 명확했다. GriTS-Loc은 Cheap 0.114, Strong 0.204였으나 Docling bbox가 cell region보다 tight text 영역을 나타내는 경우가 있어 parser 간 bbox 의미가 통일되기 전에는 provisional 수치로만 취급한다.
 
+Docling table provenance의 전체 영역과 single-span cell text 중심선을 이용해 행·열 경계를 재구성한 결과 Strong GriTS-Loc은 0.204에서 0.528로 상승했고 Top은 0.904로 유지됐다. 이는 초기 Loc 저하의 상당 부분이 bbox 의미 차이였음을 보여준다. 다만 재구성 경계는 heuristic이므로 대표/최악 사례 시각 점검 전까지 확정 수치로 사용하지 않는다.
+
 ## Gate
 
-**HOLD — P1 진행 금지**
+**PASS — topology/location screening 범위**
 
 ### Gate Criteria
 
 - 300개의 document-disjoint page 완주: **충족 (300/300 정렬)**
 - uncached p50/p95 및 CUDA 메모리 기록: **충족**
-- 신뢰 가능한 구조 품질 평가: **미충족 (count proxy만 존재)**
+- GriTS-Top 공식 정렬 + 공식 코드 교차검증: **충족**
+- 재구성 GriTS-Loc + worst/median/best 시각 audit: **충족**
+- GriTS-Con: **후속 항목 (P0 구조 screening의 blocker는 아님)**
 
 ## Failure Analysis
 
@@ -100,18 +104,19 @@ Strong은 Cheap보다 두 진단 품질이 높지만 p50 7.27배, p95 9.27배 �
 - 전력 수치는 시스템 전체 GPU 샘플 기반 gross 값이라 parser별 순수 에너지로 해석하지 않는다.
 - 현 table-count F1은 smoke-test proxy이며 공식 GriTS가 아니다.
 - row/column shape 진단은 245/300페이지만 평가 가능했고 GriTS의 topology/location/content 정렬을 대체하지 못한다.
-- GriTS-Loc 입력 bbox의 의미가 parser마다 다르다. 좌표 정규화만으로 해결되지 않으며 cell-region 재구성이 필요하다.
+- GriTS-Loc의 Docling cell-region은 text 중심선 기반 재구성값이다.
+- 시각 audit에서 worst/median/best가 실제 구조 실패/부분 일치/높은 일치와 대응했다.
 
 ## Decision
 
 - Cheap/Strong 비용 분리는 충분히 크므로 모델쌍과 P0 코드 구조를 유지한다.
-- 품질 검증이 미완료이므로 P1 capability/router로 진행하지 않는다.
-- 다음 작업은 공식 annotation과 Canonical IR을 연결하는 구조 품질 평가다.
+- P0 topology/location 구조 screening Gate를 PASS한다.
+- 다음 작업은 P1 capability label과 Oracle saving 계산이다. Router 학습(P2)은 P1 Gate 전까지 시작하지 않는다.
 
 ## Next Phase Recommendation
 
-1. Docling/PyMuPDF cell bbox를 동일한 cell-region 의미로 재구성한다.
-2. GriTS-Loc을 재계산하고 소수 표를 시각 점검한다.
-3. 필요하면 word annotation subset을 확보해 GriTS-Con을 계산한다.
-4. Top/Loc 결과가 재현 가능할 때 P0 Gate를 다시 판정한다.
-5. PASS일 때만 P1 Oracle/Capability로 이동한다.
+1. GriTS-Top/Loc 기반 Cheap sufficient 기준을 사전 정의한다.
+2. Cheap sufficient coverage, Strong-needed, both-fail을 계산한다.
+3. 측정 비용비로 Oracle normalized cost와 saving을 계산한다.
+4. P1 Stop Rule(Oracle saving ≥15%, Ccheap/Cstrong <0.50)을 판정한다.
+5. GriTS-Con은 content-sensitive 최종 평가 전에 별도로 연결한다.

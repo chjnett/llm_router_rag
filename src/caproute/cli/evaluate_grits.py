@@ -50,6 +50,7 @@ def main() -> None:
         "paired_pages": len(keys),
         "evaluated_pages": len(keys) - len(skipped),
         "ground_truth_tables": tables_evaluated,
+        "docling_location_bbox": "cell regions reconstructed from table extent and row/column text centers",
         "skipped_pages": skipped,
         "parsers": {
             name: {metric: _mean(values) for metric, values in parser_metrics.items()}
