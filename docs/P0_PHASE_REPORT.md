@@ -73,7 +73,7 @@ English born-digital scientific paper PDF에서 Cheap/Strong document processing
 | GriTS-Loc (reconstructed) | 0.114 | 0.528 |
 | Peak CUDA allocation | 0 | 약 603~628 MB/batch |
 
-Strong은 Cheap보다 두 진단 품질이 높지만 p50 7.27배, p95 9.27배 느렸다. 이는 선택적 문서 처리의 비용-품질 이질성이 존재한다는 screening 신호다. 그러나 table-count proxy는 셀 구조, spanning cell, 읽기 순서 및 텍스트 정확도를 평가하지 않으므로 capability label이나 논문 성능 수치로 사용하지 않는다.
+Strong은 Cheap보다 두 진단 품질이 높지만 p50 7.28배, p95 9.06배 느렸다. 이는 선택적 문서 처리의 비용-품질 이질성이 존재한다는 screening 신호다. 그러나 table-count proxy는 셀 구조, spanning cell, 읽기 순서 및 텍스트 정확도를 평가하지 않으므로 capability label이나 논문 성능 수치로 사용하지 않는다.
 
 동일 key 300개가 정렬되었고 그중 proxy가 양쪽 모두 정의된 299개에서 Strong 우세 214개, 동률 85개, Cheap 우세 0개였다. 이 비교 역시 count proxy 진단 결과일 뿐 capability 정답표가 아니다.
 
