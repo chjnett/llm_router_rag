@@ -10,7 +10,7 @@ P0 — implementation status; screening Gate not yet evaluated
 
 ## Git Commit
 
-Initial commit pending at report creation. 실제 실행 manifest가 commit과 dirty 상태를 자동 기록한다.
+`fed429a` — P0 harness implementation snapshot. 실제 screening manifest는 실행 당시 commit과 dirty 상태를 자동 기록한다.
 
 ## Goal
 
@@ -100,4 +100,3 @@ English born-digital scientific paper PDF에서 Cheap/Strong document processing
 3. Docling 전용 환경에서 CUDA smoke test를 한다.
 4. 20-page preflight 후 300-page P0 screening을 실행한다.
 5. Gate 결과가 PASS일 때만 P1 Oracle/Capability로 이동한다.
-
