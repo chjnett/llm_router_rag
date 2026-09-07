@@ -205,3 +205,32 @@ GriTS-Con 데이터까지 모두 확보할 때까지 P0 자체를 무기한 HOLD
 
 ### Consequence
 P0의 구조 품질·비용 screening은 완료한다. P1 capability/oracle을 시작할 수 있지만 content-sensitive 최종 평가는 GriTS-Con 전까지 완료로 보지 않는다.
+
+---
+
+## Decision 010
+
+### Date
+2026-09-08
+
+### Trigger
+사전 고정한 P1 sufficiency 기준과 비용 계약으로 capability label 및 zero-overhead Oracle을 계산했다.
+
+### Decision
+P1 Gate를 FAIL로 판정하고 P2 router 학습을 잠근다. 관측 결과에 맞춰 15% 절감 목표나 품질 임계값을 변경하지 않으며, 현재 PyMuPDF/Docling 조합을 개선하거나 교체한 뒤 동일 기준으로 P1을 재실행한다.
+
+### Evidence
+- evaluable: 245/300 pages; 55 pages는 structure XML 부재로 별도 보고
+- Cheap sufficient: 28/245 (11.43%)
+- Strong sufficient: 143/245 (58.37%)
+- Strong needed: 123/245 (50.20%)
+- both fail: 94/245 (38.37%)
+- Cheap/Strong p50 ratio: 0.1374 (PASS)
+- zero-overhead Oracle saving: 9.86% (15% 목표 FAIL)
+- frozen protocol commit: `d67f35e`
+
+### Alternatives
+결과를 본 뒤 sufficiency 임계값 또는 절감 목표를 완화하거나, 곧바로 P2 분류기를 학습한다.
+
+### Consequence
+Capability-aware routing 가설 전체를 기각하지는 않는다. 다만 현재 parser pair의 Cheap coverage가 낮고 both-fail이 높으므로, 다음 실험은 router가 아니라 parser pair repair/screening이다.

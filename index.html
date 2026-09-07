@@ -147,7 +147,7 @@
   <main id="main">
     <div class="eyebrow">Capability-aware selective document processing</div>
     <h1>과학 논문 PDF를 언제 빠르게, 언제 강하게 처리할 것인가</h1>
-    <p class="lead">Cheap 문서 처리와 Strong 문서 처리의 품질·비용 차이를 먼저 증명한 뒤, 필요한 문서만 Strong으로 보내는 연구입니다. 현재는 라우터를 만들기 전 P0 품질 검증 단계입니다.</p>
+    <p class="lead">Cheap 문서 처리와 Strong 문서 처리의 품질·비용 차이를 먼저 증명한 뒤, 필요한 문서만 Strong으로 보내는 연구입니다. P1에서 현재 파서 조합의 절감 상한이 목표에 미달해, 라우터 학습 대신 파서 조합을 개선하는 단계입니다.</p>
     <div class="hero-meta">
       <span>마지막 실험: <strong>2026-09-08 KST</strong></span>
       <span>표본: <strong>300 pages / 300 documents</strong></span>
@@ -157,22 +157,22 @@
 
     <div class="status-row">
       <article class="panel verdict">
-        <span class="badge done">P0 GATE · PASS</span>
-        <strong>구조 품질과 비용 차이가 검증됐다. P1 Oracle로 이동한다.</strong>
-        <p>Strong GriTS-Loc은 0.528, Top은 0.904이며 최악·중앙·최고 사례가 실제 구조 차이와 일치했습니다. 이제 완벽한 router를 가정했을 때 절감 여지가 충분한지 계산합니다.</p>
+        <span class="badge">P1 GATE · FAIL</span>
+        <strong>현재 파서 조합의 최대 절감률은 9.86%로 목표 15%에 미달했다.</strong>
+        <p>비용 차이는 충분하지만 Cheap으로 품질 기준을 통과한 페이지가 11.43%뿐입니다. 임계값을 사후 완화하지 않고 P2를 잠근 채 파서 조합을 개선합니다.</p>
       </article>
       <aside class="panel next">
         <span class="eyebrow">Next action</span>
-        <div class="step">P1 Oracle</div>
-        <p>Cheap sufficient coverage, Strong-needed rate, both-fail rate와 이론적 최대 절감률을 계산합니다. P1 Gate 전에는 router를 학습하지 않습니다.</p>
+        <div class="step">Parser pair repair</div>
+        <p>Cheap의 충분 비율을 높이고 Strong의 both-fail을 줄일 후보를 같은 245페이지·고정 기준으로 비교합니다. 통과 전에는 router를 학습하지 않습니다.</p>
       </aside>
     </div>
 
     <div class="metrics" aria-label="핵심 지표">
-      <div class="metric"><small>Strong / Cheap p50 비용비</small><strong>7.28×</strong><span>차이가 클수록 routing 여지 증가</span></div>
-      <div class="metric"><small>Strong GriTS-Top</small><strong>0.904</strong><span>245 pages · 291 tables</span></div>
-      <div class="metric"><small>Cheap GriTS-Top</small><strong>0.190</strong><span>공식 2D-MSS 방식</span></div>
-      <div class="metric"><small>테스트 상태</small><strong>9 / 9</strong><span>공식 코드 교차검증 포함</span></div>
+      <div class="metric"><small>Oracle 최대 절감률</small><strong>9.86%</strong><span>사전 목표 15% · FAIL</span></div>
+      <div class="metric"><small>Cheap 충분</small><strong>11.43%</strong><span>28 / 245 pages</span></div>
+      <div class="metric"><small>Strong 필요</small><strong>50.20%</strong><span>123 / 245 pages</span></div>
+      <div class="metric"><small>둘 다 실패</small><strong>38.37%</strong><span>94 / 245 pages</span></div>
     </div>
 
     <section id="results">
@@ -206,7 +206,7 @@
       <div class="pipeline">
         <div class="phase complete"><span class="id">P0-A · COMPLETE</span><strong>Harness & Cost</strong><p>Canonical IR, cache, latency, VRAM, power, 300-page 실행 완료.</p></div>
         <div class="phase complete"><span class="id">P0-B · COMPLETE</span><strong>Official Quality</strong><p>Top/Loc 및 시각 audit 완료. Content는 후속 보완.</p></div>
-        <div class="phase active"><span class="id">P1 · ACTIVE</span><strong>Capability / Oracle</strong><p>Cheap sufficient와 이론적 최대 절감률을 계산.</p></div>
+        <div class="phase"><span class="id">P1 · FAIL / REPAIR</span><strong>Capability / Oracle</strong><p>Oracle 절감 9.86%. 파서 조합 개선 후 재검증.</p></div>
         <div class="phase"><span class="id">P2+ · LOCKED</span><strong>Router & RAG</strong><p>분류기, calibration, external dataset, retrieval·QA 평가.</p></div>
       </div>
     </section>
@@ -225,12 +225,24 @@
         <article class="panel list-panel">
           <h3>과장하면 안 되는 부분</h3>
           <ul class="clean-list">
-            <li><span class="dot warn"></span><div>재구성 Loc은 아직 audit 전<small>Strong 0.528이지만 text 중심선 기반 경계를 눈으로 검증해야 함.</small></div></li>
+            <li><span class="dot warn"></span><div>Cheap coverage가 너무 낮음<small>28/245만 통과하여 완벽한 router도 9.86%만 절감.</small></div></li>
             <li><span class="dot warn"></span><div>구조 대응은 245/300<small>55페이지는 structure XML 대응이 없어 shape 진단에서 제외.</small></div></li>
-            <li><span class="dot warn"></span><div>Strong native crash 경험<small>PMC6067716 page 7을 고정 제외하고 deterministic replacement 사용.</small></div></li>
+            <li><span class="dot warn"></span><div>both-fail 비율이 높음<small>94/245는 Strong으로 보내도 고정 품질 기준을 통과하지 못함.</small></div></li>
           </ul>
         </article>
       </div>
+    </section>
+
+    <section id="p1-results">
+      <div class="section-head"><div><span class="eyebrow">P1 oracle result</span><h2>완벽한 라우터도 왜 목표를 못 넘는가</h2></div><p>라우팅 판단 비용이 0이라고 가정한 이론적 상한입니다.</p></div>
+      <div class="table-wrap"><table><thead><tr><th>분류</th><th class="num">페이지</th><th class="num">비율</th><th>의미</th></tr></thead><tbody>
+        <tr><td>Cheap 통과 전체</td><td class="num">28 / 245</td><td class="num">11.43%</td><td>Cheap으로 처리해도 고정 품질 기준 충족</td></tr>
+        <tr><td>Strong 필요</td><td class="num">123 / 245</td><td class="num">50.20%</td><td>Cheap은 실패하지만 Strong은 통과</td></tr>
+        <tr><td>둘 다 실패</td><td class="num">94 / 245</td><td class="num">38.37%</td><td>라우팅이 아니라 파서 품질을 먼저 개선해야 함</td></tr>
+        <tr><td>Strong 역전 실패</td><td class="num">8 / 245</td><td class="num">3.27%</td><td>Cheap은 통과하지만 Strong은 실패; Cheap 통과 28에 포함</td></tr>
+        <tr><td>Oracle 절감</td><td class="num">—</td><td class="num"><strong>9.86%</strong></td><td>목표 15% 미달; P1 Gate FAIL</td></tr>
+      </tbody></table></div>
+      <p class="caption">상호배타 label의 both-pass는 20페이지이며, Cheap 통과 전체 28페이지에는 Strong 역전 실패 8페이지가 포함됩니다.</p>
     </section>
 
     <section id="p1-rule">
@@ -251,6 +263,8 @@
     <section id="log">
       <div class="section-head"><div><span class="eyebrow">Experiment log</span><h2>무슨 일이 있었는가</h2></div><p>실패와 protocol 차이를 포함한 요약 로그입니다.</p></div>
       <div class="log">
+        <div class="log-row"><time>09-08</time><span class="kind">P1 FAIL</span><span>고정 기준 Oracle 절감 9.86%로 목표 15% 미달. P2 잠금, parser pair repair로 전환.</span></div>
+        <div class="log-row"><time>09-08</time><span class="kind">ORACLE</span><span>245 pages: Cheap 통과 11.43%, Strong 필요 50.20%, both-fail 38.37%.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">GATE</span><span>P0 topology/location screening PASS. P1 Capability / Oracle 단계 해제.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">AUDIT</span><span>Worst 0.011, median 0.559, best 0.845가 실제 구조 실패·부분 일치·높은 일치와 대응.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">FIX</span><span>Docling cell-region 재구성 후 GriTS-Loc 0.204 → 0.528, Top 0.904 유지.</span></div>
@@ -270,7 +284,7 @@
         <details><summary>Cheap / Strong processing</summary><p>Cheap은 PyMuPDF처럼 빠르고 가벼운 처리를, Strong은 Docling처럼 표 구조를 더 정교하게 분석하지만 더 오래 걸리는 처리를 뜻합니다. 모델 크기가 아니라 실제 capability와 비용으로 구분합니다.</p></details>
         <details><summary>Capability-aware routing</summary><p>모든 PDF에 비싼 처리를 쓰지 않고, Cheap으로도 충분한 문서는 Cheap에 두며 어려운 문서만 Strong으로 보내는 선택 전략입니다.</p></details>
         <details><summary>GriTS</summary><p>표 셀의 topology, 위치, 텍스트 내용을 grid 정렬로 비교하는 공식 구조 평가입니다. Top은 병합 구조, Loc은 셀 영역, Con은 셀 텍스트를 평가합니다.</p></details>
-        <details><summary>P0 Gate를 통과한 이유</summary><p>비용 차이, GriTS-Top, 재구성 GriTS-Loc을 측정했고 시각 audit에서 낮고 높은 점수가 실제 구조 품질과 대응했습니다. 다음은 라우터가 아니라 P1 이론적 Oracle 검증입니다.</p></details>
+        <details><summary>P1 Gate가 실패한 이유</summary><p>Cheap이 Strong보다 7.28배 빠르지만 품질 기준을 통과한 페이지가 11.43%뿐이어서, 완벽하고 무료인 라우터도 9.86%만 절감합니다. 목표 15% 전에는 P2를 시작하지 않습니다.</p></details>
       </div>
     </section>
   </main>

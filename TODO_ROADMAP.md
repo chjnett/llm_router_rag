@@ -46,20 +46,20 @@ Cheap / Strong 품질과 실제 비용비를 신뢰할 수 있게 측정했는�
 
 Frozen rule: exact table count AND GriTS-Top ≥ 0.80 AND GriTS-Loc ≥ 0.50.
 
-- [ ] capability label
-- [ ] Cheap sufficient coverage
-- [ ] Strong-needed rate
-- [ ] both-fail rate
-- [ ] Oracle routing
-- [ ] Oracle saving
-- [ ] model pair decision
+- [x] capability label
+- [x] Cheap sufficient coverage: 28/245 (11.43%)
+- [x] Strong-needed rate: 123/245 (50.20%)
+- [x] both-fail rate: 94/245 (38.37%)
+- [x] Oracle routing
+- [x] Oracle saving: 9.86%
+- [x] model pair decision: current PyMuPDF/Docling pair rejected for P2
 
 ### Stop Rule
 
-- [ ] Oracle saving >= 15% 권장
-- [ ] Ccheap/Cstrong < 0.50 권장
+- [ ] Oracle saving >= 15% 권장 — **FAIL (9.86%)**
+- [x] Ccheap/Cstrong < 0.50 권장 — PASS (0.137)
 
-FAIL이면 모델쌍 변경.
+**현재 판정: FAIL.** 기준을 사후 변경하지 않는다. P2는 잠그고 Cheap/Strong 후보 교체 또는 설정 개선을 같은 cohort와 기준으로 재검증한다.
 
 ---
 

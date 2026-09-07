@@ -11,6 +11,7 @@ from caproute.ir.schema import Block, CanonicalDocument, CanonicalPage
 from caproute.parsers.base import DocumentInput, DocumentParser
 from caproute.evaluation.structure_shape import _docling_region_cells, shape_similarity
 from caproute.evaluation.grits import grits_loc, grits_top
+from caproute.cli.p1_oracle import is_sufficient
 
 
 class FakeParser(DocumentParser):
@@ -101,6 +102,14 @@ def test_docling_tight_boxes_expand_to_cell_regions():
     cells = _docling_region_cells(table, {"1": {"size": {"height": 100}}})
     assert cells[0]["bbox"] == [0.0, 0.0, 0.4, 0.4]
     assert cells[-1]["bbox"] == [0.4, 0.4, 1.0, 1.0]
+
+
+def test_p1_sufficiency_requires_all_frozen_conditions():
+    rule = {"require_exact_table_count": True, "min_grits_top": 0.8, "min_grits_loc": 0.5}
+    metrics = {"exact_table_count": True, "grits_top_mean": 0.8, "grits_loc_mean": 0.5}
+    assert is_sufficient(metrics, rule)
+    assert not is_sufficient({**metrics, "exact_table_count": False}, rule)
+    assert not is_sufficient({**metrics, "grits_top_mean": 0.799}, rule)
 
 
 def test_grits_identity_and_missing_table_contract():

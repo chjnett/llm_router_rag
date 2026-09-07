@@ -80,9 +80,11 @@ caproute-rag/
 - Canonical IR, raw prediction cache, latency/VRAM/power harness 구현
 - PubTables validation GriTS-Top/Loc 평가 및 Microsoft 공식 코드 교차검증 완료
 - GriTS-Top: Cheap `0.190`, Strong `0.904` (245 pages / 291 tables)
-- offline test: `9 passed`
+- offline test: `11 passed`
 - GriTS-Loc: Cheap `0.114`, Strong `0.528` (Docling cell-region 재구성 후)
 - P0 Gate: **PASS** — topology/location screening과 시각 audit 완료
-- 다음 단계: P1 capability label / Oracle saving. P1 Gate 전 P2 router 학습 금지
+- P1 Oracle: Cheap sufficient `11.43%`, Strong sufficient `58.37%`, both-fail `38.37%`
+- P1 Oracle saving: `9.86%` (사전 목표 `15%` 미달), P1 Gate: **FAIL**
+- 다음 단계: P2를 잠그고 Cheap/Strong parser pair를 개선·교체하여 P1을 재검증
 
-실행 경로와 완료 조건은 `P0_IMPLEMENTATION_PLAN.md`, 현재 판단은 `docs/P0_PHASE_REPORT.md`를 따른다.
+실행 경로와 완료 조건은 `P0_IMPLEMENTATION_PLAN.md`, `P1_IMPLEMENTATION_PLAN.md`, 현재 판단은 `docs/P0_PHASE_REPORT.md`, `docs/P1_PHASE_REPORT.md`를 따른다.
