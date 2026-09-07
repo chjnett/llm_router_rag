@@ -1,0 +1,205 @@
+# Architecture
+
+## Main Architecture
+
+```text
+Scientific PDF
+      │
+      ▼
+Cheap Native Scan
+(PyMuPDF / GROBID)
+      │
+      ▼
+Feasibility Guard
+      │
+      ▼
+Capability Pre-Router
+   /              \
+Cheap 가능       Strong 필요
+   │                │
+   ▼                │
+Cheap Parser        │
+   │                │
+   ▼                │
+Output Verifier     │
+  /        \        │
+Pass       Fail─────┘
+ │                  │
+ │                  ▼
+ │             Strong Parser/VLM
+ │                  │
+ └──────────┬───────┘
+            ▼
+       Canonical IR
+            │
+            ▼
+         Chunking
+            │
+            ▼
+        Embedding
+            │
+            ▼
+        Vector DB
+            │
+            ▼
+         Retriever
+            │
+            ▼
+          Answer
+```
+
+---
+
+## 1. Cheap Native Scan
+
+목적:
+
+Strong model을 실행하기 전에 가능한 cheap feature를 뽑는다.
+
+후보:
+
+- PyMuPDF
+- GROBID
+- PDF metadata
+- native text layer
+
+추출 feature 예:
+
+- text length
+- text density
+- column count
+- bbox density
+- table count
+- figure count
+- image ratio
+- native text coverage
+- font diversity
+- reading-order complexity
+- equation hints
+- table geometry
+
+---
+
+## 2. Feasibility Guard
+
+문서군 / batch에서 cascade 경제성이 없는 경우 bypass한다.
+
+기본 아이디어:
+
+```text
+observed_saving
+=
+cheap_acceptance_rate
+-
+cheap_call_rate * (C_cheap / C_strong)
+```
+
+보수적 lower bound가 0 이하이면 Always Strong.
+
+---
+
+## 3. Capability Pre-Router
+
+예측 대상:
+
+> Strong processing이 실제로 필요한가?
+
+단순 `table vs text` 분류가 아니다.
+
+---
+
+## 4. Cheap Parser
+
+후보:
+
+- PyMuPDF native text
+- GROBID
+- lightweight table parser
+- deterministic structure parser
+
+---
+
+## 5. Output Verifier
+
+Cheap output의 구조적 신뢰성을 검사한다.
+
+feature 예:
+
+- schema validity
+- text coverage
+- row consistency
+- column consistency
+- header consistency
+- empty cell ratio
+- numeric consistency
+- source/output coverage
+- parse warnings
+
+---
+
+## 6. Strong Parser / VLM
+
+후보는 P0에서 실제 성능/속도를 측정해 고른다.
+
+예:
+
+- Docling
+- Nougat
+- TableFormer 계열
+- quantized VLM
+
+모델 크기보다 실제 RTX 3090 latency를 우선한다.
+
+---
+
+## 7. Canonical IR
+
+모든 parser output은 동일 schema로 변환한다.
+
+```json
+{
+  "document_id": "paper_001",
+  "page_id": 12,
+  "source_parser": "cheap",
+  "route": "cheap_accept",
+  "blocks": [
+    {
+      "block_id": "b1",
+      "type": "text",
+      "bbox": [0, 0, 100, 100],
+      "text": "...",
+      "confidence": 0.94
+    }
+  ],
+  "tables": [],
+  "figures": [],
+  "metadata": {}
+}
+```
+
+반드시 provenance를 남긴다.
+
+---
+
+## 8. Query-Time Visual Rescue
+
+Extension only.
+
+```text
+Question
+   ↓
+Retrieve
+   ↓
+Confidence / Query Type
+   ├─ sufficient → Answer
+   └─ uncertain / visual-heavy
+          ↓
+      Top-K pages
+          ↓
+      Strong/VLM rescue
+          ↓
+        Answer
+```
+
+Main 결과가 통과한 뒤 구현한다.
+
