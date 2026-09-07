@@ -1,5 +1,7 @@
 # CapRoute Codex Starter Bundle
 
+> 현재 연구 상태와 실험 결과는 브라우저에서 [`index.html`](index.html)을 열어 확인한다.
+
 ## Project
 
 **CapRoute: Cost-Constrained Capability Routing for Scientific PDF RAG**
@@ -72,12 +74,12 @@ caproute-rag/
 
 ## 현재 구현 상태
 
-- 신규 독립 저장소 scaffold와 P0 harness 구현 완료
-- Cheap baseline: PyMuPDF
-- Strong baseline interface: Docling optional adapter
-- 공식 PubTables-1M PASCAL VOC split loader, Canonical IR, raw prediction cache, latency/VRAM/power harness 구현
-- offline test: `5 passed`
-- P0 Gate: **NOT EVALUATED** — PubTables subset과 원본 PubMed PDF가 아직 없음
+- P0 Cheap/Strong 300-page screening 완료
+- Cheap baseline: PyMuPDF 1.28.2
+- Strong baseline: Docling 2.126.0 / CUDA
+- Canonical IR, raw prediction cache, latency/VRAM/power harness 구현
+- PubTables validation structure shape 진단 완료
+- offline test: `8 passed`
+- P0 Gate: **HOLD** — 비용 차이는 확인했으며 official GriTS 연결 전 P1은 시작하지 않음
 
 실행 경로와 완료 조건은 `P0_IMPLEMENTATION_PLAN.md`, 현재 판단은 `docs/P0_PHASE_REPORT.md`를 따른다.
-
