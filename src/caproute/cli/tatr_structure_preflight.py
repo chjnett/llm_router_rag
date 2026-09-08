@@ -84,7 +84,7 @@ def main():
     det_model = TableTransformerForObjectDetection.from_pretrained(model_cfg["detection"], use_safetensors=True).to(device).eval()
     str_model = TableTransformerForObjectDetection.from_pretrained(model_cfg["structure"], use_safetensors=True).to(device).eval()
     torch.cuda.reset_peak_memory_stats() if device.type == "cuda" else None
-    rows, latencies, tops, locs, atomic_tops, atomic_locs = [], [], [], [], [], []
+    rows, latencies, tops, locs, atomic_tops, atomic_locs, not_evaluable = [], [], [], [], [], [], []
     with torch.inference_mode():
         for sample in samples:
             if device.type == "cuda": torch.cuda.synchronize()
@@ -105,6 +105,11 @@ def main():
             latency = 1000 * (time.perf_counter() - started)
             paths = structure_files_for_page(resolve(data["detection_root"]), resolve(data["structure_root"]),
                                              sample.item.document_id, int(sample.item.page_index or 0))
+            if not paths or any(not path.exists() for path in paths):
+                latencies.append(latency)
+                not_evaluable.append({"document_id": sample.item.document_id, "page_index": sample.item.page_index,
+                                      "reason": "missing_structure_xml", "latency_ms": latency})
+                continue
             truths = [ground_truth_cells(path) for path in paths if path.exists()]
             page_top, page_loc, page_atomic_top, page_atomic_loc = [], [], [], []
             for index in range(max(len(truths), len(predictions))):
@@ -122,7 +127,8 @@ def main():
                          "truth_tables": len(truths), "predicted_tables": len(predictions),
                          "grits_top": top, "grits_loc": loc, "atomic_grits_top": atomic_top,
                          "atomic_grits_loc": atomic_loc, "predicted_cells": predictions, "latency_ms": latency})
-    summary = {"config_hash": config_hash(cfg), "completed": len(rows),
+    summary = {"config_hash": config_hash(cfg), "attempted": len(samples), "completed": len(rows) + len(not_evaluable),
+        "evaluable_pages": len(rows), "not_evaluable_pages": len(not_evaluable),
         "exact_table_count_rate": sum(r["truth_tables"] == r["predicted_tables"] for r in rows) / len(rows),
         "grits_top_mean": sum(tops) / len(tops), "grits_loc_mean": sum(locs) / len(locs),
         "atomic_grits_top_mean": sum(atomic_tops) / len(atomic_tops),
@@ -134,6 +140,7 @@ def main():
               "latency": bool(summary["latency_ms_p50"] < cfg["gate"]["max_latency_ms_p50"])}
     summary.update({"gate_checks": checks, "gate": "PASS" if all(checks.values()) else "FAIL"})
     output = resolve(cfg["outputs"]["root"]); write_json(output / "summary.json", summary); write_jsonl(output / "predictions.jsonl", rows)
+    write_jsonl(output / "not_evaluable.jsonl", not_evaluable)
     print(summary)
 
 

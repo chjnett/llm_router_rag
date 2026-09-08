@@ -47,3 +47,4 @@ FAIL: exact table count 80%, mean GriTS-Top 0.671, mean GriTS-Loc 0.392, end-to-
 - Replace claimed atomic grid cells only when the candidate spans at least two grid positions.
 - Compare atomic and span-aware GriTS in the same run; do not select per-page winners.
 - Continue to visual audit only if aggregate Top or Loc improves. The original structure Gate remains Top >=0.70 and Loc >=0.50.
+- As in the frozen P1 contract, pages without matching structure XML are `not_evaluable`: retain their latency but exclude them from GriTS and exact-count denominators.
