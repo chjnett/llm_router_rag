@@ -99,9 +99,9 @@ def main():
         "grits_top_mean": sum(tops) / len(tops), "grits_loc_mean": sum(locs) / len(locs),
         "latency_ms_p50": percentile(latencies, .5), "latency_ms_p95": percentile(latencies, .95),
         "peak_vram_bytes": torch.cuda.max_memory_allocated() if device.type == "cuda" else 0}
-    checks = {"grits_top": summary["grits_top_mean"] >= cfg["gate"]["min_grits_top"],
-              "grits_loc": summary["grits_loc_mean"] >= cfg["gate"]["min_grits_loc"],
-              "latency": summary["latency_ms_p50"] < cfg["gate"]["max_latency_ms_p50"]}
+    checks = {"grits_top": bool(summary["grits_top_mean"] >= cfg["gate"]["min_grits_top"]),
+              "grits_loc": bool(summary["grits_loc_mean"] >= cfg["gate"]["min_grits_loc"]),
+              "latency": bool(summary["latency_ms_p50"] < cfg["gate"]["max_latency_ms_p50"])}
     summary.update({"gate_checks": checks, "gate": "PASS" if all(checks.values()) else "FAIL"})
     output = resolve(cfg["outputs"]["root"]); write_json(output / "summary.json", summary); write_jsonl(output / "predictions.jsonl", rows)
     print(summary)

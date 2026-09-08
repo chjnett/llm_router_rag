@@ -34,3 +34,7 @@ PASS: 20/20 completed, table-count proxy 1.000, model-only p50 17.36 ms, p95 33.
 - predicted cells are row/column box intersections; spanning/header semantics are not synthesized in this preflight
 - PASS: mean GriTS-Top >= 0.70, mean GriTS-Loc >= 0.50, end-to-end p50 < 333.61 ms (half of Docling p50)
 - Report exact table count and peak CUDA allocation; do not promote the result to full P1 before the 300-page run
+
+## Structure Result
+
+FAIL: exact table count 80%, mean GriTS-Top 0.671, mean GriTS-Loc 0.392, end-to-end p50 129.76 ms, p95 179.73 ms, peak CUDA allocation 408,653,312 bytes. Latency passed, Top and Loc failed. Because this preflight intentionally omitted spanning/header synthesis, the next action is postprocessing audit rather than a 300-page run.

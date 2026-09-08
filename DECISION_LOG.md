@@ -300,3 +300,26 @@ TATR detection branch를 PASS하고 structure-recognition 20-page GriTS prefligh
 
 ### Consequence
 검출 결과만으로 P1 품질을 주장하지 않는다. 다음 단계에서 detection crop과 structure model을 연결하고 렌더링·전처리를 포함한 end-to-end 비용 및 GriTS-Top/Loc을 측정한다.
+
+---
+
+## Decision 014
+
+### Date
+2026-09-08
+
+### Trigger
+TATR detection과 structure-recognition을 연결해 고정된 20페이지에서 실제 GriTS 및 end-to-end latency를 측정했다.
+
+### Decision
+현재 단순 row×column 교차 후처리는 FAIL로 판정하고 300페이지 확대를 보류한다. TATR branch는 즉시 폐기하지 않고 spanning/header semantics 후처리와 시각 audit을 한 번 수행한다.
+
+### Evidence
+- exact table count: 80%
+- mean GriTS-Top: 0.671 (목표 0.70 미달)
+- mean GriTS-Loc: 0.392 (목표 0.50 미달)
+- end-to-end p50 129.76 ms, p95 179.73 ms (비용 조건 PASS)
+- peak CUDA allocation 408,653,312 bytes
+
+### Consequence
+속도 여지는 확인됐으나 구조 품질은 아직 불충분하다. 결과를 보고 threshold를 변경하지 않으며, 모델이 출력한 spanning cell과 header 정보를 버린 현재 후처리의 손실부터 검증한다.
