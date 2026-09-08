@@ -54,3 +54,7 @@ This calculation incorrectly included four pages without matching structure XML 
 ## Corrected Span-aware Result
 
 **PASS.** Attempted/completed 20/20; evaluable 16; four missing-XML pages reported separately. Exact table count 100%, GriTS-Top 0.894, GriTS-Loc 0.510, end-to-end p50 127.67 ms, p95 223.06 ms, peak CUDA allocation 408,653,312 bytes. Atomic Top/Loc were 0.839/0.490, so fixed span-aware postprocessing improved both metrics without per-page selection.
+
+## Frozen 300-page Expansion
+
+Use the identical models, thresholds, rendering, crop padding, span rule and P1 evaluable-cohort contract. The aggregate screening Gate remains Top >=0.70, Loc >=0.50 and p50 <333.61 ms. This run may unlock a TATR/Docling Oracle calculation, not P2 directly.
