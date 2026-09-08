@@ -1,0 +1,23 @@
+seed: 42
+dataset:
+  annotations: data/raw/pubtables/PubTables-1M-Image_Page_Detection_PASCAL_VOC
+  detection_root: data/raw/pubtables/PubTables-1M-Image_Page_Detection_PASCAL_VOC/val
+  structure_root: data/raw/pubtables/PubTables-1M-Structure/val
+  split_file: data/raw/pubtables/PubTables-1M-Image_Page_Detection_PASCAL_VOC/preflight_filelist.txt
+  image_root: data/raw/pubtables/PubTables-1M-Image_Page_Detection_PASCAL_VOC/images
+  pdf_root: data/raw/pubtables/pdfs
+  sample_size: 20
+  exclude_document_ids: [PMC6067716]
+models:
+  detection: microsoft/table-transformer-detection
+  structure: microsoft/table-transformer-structure-recognition
+  detection_threshold: 0.90
+  structure_threshold: 0.50
+  crop_padding: 10
+  device: cuda
+gate:
+  min_grits_top: 0.70
+  min_grits_loc: 0.50
+  max_latency_ms_p50: 333.61065
+outputs:
+  root: outputs/tatr_structure_preflight

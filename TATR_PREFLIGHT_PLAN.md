@@ -25,3 +25,12 @@ This is only a detector preflight, not P1 sufficiency evidence. Passing permits 
 ## Detection Result
 
 PASS: 20/20 completed, table-count proxy 1.000, model-only p50 17.36 ms, p95 33.67 ms, peak CUDA allocation 230,491,648 bytes. PDF rendering and processor time are excluded from this model-only latency and must be included in the later end-to-end parser measurement.
+
+## Structure Preflight Contract
+
+- Model: `microsoft/table-transformer-structure-recognition`
+- detection threshold 0.90, structure row/column threshold 0.50
+- detected tables sorted in page reading order and paired to ground truth in order
+- predicted cells are row/column box intersections; spanning/header semantics are not synthesized in this preflight
+- PASS: mean GriTS-Top >= 0.70, mean GriTS-Loc >= 0.50, end-to-end p50 < 333.61 ms (half of Docling p50)
+- Report exact table count and peak CUDA allocation; do not promote the result to full P1 before the 300-page run
