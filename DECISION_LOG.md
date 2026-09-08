@@ -625,3 +625,46 @@ R2-P를 cache-dependent CONDITIONAL PASS로 판정한다. QASPER GPU 확대는 �
 
 ### Consequence
 제안 방식은 persistent page cache가 있는 multi-query workload로 범위를 제한해야 한다. Strong quality benefit은 text-control이 아니라 multimodal evidence에서 별도로 증명한다.
+
+---
+
+## Decision 028
+
+### Date
+2026-09-08
+
+### Trigger
+SPIQA test-A에서 50문항 사전실험과 해당 논문을 제외한 100문항 확인 실험으로 caption, CLIP, ColSmol retrieval을 비교했다.
+
+### Decision
+Visual signal feasibility는 PASS하지만 Always Visual은 폐기한다. 실제 선택기 검증 전에는 P2로 승격하지 않는다.
+
+### Evidence
+- confirmation caption/CLIP/ColSmol R@1: 0.65/0.41/0.34
+- caption+CLIP oracle R@1/R@5: 0.81/0.95
+- caption+ColSmol oracle R@1/R@5: 0.77/0.95
+- ColSmol peak allocated VRAM 4.04GiB, 221-image indexing 79.14s
+
+### Consequence
+시각 모델의 단독 우위가 아니라 선택적 보완성만 주장한다. 추론 시 이용 가능한 특징으로 실제 selector를 동결 평가한다.
+
+---
+
+## Decision 029
+
+### Date
+2026-09-08
+
+### Trigger
+50문항에서 Logistic selector와 threshold를 고정하고 paper-disjoint 100문항에서 평가했다.
+
+### Decision
+P1-V selector Gate를 FAIL로 판정한다. 같은 test-A 확인 표본의 재튜닝과 추가 GPU model sweep을 중단한다.
+
+### Evidence
+- train: R@1 0.74→0.90, MRR 0.8169→0.9194, route 28%, AUC 0.923
+- confirmation: R@1 0.65→0.62, MRR 0.7557→0.7285, route 36%, AUC 0.747
+- tests: 27 passed
+
+### Consequence
+Oracle 보완성만으로 deployable routing을 주장할 수 없다. 다음 해제 조건은 별도 300+ training/calibration questions와 paper-disjoint certification 설계다.

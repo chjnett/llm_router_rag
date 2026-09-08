@@ -1,0 +1,12 @@
+seed: 42
+train_results: outputs/p1v_spiqa_colsmol_preflight/results.json
+test_results: outputs/p1v_spiqa_colsmol_confirmation/results.json
+policy:
+  max_train_route_rate: 0.35
+  regularization_c: 0.25
+gate:
+  min_test_recall_at_1_gain: 0.0
+  min_test_mrr_gain: 0.0
+  max_test_route_rate: 0.50
+outputs:
+  root: outputs/p1v_spiqa_colsmol_selector

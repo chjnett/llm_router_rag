@@ -2,7 +2,7 @@
 
 ## 한 줄 결론
 
-현재는 Router 학습 단계가 아니다. PubTables 표 중심 parser pair의 Oracle 절감률은 9.86%로 실패했고, QASPER text-control에서는 evidence alignment는 통과했지만 dense Recall@5가 54.14%에 머물렀다. 따라서 **retrieval 병목을 먼저 수리한 뒤**, 실제 전체 논문 분포 재평가와 선택적 visual retrieval(ColPali) 중 다음 주 경로를 결정한다.
+현재는 대규모 Router/GPU 확대 단계가 아니다. QASPER cached page rescue는 비용 조건부 가능성을 보였고 SPIQA에서 caption과 visual retrieval의 oracle 보완성도 paper-disjoint 표본에서 재현됐다. 그러나 50문항에서 학습한 실제 선택기는 독립 100문항에서 R@1 `0.65→0.62`로 악화됐다. 따라서 **별도 300+ 학습/보정 cohort 확보 전에는 GPU sweep과 certification을 잠근다.**
 
 ## 무엇이 확인됐는가
 
@@ -15,6 +15,16 @@
 | QASPER R1 BM25 | Recall@5 43.68%, nDCG@5 0.3238 | 기준선 완료, 낮음 |
 | QASPER R1 dense | Recall@5 54.14%, nDCG@5 0.3846 | BM25 대비 개선, 절대치는 낮음 |
 | QASPER R1 RRF | Recall@5 49.78% | dense보다 하락, 실패 보존 |
+| QASPER R2-P | cached adjacent recall 97.06%, Strong time -18.26% | cache 조건부 PASS |
+| SPIQA CLIP confirmation | caption R@1 0.65, oracle 0.81 | 보완성 PASS |
+| SPIQA ColSmol confirmation | caption R@1 0.65, oracle 0.77 | 보완성 PASS |
+| SPIQA learned selector | R@1 0.62, MRR 0.7285, route 36% | 독립 확인 FAIL |
+
+## P1-V multimodal 결론
+
+Visual retrieval을 항상 쓰는 방식은 실패했다. 100문항에서 CLIP R@1은 0.41, ColSmol은 0.34로 caption 0.65보다 낮다. Oracle 결합은 각각 0.81/0.77이므로 질문별 보완성은 존재한다. 그러나 추론 가능 신호로 학습한 ColSmol 선택기는 train R@1 0.90에서 confirmation R@1 0.62로 무너졌다. 현재 병목은 GPU 모델 크기가 아니라 **선택 정책의 데이터 효율과 일반화**다. 상세 수치는 `docs/P1V_SPIQA_PREFLIGHT_REPORT.md`에 있다.
+
+다음 허용 작업은 test-A 재튜닝이 아니라 독립 training/calibration 자료 설계다. 최소 300질문을 확보하기 전에는 추가 시각 모델 sweep을 하지 않는다.
 
 ## 현재 결과를 어떻게 이해해야 하는가
 

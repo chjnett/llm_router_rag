@@ -89,8 +89,11 @@ caproute-rag/
 - TATR 300-page screening: Top `0.866`, Loc `0.494`, p50 `135.79 ms` — **FAIL near-miss**
 - QASPER R0 evidence audit: 100/100 usable, exact mapping `93.68%` — PASS
 - QASPER R1: BM25 Recall@5 `43.68%`, BGE dense `54.14%`, RRF `49.78%`
-- 현재 병목: parser router 이전의 evidence retrieval
-- 다음 단계: R1.1 failure analysis와 lightweight reranking preflight
+- QASPER R2-P: cached adjacent page rescue recall `97.06%`, Strong time `-18.26%` — 조건부 PASS
+- SPIQA paper-disjoint confirmation: caption R@1 `0.65`, CLIP oracle `0.81`, ColSmol oracle `0.77`
+- 실제 ColSmol selector: R@1 `0.65→0.62`, MRR `0.7557→0.7285` — **FAIL**
+- 현재 병목: visual 신호 존재 여부가 아니라 선택 정책의 일반화
+- 다음 단계: 별도 300+ training/calibration 질문 확보 전 GPU sweep 잠금
 - 상세 현황: `CURRENT_RESEARCH_STATUS_AND_NEXT_PLAN.md`
 
 실행 경로와 완료 조건은 `P0_IMPLEMENTATION_PLAN.md`, `P1_IMPLEMENTATION_PLAN.md`, 현재 판단은 `docs/P0_PHASE_REPORT.md`, `docs/P1_PHASE_REPORT.md`를 따른다.

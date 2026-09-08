@@ -94,13 +94,18 @@ Frozen rule: exact table count AND GriTS-Top ≥ 0.80 AND GriTS-Loc ≥ 0.50.
 - [x] R1-P 10 complete-PDF evidence page mapping — **PREFLIGHT PASS** (page R@5 0.8971)
 - [x] R2-P 10-paper cost preflight — **CONDITIONAL PASS** (cached workload: recall 0.9706, time -18.26%)
 - [x] Cheap/Strong output evidence coverage — 둘 다 100%, QASPER text에서 Strong gain 없음
-- [ ] P1-V small multimodal dataset access/manifest audit
-- [ ] P1-V 20~50 question Always Text vs visual retrieval GPU preflight
+- [x] P1-V SPIQA small multimodal dataset access/manifest audit
+- [x] P1-V 50-question Always Text vs CLIP/ColSmol GPU preflight — visual complementarity PASS
+- [x] P1-V paper-disjoint 100-question confirmation — oracle complementarity reproduced
+- [x] P1-V inference-only Logistic selector — **FAIL** (R@1 0.65→0.62)
+- [ ] P1-V independent training/calibration cohort >=300 questions 확보
 - [ ] Strong both-fail repair 후보 평가 (RAG retrieval 차이 확인 전 보류)
 
 ---
 
 # Week 3 — P2 Router
+
+**현재 잠금:** 50→100 paper-disjoint selector가 일반화에 실패했다. 별도 300+ 학습/보정 cohort 전에는 확대하지 않는다.
 
 - [ ] feature extractor
 - [ ] Logistic Regression

@@ -203,6 +203,47 @@ def test_page_rescue_adjacent_expansion_stays_inside_document():
     assert adjacent_pages([0, 3], 4) == {0, 1, 2, 3}
 
 
+def test_spiqa_balanced_sample_keeps_requested_types():
+    from caproute.cli.run_spiqa_clip_preflight import freeze_balanced_sample
+    dataset = {"p": {"all_figures": {"t.png": {"content_type": "table"}, "f.png": {"content_type": "figure"}},
+                     "qa": [{"question": "t", "reference": "t.png"}, {"question": "f", "reference": "f.png"}]}}
+    names = {"SPIQA_testA_Images_224px/p/t.png", "SPIQA_testA_Images_224px/p/f.png"}
+    rows = freeze_balanced_sample(dataset, names, 1, 1)
+    assert [row["content_type"] for row in rows] == ["table", "figure"]
+
+
+def test_spiqa_balanced_sample_excludes_seen_papers():
+    from caproute.cli.run_spiqa_clip_preflight import freeze_balanced_sample
+    dataset = {
+        "a": {"all_figures": {"t.png": {"content_type": "table"}},
+              "qa": [{"question": "seen", "reference": "t.png"}]},
+        "b": {"all_figures": {"t.png": {"content_type": "table"}},
+              "qa": [{"question": "held out", "reference": "t.png"}]},
+    }
+    names = {"SPIQA_testA_Images_224px/a/t.png", "SPIQA_testA_Images_224px/b/t.png"}
+    rows = freeze_balanced_sample(dataset, names, 1, 0, {"a"})
+    assert [row["paper_id"] for row in rows] == ["b"]
+
+
+def test_spiqa_score_features_are_finite_and_margin_is_ordered():
+    import numpy as np
+    from caproute.cli.run_spiqa_clip_preflight import score_features
+    result = score_features(np.asarray([0.1, 0.5, 0.3]))
+    assert result["top_score"] == 0.5
+    assert abs(result["top_margin"] - 0.2) < 1e-12
+    assert 0.0 <= result["normalized_entropy"] <= 1.0
+
+
+def test_spiqa_selector_uses_only_inference_available_fields():
+    from caproute.cli.evaluate_spiqa_selector import FEATURE_NAMES, inference_features
+    row = {
+        "question": "Which figure shows the trend?", "candidate_images": 3,
+        "caption_signal": {"top_score": 0.8, "top_margin": 0.2, "normalized_entropy": 0.5},
+        "colsmol_signal": {"top_score": 4.0, "top_margin": 0.4, "normalized_entropy": 0.7},
+    }
+    assert len(inference_features(row)) == len(FEATURE_NAMES)
+
+
 def test_tatr_span_postprocessing_merges_claimed_grid_cells():
     from caproute.cli.tatr_structure_preflight import grid_cells
     items = [

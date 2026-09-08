@@ -147,7 +147,7 @@
   <main id="main">
     <div class="eyebrow">Capability-aware selective document processing</div>
     <h1>과학 논문 PDF를 언제 빠르게, 언제 강하게 처리할 것인가</h1>
-    <p class="lead">Cheap 문서 처리와 Strong 문서 처리의 품질·비용 차이를 먼저 증명한 뒤, 필요한 문서만 Strong으로 보내는 연구입니다. P1에서 현재 파서 조합의 절감 상한이 목표에 미달해, 라우터 학습 대신 파서 조합을 개선하는 단계입니다.</p>
+    <p class="lead">Cheap 문서 처리와 Strong/visual 처리를 질문별로 선택하는 연구입니다. SPIQA에서 두 경로의 보완성은 재현됐지만 실제 선택기는 독립 표본에서 성능이 하락해, 추가 GPU 확대보다 학습 데이터 확장이 먼저입니다.</p>
     <div class="hero-meta">
       <span>마지막 실험: <strong>2026-09-08 KST</strong></span>
       <span>표본: <strong>300 pages / 300 documents</strong></span>
@@ -157,22 +157,22 @@
 
     <div class="status-row">
       <article class="panel verdict">
-        <span class="badge">RAG R0 · PASS</span>
-        <strong>Cached page rescue는 품질 97.06%를 유지하며 Strong 시간을 18.26% 줄였다.</strong>
-        <p>조건부 PASS입니다. 캐시가 없으면 152.68% 더 비싸고, QASPER에서는 Strong text 품질 이득이 없어 다음 GPU는 multimodal 소표본에 사용합니다.</p>
+        <span class="badge hold">P1-V SELECTOR · FAIL</span>
+        <strong>시각 신호는 보완적이지만 실제 선택기는 독립 표본에서 기준선보다 낮았다.</strong>
+        <p>SPIQA 100문항에서 caption R@1 65%, oracle 77~81%였으나 학습 selector는 62%로 하락했습니다. 추가 GPU sweep은 잠그고 독립 학습 자료를 먼저 확보합니다.</p>
       </article>
       <aside class="panel next">
         <span class="eyebrow">Next action</span>
-        <div class="step">R1.1 Retrieval Repair</div>
-        <p>표·그림 evidence가 있는 20~50문항 데이터 접근성을 먼저 점검하고 Always Text 대 visual retrieval GPU preflight를 실행합니다. 전체 ColPali와 Router는 잠금 상태입니다.</p>
+        <div class="step">Independent Data</div>
+        <p>최소 300개의 별도 training/calibration 질문을 확보하고, 현재 100문항 확인 표본은 재튜닝에 사용하지 않습니다. 그 전까지 대형 GPU 실험은 중단합니다.</p>
       </aside>
     </div>
 
     <div class="metrics" aria-label="핵심 지표">
-      <div class="metric"><small>Oracle 최대 절감률</small><strong>9.86%</strong><span>사전 목표 15% · FAIL</span></div>
-      <div class="metric"><small>Cheap 충분</small><strong>11.43%</strong><span>28 / 245 pages</span></div>
-      <div class="metric"><small>Strong 필요</small><strong>50.20%</strong><span>123 / 245 pages</span></div>
-      <div class="metric"><small>둘 다 실패</small><strong>38.37%</strong><span>94 / 245 pages</span></div>
+      <div class="metric"><small>Caption R@1</small><strong>65%</strong><span>SPIQA confirmation 100</span></div>
+      <div class="metric"><small>CLIP Oracle R@1</small><strong>81%</strong><span>잠재 상한 · +16%p</span></div>
+      <div class="metric"><small>실제 Selector R@1</small><strong>62%</strong><span>기준선 대비 -3%p · FAIL</span></div>
+      <div class="metric"><small>ColSmol peak VRAM</small><strong>4.04GiB</strong><span>RTX 3090 내 실행 가능</span></div>
     </div>
 
     <section id="results">
@@ -209,8 +209,21 @@
         <div class="phase"><span class="id">P1 · FAIL / REPAIR</span><strong>Capability / Oracle</strong><p>Oracle 절감 9.86%. 파서 조합 개선 후 재검증.</p></div>
         <div class="phase complete"><span class="id">R0 · PASS</span><strong>QASPER Evidence Audit</strong><p>100 usable, exact paragraph mapping 93.68%.</p></div>
         <div class="phase complete"><span class="id">R1 · COMPLETE</span><strong>Retrieval Baselines</strong><p>Dense R@5 54.14%; RRF 49.78%.</p></div>
-        <div class="phase"><span class="id">R1.1 · ACTIVE</span><strong>Retrieval Repair</strong><p>Failure stratification과 candidate re-ranking.</p></div>
+        <div class="phase"><span class="id">P1-V · FAIL</span><strong>Visual Selector</strong><p>Oracle 보완성 PASS, 실제 selector 일반화 FAIL.</p></div>
       </div>
+    </section>
+
+    <section id="multimodal-results">
+      <div class="section-head"><div><span class="eyebrow">SPIQA P1-V</span><h2>보완성은 있지만 아직 선택할 수 없다</h2></div><p>첫 12개 논문을 제외한 27개 논문·100문항 확인 결과입니다.</p></div>
+      <div class="table-wrap"><table><thead><tr><th>방식</th><th class="num">R@1</th><th class="num">R@5</th><th class="num">MRR</th><th>판정</th></tr></thead><tbody>
+        <tr><td>Caption BGE</td><td class="num">0.650</td><td class="num">0.870</td><td class="num">0.7557</td><td>Cheap 기준선</td></tr>
+        <tr><td>CLIP visual</td><td class="num">0.410</td><td class="num">0.800</td><td class="num">0.5549</td><td>Always visual 실패</td></tr>
+        <tr><td>ColSmol-256M</td><td class="num">0.340</td><td class="num">0.750</td><td class="num">0.5147</td><td>Always strong 실패</td></tr>
+        <tr><td>Caption/CLIP oracle</td><td class="num">0.810</td><td class="num">0.950</td><td class="num">0.8626</td><td>선택 가능성 상한</td></tr>
+        <tr><td>Caption/ColSmol oracle</td><td class="num">0.770</td><td class="num">0.950</td><td class="num">0.8488</td><td>선택 가능성 상한</td></tr>
+        <tr><td>학습 ColSmol selector</td><td class="num"><strong>0.620</strong></td><td class="num">0.870</td><td class="num">0.7285</td><td>36% route · Gate FAIL</td></tr>
+      </tbody></table></div>
+      <p class="caption">Oracle은 정답을 본 이상적 상한이며 실제 시스템 성능이 아닙니다. 실제 selector는 reference나 정답 지표 없이 score·margin·entropy·질문 단서만 사용했습니다.</p>
     </section>
 
     <section id="risks">
@@ -265,6 +278,10 @@
     <section id="log">
       <div class="section-head"><div><span class="eyebrow">Experiment log</span><h2>무슨 일이 있었는가</h2></div><p>실패와 protocol 차이를 포함한 요약 로그입니다.</p></div>
       <div class="log">
+        <div class="log-row"><time>09-08</time><span class="kind">SELECTOR FAIL</span><span>Paper-disjoint 100q: caption R@1 65% → selected 62%, MRR 0.7557 → 0.7285. 추가 GPU sweep 잠금.</span></div>
+        <div class="log-row"><time>09-08</time><span class="kind">P1-V CONFIRM</span><span>100q/27 papers: CLIP oracle R@1 81%, ColSmol oracle 77%. 보완성은 재현됐지만 Always Visual은 실패.</span></div>
+        <div class="log-row"><time>09-08</time><span class="kind">COLSMOL</span><span>221 images indexing 79.14s, query 7.18s, peak allocated VRAM 4.04GiB, compressed index 60.2MB.</span></div>
+        <div class="log-row"><time>09-08</time><span class="kind">ENV LIMIT</span><span>ColSmol은 격리 venv/Transformers 5.16 사용. adapter base metadata 조회 필요; main 환경은 보존.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">R2-P PASS*</span><span>Cached adjacent: recall 97.06%, unique pages -22.33%, Strong time 37.05→30.29s(-18.26%).</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">CACHE LIMIT</span><span>No shared cache 256 calls/93.63s로 Always Strong보다 152.68% 비쌈. Persistent cache 필수.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">GPU ANOMALY</span><span>Docling monolithic run stall/native exit. 20-page 이하 배치와 checkpoint로 103/103 복구.</span></div>
