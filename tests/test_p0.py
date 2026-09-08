@@ -191,6 +191,13 @@ def test_recovery_split_relevance_uses_exact_canonical_evidence():
     assert mapped_relevant_indices(paper, qa) == {1}
 
 
+def test_page_mapping_normalizes_hyphenated_line_breaks_and_scores_coverage():
+    from caproute.cli.evaluate_qasper_page_mapping import map_paragraph, normalize_pdf_text
+    assert normalize_pdf_text("multi-\nmodal   retrieval") == "multimodal retrieval"
+    result = map_paragraph("multimodal retrieval", [normalize_pdf_text("A multimodal retrieval system")], 0.8, 0.1)
+    assert result["page"] == 0
+
+
 def test_tatr_span_postprocessing_merges_claimed_grid_cells():
     from caproute.cli.tatr_structure_preflight import grid_cells
     items = [

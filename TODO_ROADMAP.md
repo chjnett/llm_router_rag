@@ -91,7 +91,8 @@ Frozen rule: exact table count AND GriTS-Top ≥ 0.80 AND GriTS-Loc ≥ 0.50.
 - [x] QASPER document-disjoint recovery splits 고정 — calibration 200 / certification 200 / final 443
 - [x] R1 recovery calibration — **FAIL** (best R@5 0.6303, nDCG@5 0.5122)
 - [x] MiniLM-L12 비교 — L6보다 악화, 폐기
-- [ ] R1-P 10 complete-PDF evidence page mapping protocol 및 preflight
+- [x] R1-P 10 complete-PDF evidence page mapping — **PREFLIGHT PASS** (page R@5 0.8971)
+- [ ] R2-P 10-paper Always Text vs query-time Strong rescue 비용·품질 preflight
 - [ ] Strong both-fail repair 후보 평가 (RAG retrieval 차이 확인 전 보류)
 
 ---

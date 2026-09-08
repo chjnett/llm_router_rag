@@ -74,6 +74,8 @@ R1.3 결과: section dense와 BM25 후보에 인접 단락 ±1을 추가하자 c
 
 Calibration 결과: exact-mapped 187문항에서 section dense Recall@5 0.5979, adjacent+MiniLM-L6 0.6303/nDCG@5 0.5122였다. L12 reranker는 0.6212/0.4987로 더 나빠 폐기했다. Recall Gate 0.65를 완화하지 않으며 certification/final은 열지 않는다. 다음은 10개 complete PDF에서 paragraph miss와 실제 evidence-page miss가 같은지 확인하는 R1-P mapping preflight다.
 
+R1-P 결과: 10/10 PDFs, 103 pages를 파싱했고 evidence 57/59(96.61%)를 page에 매핑했다. 34문항의 page Recall@5는 0.8971, adjacent ±1 rescue Recall은 0.9706이었다. 이는 실제 page-level rescue가 유망하다는 preflight 신호지만 평균 7.53 candidate pages의 Strong 처리 비용은 아직 측정하지 않았다. 다음은 같은 10편에서 Always Text와 query-time Strong rescue의 실제 비용·품질 R2-P다.
+
 ### 2. 전체 논문 분포 preflight — retrieval recovery 확인 후
 
 - 처음부터 30~50편을 수작업 라벨링하지 않는다.

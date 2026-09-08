@@ -158,13 +158,13 @@
     <div class="status-row">
       <article class="panel verdict">
         <span class="badge">RAG R0 · PASS</span>
-        <strong>Calibration best Recall@5는 63.03%로 Gate 65%에 미달했다.</strong>
-        <p>nDCG@5 0.5122는 통과했지만 전체 Gate는 실패입니다. L12 reranker도 62.12%로 악화되어 폐기했고 Certification/Final은 열지 않습니다.</p>
+        <strong>10-PDF page mapping preflight는 Recall@5 89.71%로 통과했다.</strong>
+        <p>Paragraph R@5는 63.03%였지만 같은 페이지의 인접 문맥이 evidence를 보완했습니다. 단, 34문항 소표본이며 Strong 처리 비용은 아직 측정하지 않았습니다.</p>
       </article>
       <aside class="panel next">
         <span class="eyebrow">Next action</span>
         <div class="step">R1.1 Retrieval Repair</div>
-        <p>다음은 10개 complete PDF에서 paragraph miss가 실제 evidence-page miss인지 확인합니다. 실제 rescue 단위와 평가 단위를 맞추기 위한 preflight이며 기준 완화가 아닙니다.</p>
+        <p>같은 10편에서 Always Text와 top-page Strong rescue의 GPU seconds·latency·quality를 측정합니다. 평균 7.53 candidate pages 비용을 확인하기 전 Router는 학습하지 않습니다.</p>
       </aside>
     </div>
 
@@ -265,6 +265,8 @@
     <section id="log">
       <div class="section-head"><div><span class="eyebrow">Experiment log</span><h2>무슨 일이 있었는가</h2></div><p>실패와 protocol 차이를 포함한 요약 로그입니다.</p></div>
       <div class="log">
+        <div class="log-row"><time>09-08</time><span class="kind">R1-P PASS</span><span>10 PDFs/103 pages, evidence mapping 96.61%, 34문항 page R@5 89.71%, hit@5 91.18%.</span></div>
+        <div class="log-row"><time>09-08</time><span class="kind">COST OPEN</span><span>Adjacent rescue hit 97.06%이나 평균 7.53 pages 처리. Strong/VLM 실제 비용 전 성공 주장 금지.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">CAL FAIL</span><span>187문항 best L6 R@5 63.03% FAIL, nDCG@5 0.5122 PASS. Certification/Final 잠금.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">L12 DROP</span><span>L12 R@5 62.12%, nDCG@5 0.4987로 L6보다 악화. 추가 model sweep 중단.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">R1.3 FAIL</span><span>Adjacent rescue candidate R 92.78%, R@5 61.61% FAIL, nDCG@5 0.5103 PASS. 개발 탐색 종료.</span></div>

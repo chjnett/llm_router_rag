@@ -576,3 +576,29 @@ R1 calibration Gate를 FAIL로 판정하고 Certification/Final을 잠근다. Mi
 
 ### Consequence
 Paragraph-level recovery를 성공으로 주장하지 않는다. Page-level rescue architecture와 평가 단위의 일치 여부를 먼저 확인하고, 유망하지 않으면 QASPER branch를 중단한다.
+
+---
+
+## Decision 026
+
+### Date
+2026-09-08
+
+### Trigger
+Calibration에서 고정한 첫 10개 eligible QASPER paper의 원 PDF를 받아 canonical evidence와 page를 매핑하고 기존 retrieval을 page 단위로 투영했다.
+
+### Decision
+R1-P page mapping preflight를 PASS한다. Query-time page rescue의 비용·품질 preflight R2-P를 허용하지만 Router, Certification/Final 및 ColPali는 계속 잠근다.
+
+### Evidence
+- PDF parse 10/10, 103 pages; mapped questions 34
+- evidence paragraph mapping 57/59 = 96.61%
+- page Recall@5 0.8971, page Hit@5 0.9118
+- top-5 pages + adjacent ±1 Recall/Hit 0.9706/0.9706
+- mean adjacent candidates 7.53 pages
+- native scan p50/p95 2.58/3.61 ms/page
+- lowest accepted approximate mappings 5개 textual audit에서 page 일치
+- automated tests: 22 passed
+
+### Consequence
+Paragraph-level Recall 실패가 page-level rescue 실패와 동일하지 않음을 확인했다. 다음 단계는 Strong 처리 비용을 실제로 지불했을 때 Always Strong 대비 경제성이 있는지 측정하는 것이며, 품질 수치만으로 성공을 주장하지 않는다.

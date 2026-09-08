@@ -1,0 +1,20 @@
+seed: 42
+dataset:
+  split: validation
+  archive: data/raw/qasper/qasper-train-dev-v0.3.tgz
+  calibration_results: outputs/r1_calibration_baseline/results.json
+selection:
+  min_evaluable_questions_per_paper: 2
+  paper_count: 10
+  ordering: paper_id
+mapping:
+  approximate_token_coverage: 0.80
+  best_second_margin: 0.10
+gate:
+  min_pdf_parse_success: 8
+  min_evidence_page_mapping_rate: 0.80
+  min_mapped_questions: 30
+  min_page_recall_at_5: 0.65
+outputs:
+  root: outputs/r1_page_mapping
+  pdf_root: data/raw/qasper/pdfs_r1p
