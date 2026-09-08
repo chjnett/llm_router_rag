@@ -157,14 +157,14 @@
 
     <div class="status-row">
       <article class="panel verdict">
-        <span class="badge">P1 GATE · FAIL</span>
-        <strong>현재 파서 조합의 최대 절감률은 9.86%로 목표 15%에 미달했다.</strong>
-        <p>비용 차이는 충분하지만 Cheap으로 품질 기준을 통과한 페이지가 11.43%뿐입니다. 임계값을 사후 완화하지 않고 P2를 잠근 채 파서 조합을 개선합니다.</p>
+        <span class="badge done">TATR PREFLIGHT · PASS</span>
+        <strong>span-aware TATR가 20페이지 고정 Gate를 모두 통과했다.</strong>
+        <p>대응 16페이지에서 Top 0.894, Loc 0.510, 전체 p50 127.67ms입니다. 기존 P1은 여전히 FAIL이며, 이제 300페이지에서 새 Cheap 후보의 Oracle을 검증합니다.</p>
       </article>
       <aside class="panel next">
         <span class="eyebrow">Next action</span>
         <div class="step">Parser pair repair</div>
-        <p>TATR structure는 p50 129.76ms로 빨랐지만 Top 0.671, Loc 0.392로 FAIL했습니다. 다음은 모델의 spanning/header 출력을 반영한 후처리와 시각 audit입니다.</p>
+        <p>다음은 TATR span-aware 파이프라인을 300페이지에 cache하고, 동일한 P1 충분성 기준으로 Oracle 절감률 15%를 재검증하는 것입니다.</p>
       </aside>
     </div>
 
@@ -263,6 +263,8 @@
     <section id="log">
       <div class="section-head"><div><span class="eyebrow">Experiment log</span><h2>무슨 일이 있었는가</h2></div><p>실패와 protocol 차이를 포함한 요약 로그입니다.</p></div>
       <div class="log">
+        <div class="log-row"><time>09-08</time><span class="kind">TATR PASS</span><span>16 evaluable pages: span-aware Top 0.894, Loc 0.510, p50 127.67ms. 300-page 단계 해제.</span></div>
+        <div class="log-row"><time>09-08</time><span class="kind">CORRECTION</span><span>초기 계산은 XML 미대응 4페이지를 0점 포함. P1 계약대로 not-evaluable 분리 후 재평가.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">STRUCT FAIL</span><span>TATR 20 pages: Top 0.671, Loc 0.392, exact-count 80%. 고정 품질 Gate 미달.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">SPEED PASS</span><span>렌더링 포함 p50 129.76ms, p95 179.73ms, peak VRAM 약 409MB. 300-page 확대는 보류.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">TATR PASS</span><span>Detection 20/20, table-count proxy 1.000, model-only p50 17.36ms, peak VRAM 약 230MB.</span></div>

@@ -323,3 +323,28 @@ TATR detection과 structure-recognition을 연결해 고정된 20페이지에서
 
 ### Consequence
 속도 여지는 확인됐으나 구조 품질은 아직 불충분하다. 결과를 보고 threshold를 변경하지 않으며, 모델이 출력한 spanning cell과 header 정보를 버린 현재 후처리의 손실부터 검증한다.
+
+---
+
+## Decision 015
+
+### Date
+2026-09-08
+
+### Trigger
+초기 TATR 계산이 structure XML 미대응 4페이지를 0점으로 포함한 분모 불일치였음을 audit에서 발견했고, span-aware 후처리를 고정해 재평가했다.
+
+### Decision
+P1과 동일하게 미대응 페이지를 not-evaluable로 별도 보고하고, 대응 16페이지의 span-aware preflight를 PASS한다. TATR 300-page screening을 허용하되 P2는 계속 잠근다.
+
+### Evidence
+- attempted/completed 20/20, evaluable 16, not-evaluable 4
+- exact table count 100%
+- atomic Top/Loc 0.839/0.490
+- span-aware Top/Loc 0.894/0.510
+- end-to-end p50 127.67 ms, p95 223.06 ms
+- peak CUDA allocation 408,653,312 bytes
+- audit: `docs/figures/tatr_span_loc_audit.png`
+
+### Consequence
+초기 0.671/0.392 결과는 삭제하지 않고 superseded로 기록한다. 다음은 300페이지 전체에서 cache, 비용 및 P1 Oracle saving을 다시 계산하는 단계다.

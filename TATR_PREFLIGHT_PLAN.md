@@ -35,9 +35,11 @@ PASS: 20/20 completed, table-count proxy 1.000, model-only p50 17.36 ms, p95 33.
 - PASS: mean GriTS-Top >= 0.70, mean GriTS-Loc >= 0.50, end-to-end p50 < 333.61 ms (half of Docling p50)
 - Report exact table count and peak CUDA allocation; do not promote the result to full P1 before the 300-page run
 
-## Structure Result
+## Initial Structure Result (superseded for Gate use)
 
 FAIL: exact table count 80%, mean GriTS-Top 0.671, mean GriTS-Loc 0.392, end-to-end p50 129.76 ms, p95 179.73 ms, peak CUDA allocation 408,653,312 bytes. Latency passed, Top and Loc failed. Because this preflight intentionally omitted spanning/header synthesis, the next action is postprocessing audit rather than a 300-page run.
+
+This calculation incorrectly included four pages without matching structure XML as zero-quality pages. It is retained as an anomaly but replaced by the P1-aligned evaluable-cohort result below.
 
 ## Frozen Span-aware Postprocessing
 
@@ -48,3 +50,7 @@ FAIL: exact table count 80%, mean GriTS-Top 0.671, mean GriTS-Loc 0.392, end-to-
 - Compare atomic and span-aware GriTS in the same run; do not select per-page winners.
 - Continue to visual audit only if aggregate Top or Loc improves. The original structure Gate remains Top >=0.70 and Loc >=0.50.
 - As in the frozen P1 contract, pages without matching structure XML are `not_evaluable`: retain their latency but exclude them from GriTS and exact-count denominators.
+
+## Corrected Span-aware Result
+
+**PASS.** Attempted/completed 20/20; evaluable 16; four missing-XML pages reported separately. Exact table count 100%, GriTS-Top 0.894, GriTS-Loc 0.510, end-to-end p50 127.67 ms, p95 223.06 ms, peak CUDA allocation 408,653,312 bytes. Atomic Top/Loc were 0.839/0.490, so fixed span-aware postprocessing improved both metrics without per-page selection.
