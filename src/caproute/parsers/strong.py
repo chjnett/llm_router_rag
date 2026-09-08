@@ -91,4 +91,7 @@ def build_parser(name: str, options=None) -> DocumentParser:
     if name == "pymupdf" or name.startswith("pymupdf_"):
         from caproute.parsers.cheap import PyMuPDFParser
         return PyMuPDFParser(options, name=name)
+    if name == "pdfplumber":
+        from caproute.parsers.pdfplumber_parser import PDFPlumberParser
+        return PDFPlumberParser(options)
     raise ValueError(f"Unknown parser: {name}")

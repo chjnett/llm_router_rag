@@ -30,3 +30,7 @@ P1 primary Gate 실패 원인이었던 낮은 Cheap sufficient coverage를 추�
 4. primary sufficiency threshold는 변경하지 않는다.
 
 통과 후보가 여러 개면 Oracle saving을 우선하고, 그 다음 p95 latency를 사용한다. 모두 실패하면 새 lightweight parser 도입을 검토한다.
+
+## Independent Parser Preflight
+
+PyMuPDF 변형 3종 실패 후 `pdfplumber 0.11.x` line strategy를 독립 후보로 고정한다. 먼저 동일 seed의 첫 20페이지에서 완주, table-count proxy 개선, p50/Strong p50 < 0.50을 확인한다. preflight가 유망할 때만 300페이지 GriTS 평가를 허용한다.
