@@ -5,9 +5,9 @@ dataset:
   clip_results: outputs/p1v_spiqa_clip_confirmation/results.json
   sample_manifest: outputs/p1v_spiqa_clip_confirmation/sample_manifest.json
 model:
-  id: vidore/colSmol-256M
+  id: cache/colsmol-runtime/adapter
   cache_folder: cache/colsmol
-  local_files_only: false
+  local_files_only: true
   batch_size: 8
 gate:
   min_questions: 100

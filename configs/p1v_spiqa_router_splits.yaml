@@ -1,0 +1,12 @@
+seed: 42
+dataset:
+  json: data/raw/spiqa/test-A/SPIQA_testA.json
+  images_zip: data/raw/spiqa/test-A/SPIQA_testA_Images_224px.zip
+excluded_manifests:
+  - outputs/p1v_spiqa_clip_preflight/sample_manifest.json
+  - outputs/p1v_spiqa_clip_confirmation/sample_manifest.json
+targets:
+  train_questions: 280
+  calibration_questions: 90
+outputs:
+  root: outputs/p1v_spiqa_router_splits

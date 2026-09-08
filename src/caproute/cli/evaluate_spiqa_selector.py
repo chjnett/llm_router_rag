@@ -64,10 +64,14 @@ def main() -> None:
     args = parser.parse_args()
     config = load_config(args.config)
     train = json.loads(Path(config["train_results"]).read_text(encoding="utf-8"))["questions"]
+    calibration_path = config.get("calibration_results", config["train_results"])
+    calibration = json.loads(Path(calibration_path).read_text(encoding="utf-8"))["questions"]
     test = json.loads(Path(config["test_results"]).read_text(encoding="utf-8"))["questions"]
     x_train = np.asarray([inference_features(row) for row in train], dtype=np.float64)
+    x_calibration = np.asarray([inference_features(row) for row in calibration], dtype=np.float64)
     x_test = np.asarray([inference_features(row) for row in test], dtype=np.float64)
     y_train = np.asarray([row["colsmol"]["mrr"] > row["caption"]["mrr"] for row in train], dtype=np.int64)
+    y_calibration = np.asarray([row["colsmol"]["mrr"] > row["caption"]["mrr"] for row in calibration], dtype=np.int64)
     y_test = np.asarray([row["colsmol"]["mrr"] > row["caption"]["mrr"] for row in test], dtype=np.int64)
     model = make_pipeline(
         StandardScaler(),
@@ -75,12 +79,15 @@ def main() -> None:
     )
     model.fit(x_train, y_train)
     train_probability = model.predict_proba(x_train)[:, 1]
+    calibration_probability = model.predict_proba(x_calibration)[:, 1]
     test_probability = model.predict_proba(x_test)[:, 1]
-    threshold, train_selected, train_route_rate = choose_threshold(
-        train, train_probability, float(config["policy"]["max_train_route_rate"])
+    threshold, calibration_selected, calibration_route_rate = choose_threshold(
+        calibration, calibration_probability, float(config["policy"]["max_train_route_rate"])
     )
+    train_selected, train_route_rate = selected_metrics(train, train_probability, threshold)
     test_selected, test_route_rate = selected_metrics(test, test_probability, threshold)
     train_caption = mean_metrics([row["caption"] for row in train])
+    calibration_caption = mean_metrics([row["caption"] for row in calibration])
     test_caption = mean_metrics([row["caption"] for row in test])
     test_strong = mean_metrics([row["colsmol"] for row in test])
     test_oracle = mean_metrics([row["oracle_selective"] for row in test])
@@ -99,6 +106,10 @@ def main() -> None:
         "train": {"questions": len(train), "positive_rate": float(y_train.mean()),
                   "auc": float(roc_auc_score(y_train, train_probability)), "caption": train_caption,
                   "selected": train_selected, "route_rate": train_route_rate},
+        "calibration": {"questions": len(calibration), "positive_rate": float(y_calibration.mean()),
+                        "auc": float(roc_auc_score(y_calibration, calibration_probability)),
+                        "caption": calibration_caption, "selected": calibration_selected,
+                        "route_rate": calibration_route_rate},
         "test": {"questions": len(test), "positive_rate": float(y_test.mean()),
                  "auc": float(roc_auc_score(y_test, test_probability)), "caption": test_caption,
                  "always_colsmol": test_strong, "oracle": test_oracle,

@@ -1,0 +1,6 @@
+seed: 42
+bootstrap_samples: 10000
+policy_lock: artifacts/p1v_spiqa_selector_policy_lock.json
+test_results: outputs/p1v_spiqa_colsmol_certification/results.json
+gate: {min_test_recall_at_1_gain: 0.0, min_test_mrr_gain: 0.0, max_test_route_rate: 0.50}
+outputs: {root: outputs/p1v_spiqa_colsmol_selector_certified}

@@ -244,6 +244,31 @@ def test_spiqa_selector_uses_only_inference_available_fields():
     assert len(inference_features(row)) == len(FEATURE_NAMES)
 
 
+def test_spiqa_router_split_allocator_keeps_whole_papers():
+    from caproute.cli.freeze_spiqa_router_splits import allocate
+    rows = {"a": [{}, {}], "b": [{}], "c": [{}, {}]}
+    selected, remaining = allocate(["a", "b", "c"], rows, 3)
+    assert selected == ["a", "b"]
+    assert remaining == ["c"]
+
+
+def test_locked_selector_probability_is_bounded():
+    from caproute.cli.evaluate_spiqa_locked_selector import locked_probabilities
+    from caproute.cli.evaluate_spiqa_selector import FEATURE_NAMES
+    row = {"question": "figure", "candidate_images": 2,
+           "caption_signal": {"top_score": 0.2, "top_margin": 0.1, "normalized_entropy": 0.8},
+           "colsmol_signal": {"top_score": 1.0, "top_margin": 0.2, "normalized_entropy": 0.7}}
+    lock = {"scaler_mean": [0.0] * len(FEATURE_NAMES), "scaler_scale": [1.0] * len(FEATURE_NAMES),
+            "coefficients": [0.0] * len(FEATURE_NAMES), "intercept": 0.0}
+    assert locked_probabilities([row], lock).tolist() == [0.5]
+
+
+def test_exact_mcnemar_handles_no_disagreement():
+    from caproute.cli.evaluate_spiqa_locked_selector import exact_mcnemar_p_value
+    assert exact_mcnemar_p_value(0, 0) == 1.0
+    assert 0.0 <= exact_mcnemar_p_value(1, 4) <= 1.0
+
+
 def test_tatr_span_postprocessing_merges_claimed_grid_cells():
     from caproute.cli.tatr_structure_preflight import grid_cells
     items = [

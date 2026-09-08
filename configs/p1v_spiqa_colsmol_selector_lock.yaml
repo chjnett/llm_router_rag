@@ -1,0 +1,5 @@
+seed: 42
+train_results: outputs/p1v_spiqa_colsmol_train/results.json
+calibration_results: outputs/p1v_spiqa_colsmol_calibration/results.json
+policy: {max_calibration_route_rate: 0.35, regularization_c: 0.25}
+outputs: {root: outputs/p1v_spiqa_colsmol_selector_lock}

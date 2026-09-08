@@ -1,0 +1,66 @@
+{
+  "config": {
+    "seed": 42,
+    "bootstrap_samples": 10000,
+    "policy_lock": "artifacts/p1v_spiqa_selector_policy_lock.json",
+    "test_results": "outputs/p1v_spiqa_colsmol_certification/results.json",
+    "gate": {
+      "min_test_recall_at_1_gain": 0.0,
+      "min_test_mrr_gain": 0.0,
+      "max_test_route_rate": 0.5
+    },
+    "outputs": {
+      "root": "outputs/p1v_spiqa_colsmol_selector_certified"
+    }
+  },
+  "config_sha256": "501df4f2458b1b74e0532ba9d19464b0c4e5a35b30fd6805e6578e2b52824ebc",
+  "policy_lock_sha256": "ce20531ed8c0501f6c1819c4a9ac76f242bf1e9ba28dc0ecea4114f1db9c449e",
+  "test_results_sha256": "303002424a5238f0d7a1ec47a71e66bac5ad80838a3309ccc32f710d424661ee",
+  "questions": 81,
+  "threshold": 0.39205427748257926,
+  "caption": {
+    "recall_at_1": 0.6790123456790124,
+    "recall_at_5": 0.9382716049382716,
+    "recall_at_10": 0.9876543209876543,
+    "mrr": 0.7977709190672153,
+    "ndcg_at_5": 0.8276222064511466
+  },
+  "always_colsmol": {
+    "recall_at_1": 0.345679012345679,
+    "recall_at_5": 0.7283950617283951,
+    "recall_at_10": 0.9012345679012346,
+    "mrr": 0.4954948794617414,
+    "ndcg_at_5": 0.52893328400862
+  },
+  "oracle": {
+    "recall_at_1": 0.7901234567901234,
+    "recall_at_5": 1.0,
+    "recall_at_10": 1.0,
+    "mrr": 0.87880658436214,
+    "ndcg_at_5": 0.9094122471930186
+  },
+  "selected": {
+    "recall_at_1": 0.7160493827160493,
+    "recall_at_5": 0.9506172839506173,
+    "recall_at_10": 0.9876543209876543,
+    "mrr": 0.8243827160493827,
+    "ndcg_at_5": 0.8515529927271361
+  },
+  "route_rate": 0.12345679012345678,
+  "gate_passed": true,
+  "uncertainty": {
+    "recall_at_1_difference": {
+      "mean": 0.037037037037037035,
+      "ci95_low": -0.012345679012345678,
+      "ci95_high": 0.09876543209876543
+    },
+    "mrr_difference": {
+      "mean": 0.02661179698216735,
+      "ci95_low": -0.010288065843621401,
+      "ci95_high": 0.07037037037037036
+    },
+    "caption_only_correct": 1,
+    "selected_only_correct": 4,
+    "mcnemar_exact_p": 0.375
+  }
+}

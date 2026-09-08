@@ -2,7 +2,7 @@
 
 ## Verdict
 
-**Visual-signal feasibility PASS, deployable selector FAIL.** GPU 확대와 P2 승격은 보류한다.
+**Visual-signal feasibility PASS. 초기 50→100 selector는 FAIL했지만, 확대된 train/calibration/certification에서는 점 추정 Gate를 PASS했다. 통계적 인증은 아직 미완료다.**
 
 SPIQA test-A의 224px 이미지와 메타데이터만 사용했다. 첫 50문항(12개 논문)은 개발용 사전실험, 이후 100문항(27개 논문)은 첫 표본의 논문을 완전히 제외한 확인 표본이다. 두 표본은 각각 table/figure 질문을 절반씩 고정했다.
 
@@ -69,7 +69,23 @@ ColSmol compressed document index는 50문항 표본 26.7MB, 확인 표본 60.2M
 
 ## Decision and next unlock condition
 
-현재 결과만으로 추가 GPU sweep이나 P2 전체 구현을 진행하지 않는다. 다음 GPU 실험은 최소 300개 이상의 **별도 학습/보정 질문**과 논문 단위 독립 certification cohort를 확보한 뒤 허용한다. 우선순위는 (1) 더 큰 학습 cohort, (2) caption 실패를 예측하는 cheap confidence 설계, (3) 고정 threshold certification이다. 동일 test-A 확인 표본으로 재튜닝하지 않는다.
+초기 실패 이후 남은 79개 논문 461문항을 train 286 / calibration 94 / certification 81로 논문 단위 분리했다. 아래 확대 실험은 앞의 50·100문항과도 논문이 겹치지 않는다.
+
+## Expanded locked-policy result
+
+| Split | Papers | Questions | Caption R@1 | Selected R@1 | Route rate |
+|---|---:|---:|---:|---:|---:|
+| Train | 50 | 286 | 0.6329 | 0.6958 | 19.23% |
+| Calibration | 16 | 94 | 0.5745 | 0.6489 | 27.66% |
+| Certification | 13 | 81 | 0.6790 | **0.7160** | **12.35%** |
+
+정책은 train에서만 적합하고 calibration에서 threshold `0.392054`를 고정했다. Certification 전에 scaler, coefficients, intercept, threshold와 train/calibration result hash를 `policy_lock.json`에 기록했다.
+
+Git에 보존되는 고정 정책과 인증 요약은 `artifacts/p1v_spiqa_selector_policy_lock.json`, `artifacts/p1v_spiqa_selector_certification.json`이다.
+
+Certification에서 R@1은 +3.70%p, R@5는 +1.23%p, MRR은 +0.0266 개선됐다. 그러나 paired bootstrap 95% CI는 R@1 `[-1.23,+9.88]%p`, MRR `[-0.0103,+0.0704]`이며 McNemar exact p=`0.375`다. Selector-only correct 4건, caption-only correct 1건이다.
+
+따라서 point-estimate Gate는 PASS하지만 통계적으로 우월하거나 비열등하다고 인증하지 않는다. SPIQA test-A 118개 논문을 모두 개발/확인/학습/보정/인증에 배정했으므로 같은 데이터의 추가 튜닝을 금지한다. 다음 해제 조건은 새로운 external dataset 또는 더 큰 독립 certification cohort다.
 
 ## Reproduction
 
@@ -79,4 +95,7 @@ ColSmol compressed document index는 50문항 표본 26.7MB, 확인 표본 60.2M
 .venv-colsmol\Scripts\python.exe -m caproute.cli.run_spiqa_colsmol_preflight --config configs\p1v_spiqa_colsmol_preflight.yaml
 .venv-colsmol\Scripts\python.exe -m caproute.cli.run_spiqa_colsmol_preflight --config configs\p1v_spiqa_colsmol_confirmation.yaml
 .venv\Scripts\python.exe -m caproute.cli.evaluate_spiqa_selector --config configs\p1v_spiqa_colsmol_selector.yaml
+.venv\Scripts\python.exe -m caproute.cli.freeze_spiqa_router_splits --config configs\p1v_spiqa_router_splits.yaml
+.venv\Scripts\python.exe -m caproute.cli.freeze_spiqa_selector_policy --config configs\p1v_spiqa_colsmol_selector_lock.yaml
+.venv\Scripts\python.exe -m caproute.cli.evaluate_spiqa_locked_selector --config configs\p1v_spiqa_colsmol_selector_certified.yaml
 ```

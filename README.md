@@ -91,9 +91,11 @@ caproute-rag/
 - QASPER R1: BM25 Recall@5 `43.68%`, BGE dense `54.14%`, RRF `49.78%`
 - QASPER R2-P: cached adjacent page rescue recall `97.06%`, Strong time `-18.26%` — 조건부 PASS
 - SPIQA paper-disjoint confirmation: caption R@1 `0.65`, CLIP oracle `0.81`, ColSmol oracle `0.77`
-- 실제 ColSmol selector: R@1 `0.65→0.62`, MRR `0.7557→0.7285` — **FAIL**
-- 현재 병목: visual 신호 존재 여부가 아니라 선택 정책의 일반화
-- 다음 단계: 별도 300+ training/calibration 질문 확보 전 GPU sweep 잠금
+- 초기 ColSmol selector: R@1 `0.65→0.62` — **FAIL**, 실패 보존
+- 확대 locked selector certification: R@1 `0.679→0.716`, MRR `0.7978→0.8244`, route `12.35%`
+- 통계: R@1 차이 95% CI `[-0.0123,0.0988]`, McNemar p=`0.375` — **INCONCLUSIVE**
+- 현재 병목: 더 큰 독립 certification cohort
+- 다음 단계: SPIQA test-A 재튜닝 금지, external multimodal dataset audit
 - 상세 현황: `CURRENT_RESEARCH_STATUS_AND_NEXT_PLAN.md`
 
 실행 경로와 완료 조건은 `P0_IMPLEMENTATION_PLAN.md`, `P1_IMPLEMENTATION_PLAN.md`, 현재 판단은 `docs/P0_PHASE_REPORT.md`, `docs/P1_PHASE_REPORT.md`를 따른다.

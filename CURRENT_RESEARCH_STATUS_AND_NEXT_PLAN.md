@@ -2,7 +2,7 @@
 
 ## 한 줄 결론
 
-현재는 대규모 Router/GPU 확대 단계가 아니다. QASPER cached page rescue는 비용 조건부 가능성을 보였고 SPIQA에서 caption과 visual retrieval의 oracle 보완성도 paper-disjoint 표본에서 재현됐다. 그러나 50문항에서 학습한 실제 선택기는 독립 100문항에서 R@1 `0.65→0.62`로 악화됐다. 따라서 **별도 300+ 학습/보정 cohort 확보 전에는 GPU sweep과 certification을 잠근다.**
+SPIQA 초기 50→100 selector는 실패했지만, 남은 논문을 train 286 / calibration 94 / certification 81로 완전히 분리한 확대 정책은 인증 점 추정 R@1 `0.679→0.716`, MRR `0.7978→0.8244`, ColSmol route `12.35%`로 Gate를 통과했다. 다만 95% CI가 0을 포함하고 McNemar p=`0.375`이므로 **성능 개선 신호는 있으나 통계적 인증은 미완료**다. 같은 test-A 재튜닝을 금지하고 external certification으로 이동한다.
 
 ## 무엇이 확인됐는가
 
@@ -18,13 +18,14 @@
 | QASPER R2-P | cached adjacent recall 97.06%, Strong time -18.26% | cache 조건부 PASS |
 | SPIQA CLIP confirmation | caption R@1 0.65, oracle 0.81 | 보완성 PASS |
 | SPIQA ColSmol confirmation | caption R@1 0.65, oracle 0.77 | 보완성 PASS |
-| SPIQA learned selector | R@1 0.62, MRR 0.7285, route 36% | 독립 확인 FAIL |
+| SPIQA initial selector | R@1 0.62, MRR 0.7285, route 36% | 50→100 확인 FAIL |
+| SPIQA expanded selector | R@1 0.716, MRR 0.8244, route 12.35% | point PASS, 통계 INCONCLUSIVE |
 
 ## P1-V multimodal 결론
 
 Visual retrieval을 항상 쓰는 방식은 실패했다. 100문항에서 CLIP R@1은 0.41, ColSmol은 0.34로 caption 0.65보다 낮다. Oracle 결합은 각각 0.81/0.77이므로 질문별 보완성은 존재한다. 그러나 추론 가능 신호로 학습한 ColSmol 선택기는 train R@1 0.90에서 confirmation R@1 0.62로 무너졌다. 현재 병목은 GPU 모델 크기가 아니라 **선택 정책의 데이터 효율과 일반화**다. 상세 수치는 `docs/P1V_SPIQA_PREFLIGHT_REPORT.md`에 있다.
 
-다음 허용 작업은 test-A 재튜닝이 아니라 독립 training/calibration 자료 설계다. 최소 300질문을 확보하기 전에는 추가 시각 모델 sweep을 하지 않는다.
+확대 실험에서 별도 train/calibration 380문항을 확보하고 정책을 인증 전에 잠갔다. Certification의 R@1 차이는 +3.70%p였지만 bootstrap 95% CI `[-1.23,+9.88]%p`, McNemar p=`0.375`다. 다음 허용 작업은 test-A 재튜닝이 아니라 새로운 external multimodal cohort의 접근성·라이선스·크기를 점검하는 것이다.
 
 ## 현재 결과를 어떻게 이해해야 하는가
 

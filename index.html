@@ -157,22 +157,22 @@
 
     <div class="status-row">
       <article class="panel verdict">
-        <span class="badge hold">P1-V SELECTOR · FAIL</span>
-        <strong>시각 신호는 보완적이지만 실제 선택기는 독립 표본에서 기준선보다 낮았다.</strong>
-        <p>SPIQA 100문항에서 caption R@1 65%, oracle 77~81%였으나 학습 selector는 62%로 하락했습니다. 추가 GPU sweep은 잠그고 독립 학습 자료를 먼저 확보합니다.</p>
+        <span class="badge hold">P1-V · POINT PASS / STAT OPEN</span>
+        <strong>확대 선택기는 독립 인증에서 R@1을 67.9%에서 71.6%로 높였다.</strong>
+        <p>ColSmol 호출은 12.35%였지만 95% CI가 0을 포함합니다. 개선 신호는 보존하되 통계적 인증 전에는 성공을 확정하지 않습니다.</p>
       </article>
       <aside class="panel next">
         <span class="eyebrow">Next action</span>
-        <div class="step">Independent Data</div>
-        <p>최소 300개의 별도 training/calibration 질문을 확보하고, 현재 100문항 확인 표본은 재튜닝에 사용하지 않습니다. 그 전까지 대형 GPU 실험은 중단합니다.</p>
+        <div class="step">External Cert</div>
+        <p>SPIQA test-A 118개 논문을 모두 분리 사용했습니다. 같은 표본 재튜닝 없이 새로운 multimodal dataset의 독립 인증 표본을 확보합니다.</p>
       </aside>
     </div>
 
     <div class="metrics" aria-label="핵심 지표">
-      <div class="metric"><small>Caption R@1</small><strong>65%</strong><span>SPIQA confirmation 100</span></div>
-      <div class="metric"><small>CLIP Oracle R@1</small><strong>81%</strong><span>잠재 상한 · +16%p</span></div>
-      <div class="metric"><small>실제 Selector R@1</small><strong>62%</strong><span>기준선 대비 -3%p · FAIL</span></div>
-      <div class="metric"><small>ColSmol peak VRAM</small><strong>4.04GiB</strong><span>RTX 3090 내 실행 가능</span></div>
+      <div class="metric"><small>Certification R@1</small><strong>71.6%</strong><span>Caption 67.9% · +3.7%p</span></div>
+      <div class="metric"><small>ColSmol 호출률</small><strong>12.35%</strong><span>10 / 81 questions</span></div>
+      <div class="metric"><small>R@1 95% CI</small><strong>-1.2~9.9</strong><span>%p · 통계 미확정</span></div>
+      <div class="metric"><small>McNemar</small><strong>p=.375</strong><span>4 wins / 1 loss</span></div>
     </div>
 
     <section id="results">
@@ -209,7 +209,7 @@
         <div class="phase"><span class="id">P1 · FAIL / REPAIR</span><strong>Capability / Oracle</strong><p>Oracle 절감 9.86%. 파서 조합 개선 후 재검증.</p></div>
         <div class="phase complete"><span class="id">R0 · PASS</span><strong>QASPER Evidence Audit</strong><p>100 usable, exact paragraph mapping 93.68%.</p></div>
         <div class="phase complete"><span class="id">R1 · COMPLETE</span><strong>Retrieval Baselines</strong><p>Dense R@5 54.14%; RRF 49.78%.</p></div>
-        <div class="phase"><span class="id">P1-V · FAIL</span><strong>Visual Selector</strong><p>Oracle 보완성 PASS, 실제 selector 일반화 FAIL.</p></div>
+        <div class="phase active"><span class="id">P1-V · CONDITIONAL</span><strong>Visual Selector</strong><p>Point Gate PASS, external statistical certification 필요.</p></div>
       </div>
     </section>
 
@@ -222,8 +222,9 @@
         <tr><td>Caption/CLIP oracle</td><td class="num">0.810</td><td class="num">0.950</td><td class="num">0.8626</td><td>선택 가능성 상한</td></tr>
         <tr><td>Caption/ColSmol oracle</td><td class="num">0.770</td><td class="num">0.950</td><td class="num">0.8488</td><td>선택 가능성 상한</td></tr>
         <tr><td>학습 ColSmol selector</td><td class="num"><strong>0.620</strong></td><td class="num">0.870</td><td class="num">0.7285</td><td>36% route · Gate FAIL</td></tr>
+        <tr><td>확대 locked selector</td><td class="num"><strong>0.716</strong></td><td class="num">0.951</td><td class="num">0.8244</td><td>별도 81q · 12.35% route</td></tr>
       </tbody></table></div>
-      <p class="caption">Oracle은 정답을 본 이상적 상한이며 실제 시스템 성능이 아닙니다. 실제 selector는 reference나 정답 지표 없이 score·margin·entropy·질문 단서만 사용했습니다.</p>
+      <p class="caption">앞의 다섯 행과 초기 selector는 100문항 확인 표본, 확대 locked selector는 별도 81문항 인증 표본입니다. Oracle은 정답을 본 이상적 상한이며 실제 시스템 성능이 아닙니다.</p>
     </section>
 
     <section id="risks">
@@ -278,6 +279,10 @@
     <section id="log">
       <div class="section-head"><div><span class="eyebrow">Experiment log</span><h2>무슨 일이 있었는가</h2></div><p>실패와 protocol 차이를 포함한 요약 로그입니다.</p></div>
       <div class="log">
+        <div class="log-row"><time>09-09</time><span class="kind">CERT OPEN</span><span>81q locked policy: R@1 67.90→71.60%, MRR 0.7978→0.8244, ColSmol route 12.35%.</span></div>
+        <div class="log-row"><time>09-09</time><span class="kind">STAT OPEN</span><span>R@1 difference 95% CI -1.23~+9.88%p, McNemar p=.375. 점 추정 PASS이나 통계 인증 미완료.</span></div>
+        <div class="log-row"><time>09-09</time><span class="kind">POLICY LOCK</span><span>Train 286 + calibration 94에서 threshold .392054 고정 후 certification 81을 한 번만 평가.</span></div>
+        <div class="log-row"><time>09-09</time><span class="kind">STALL RECOVERY</span><span>Online model init가 6h 이상 정지. 중단 후 502MB local snapshot/offline mode로 세 분할 정상 완료.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">SELECTOR FAIL</span><span>Paper-disjoint 100q: caption R@1 65% → selected 62%, MRR 0.7557 → 0.7285. 추가 GPU sweep 잠금.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">P1-V CONFIRM</span><span>100q/27 papers: CLIP oracle R@1 81%, ColSmol oracle 77%. 보완성은 재현됐지만 Always Visual은 실패.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">COLSMOL</span><span>221 images indexing 79.14s, query 7.18s, peak allocated VRAM 4.04GiB, compressed index 60.2MB.</span></div>

@@ -100,13 +100,17 @@ def main() -> None:
     query_seconds = 0.0
     with zipfile.ZipFile(config["dataset"]["images_zip"]) as archive:
         archive_names = set(archive.namelist())
-        excluded_paper_ids = set()
-        excluded_manifest = config["selection"].get("excluded_manifest")
-        if excluded_manifest:
-            excluded_rows = json.loads(Path(excluded_manifest).read_text(encoding="utf-8"))
-            excluded_paper_ids = {row["paper_id"] for row in excluded_rows}
-        sample = freeze_balanced_sample(dataset, archive_names, int(config["selection"]["table_questions"]),
-                                        int(config["selection"]["figure_questions"]), excluded_paper_ids)
+        frozen_manifest = config["selection"].get("sample_manifest")
+        if frozen_manifest:
+            sample = json.loads(Path(frozen_manifest).read_text(encoding="utf-8"))
+        else:
+            excluded_paper_ids = set()
+            excluded_manifest = config["selection"].get("excluded_manifest")
+            if excluded_manifest:
+                excluded_rows = json.loads(Path(excluded_manifest).read_text(encoding="utf-8"))
+                excluded_paper_ids = {row["paper_id"] for row in excluded_rows}
+            sample = freeze_balanced_sample(dataset, archive_names, int(config["selection"]["table_questions"]),
+                                            int(config["selection"]["figure_questions"]), excluded_paper_ids)
         for row in sample:
             paper_id = row["paper_id"]
             if paper_id not in paper_cache:
@@ -157,7 +161,7 @@ def main() -> None:
     gate = config["gate"]
     summary = {
         "questions": len(details), "papers": len(paper_cache),
-        "reference_image_coverage": len(details) / (int(config["selection"]["table_questions"]) + int(config["selection"]["figure_questions"])),
+        "reference_image_coverage": len(details) / len(sample) if sample else 0.0,
         "images_indexed": sum(len(value[0]) for value in paper_cache.values()),
         "indexing_seconds": indexing_seconds, "query_seconds": query_seconds,
         "peak_vram_allocated_bytes": torch.cuda.max_memory_allocated() if device.type == "cuda" else None,

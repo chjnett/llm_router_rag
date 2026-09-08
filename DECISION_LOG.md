@@ -668,3 +668,31 @@ P1-V selector Gate를 FAIL로 판정한다. 같은 test-A 확인 표본의 재�
 
 ### Consequence
 Oracle 보완성만으로 deployable routing을 주장할 수 없다. 다음 해제 조건은 별도 300+ training/calibration questions와 paper-disjoint certification 설계다.
+
+---
+
+## Decision 030
+
+### Date
+2026-09-09
+
+### Trigger
+초기 selector 실패 후 남은 SPIQA test-A 79개 논문 461문항을 train/calibration/certification으로 동결하고 정책을 인증 전에 잠갔다.
+
+### Decision
+확대 selector를 point-estimate PASS, statistical INCONCLUSIVE로 판정한다. 같은 test-A의 추가 튜닝과 GPU sweep은 중단하고 external certification으로 이동한다.
+
+### Evidence
+- paper-disjoint train/calibration/certification: 50/16/13 papers, 286/94/81 questions
+- locked threshold 0.392054; policy/data hashes recorded before certification
+- certification R@1 0.6790→0.7160, R@5 0.9383→0.9506, MRR 0.7978→0.8244
+- ColSmol route 10/81 = 12.35%
+- R@1 paired bootstrap 95% CI [-0.0123, 0.0988]
+- MRR difference 95% CI [-0.0103, 0.0704]
+- selector-only/caption-only correct 4/1; McNemar exact p=0.375
+
+### Consequence
+선택적 visual retrieval의 일반화 신호는 보존하지만 통계적 우월성을 주장하지 않는다. 더 큰 독립 cohort 없이는 P2/P3로 승격하지 않는다.
+
+### Operational anomaly
+네트워크 메타데이터 조회를 허용한 3분할 연속 ColSmol 실행이 6시간 이상 모델 초기화에서 정지했고 결과 파일은 0개였다. 실행을 중단하고 502MB local runtime snapshot을 구성해 HF/Transformers offline 모드로 재실행했으며 train/calibration/certification을 각각 185.60/70.04/64.68초에 완료했다.

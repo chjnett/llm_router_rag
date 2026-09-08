@@ -98,14 +98,17 @@ Frozen rule: exact table count AND GriTS-Top ≥ 0.80 AND GriTS-Loc ≥ 0.50.
 - [x] P1-V 50-question Always Text vs CLIP/ColSmol GPU preflight — visual complementarity PASS
 - [x] P1-V paper-disjoint 100-question confirmation — oracle complementarity reproduced
 - [x] P1-V inference-only Logistic selector — **FAIL** (R@1 0.65→0.62)
-- [ ] P1-V independent training/calibration cohort >=300 questions 확보
+- [x] P1-V independent train/calibration 380 questions 확보 — 66 papers
+- [x] P1-V policy lock before certification — threshold 0.392054
+- [x] P1-V independent certification 81 questions — point Gate PASS, statistical INCONCLUSIVE
+- [ ] 새 external multimodal cohort에서 통계적 certification
 - [ ] Strong both-fail repair 후보 평가 (RAG retrieval 차이 확인 전 보류)
 
 ---
 
 # Week 3 — P2 Router
 
-**현재 잠금:** 50→100 paper-disjoint selector가 일반화에 실패했다. 별도 300+ 학습/보정 cohort 전에는 확대하지 않는다.
+**현재 잠금:** 확대 selector는 certification 점 추정 R@1 `0.679→0.716`으로 PASS했지만 95% CI가 0을 포함한다. 같은 SPIQA test-A 재튜닝은 금지하며 external certification 전에는 Full P2로 승격하지 않는다.
 
 - [ ] feature extractor
 - [ ] Logistic Regression

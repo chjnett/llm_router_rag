@@ -1,0 +1,9 @@
+seed: 42
+dataset:
+  json: data/raw/spiqa/test-A/SPIQA_testA.json
+  images_zip: data/raw/spiqa/test-A/SPIQA_testA_Images_224px.zip
+  clip_results: outputs/p1v_spiqa_clip_calibration/results.json
+  sample_manifest: outputs/p1v_spiqa_router_splits/calibration_manifest.json
+model: {id: cache/colsmol-runtime/adapter, cache_folder: cache/colsmol, local_files_only: true, batch_size: 8}
+gate: {min_questions: 90, min_recall_at_5: 0.70, min_oracle_recall_at_1_gain: 0.05, max_peak_vram_bytes: 22000000000}
+outputs: {root: outputs/p1v_spiqa_colsmol_calibration}
