@@ -256,3 +256,25 @@ PyMuPDF 설정 탐색을 중단하고 별도의 lightweight table parser 후보 
 
 ### Consequence
 표 개수를 맞히는 것과 셀 구조를 충분히 복원하는 것은 다르다는 음성 결과를 보존한다. 다음 Cheap 후보는 PyMuPDF parameter variant가 아니라 독립 구현이어야 한다.
+
+---
+
+## Decision 012
+
+### Date
+2026-09-08
+
+### Trigger
+독립 CPU parser인 pdfplumber 0.11.10 line strategy를 사전 고정한 20페이지에서 preflight했다.
+
+### Decision
+300페이지로 확대하지 않고 pdfplumber 후보를 중단한다.
+
+### Evidence
+- completed 20/20, failures 0
+- p50 95.97 ms, p95 158.73 ms
+- table-count F1 proxy 0.183
+- malformed color operator warning 4회, 결과 누락 없음
+
+### Consequence
+비용 조건은 만족하지만 구조 개선 신호가 없다. 다음 후보는 단순 PDF 선 휴리스틱이 아닌 lightweight learned table-structure model을 우선 검토한다.

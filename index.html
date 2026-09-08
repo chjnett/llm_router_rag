@@ -164,7 +164,7 @@
       <aside class="panel next">
         <span class="eyebrow">Next action</span>
         <div class="step">Parser pair repair</div>
-        <p>PyMuPDF 설정 3종은 모두 실패했습니다. 다음은 독립 lightweight table parser를 소규모 preflight한 뒤 같은 245페이지·고정 기준으로 비교합니다.</p>
+        <p>PyMuPDF 3종과 pdfplumber preflight가 모두 실패했습니다. 다음은 선 휴리스틱이 아닌 lightweight learned table-structure model을 소규모로 검증합니다.</p>
       </aside>
     </div>
 
@@ -263,6 +263,8 @@
     <section id="log">
       <div class="section-head"><div><span class="eyebrow">Experiment log</span><h2>무슨 일이 있었는가</h2></div><p>실패와 protocol 차이를 포함한 요약 로그입니다.</p></div>
       <div class="log">
+        <div class="log-row"><time>09-08</time><span class="kind">PREFLIGHT STOP</span><span>pdfplumber 20/20 완주, p50 95.97ms이나 table-count proxy 0.183으로 300-page 확대 중단.</span></div>
+        <div class="log-row"><time>09-08</time><span class="kind">WARNING</span><span>PDF color operator 경고 4회 관측, page failure는 0건. 품질 중단 사유와 분리 기록.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">REPAIR FAIL</span><span>PyMuPDF 3종 모두 15% Gate 미달: union/refine 9.17%, text 0%, raw-lines 9.81%.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">ANOMALY</span><span>text 전략은 table-count proxy 0.931이지만 구조 충분 페이지 0개. 개수 proxy와 GriTS 품질의 괴리 확인.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">P1 FAIL</span><span>고정 기준 Oracle 절감 9.86%로 목표 15% 미달. P2 잠금, parser pair repair로 전환.</span></div>
