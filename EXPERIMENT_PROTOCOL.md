@@ -156,6 +156,8 @@ nDCG@5 >= 0.50
 
 개발 100문항의 R1.1~R1.3이 Gate를 통과하지 못했으므로 해당 cohort 탐색은 종료한다. Recovery split은 paper-disjoint하게 calibration 200, certification 200, final 443 answerable questions로 고정한다. Certification/final 결과를 보고 recovery method를 변경하지 않는다.
 
+Calibration best는 Recall@5 0.6303으로 Gate를 통과하지 못했다. Certification/final은 잠근다. Query-time rescue의 실제 단위가 page이므로, 다음 R1-P는 10 complete PDFs에서 canonical evidence paragraph와 native PDF page의 매핑 가능성 및 page-level retrieval recall을 측정한다. Mapping 규칙과 허용 오차는 결과 전에 고정한다.
+
 ---
 
 ## P8 — QA

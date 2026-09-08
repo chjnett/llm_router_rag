@@ -72,6 +72,8 @@ R1.3 결과: section dense와 BM25 후보에 인접 단락 ±1을 추가하자 c
 
 다음 문서 단위 분할을 고정했다: development 34 papers/100 questions, calibration 62/200, certification 60/200, final 123/443. Development paper의 나머지 질문도 다른 split에 넣지 않았다. 다음 recovery 방법 선택은 calibration에서만 수행한다.
 
+Calibration 결과: exact-mapped 187문항에서 section dense Recall@5 0.5979, adjacent+MiniLM-L6 0.6303/nDCG@5 0.5122였다. L12 reranker는 0.6212/0.4987로 더 나빠 폐기했다. Recall Gate 0.65를 완화하지 않으며 certification/final은 열지 않는다. 다음은 10개 complete PDF에서 paragraph miss와 실제 evidence-page miss가 같은지 확인하는 R1-P mapping preflight다.
+
 ### 2. 전체 논문 분포 preflight — retrieval recovery 확인 후
 
 - 처음부터 30~50편을 수작업 라벨링하지 않는다.

@@ -89,7 +89,9 @@ Frozen rule: exact table count AND GriTS-Top ≥ 0.80 AND GriTS-Loc ≥ 0.50.
 - [x] R1.2 section-aware chunk/query formulation — **FAIL Gate**, section passage R@5 0.5562 / R@10 0.7556
 - [x] R1.3 adjacent-window + section candidate rescue — **near-miss FAIL** (R@5 0.6161, nDCG@5 0.5103)
 - [x] QASPER document-disjoint recovery splits 고정 — calibration 200 / certification 200 / final 443
-- [ ] R1 recovery method를 calibration에서 선택 (development 100 재사용 금지)
+- [x] R1 recovery calibration — **FAIL** (best R@5 0.6303, nDCG@5 0.5122)
+- [x] MiniLM-L12 비교 — L6보다 악화, 폐기
+- [ ] R1-P 10 complete-PDF evidence page mapping protocol 및 preflight
 - [ ] Strong both-fail repair 후보 평가 (RAG retrieval 차이 확인 전 보류)
 
 ---

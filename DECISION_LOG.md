@@ -553,3 +553,26 @@ QASPER validation의 answerable questions를 paper 단위로 development/calibra
 
 ### Consequence
 다음 recovery 방법 선택은 calibration에서만 한다. Certification/final 결과는 설정 선택에 사용하지 않는다.
+
+---
+
+## Decision 025
+
+### Date
+2026-09-08
+
+### Trigger
+Paper-disjoint calibration에서 frozen adjacent rescue와 한 개의 사전 지정 L12 reranker 후보를 비교했다.
+
+### Decision
+R1 calibration Gate를 FAIL로 판정하고 Certification/Final을 잠근다. MiniLM-L12는 폐기하며 추가 model sweep을 하지 않는다. 다음은 10 complete-PDF evidence-page mapping preflight다.
+
+### Evidence
+- manifest/evaluated/skipped: 200/187/13 questions, 61 evaluated papers
+- candidate Recall 0.9518
+- L6 Recall@5 0.6303 (Gate 0.65 FAIL), nDCG@5 0.5122 (PASS)
+- L12 Recall@5 0.6212, nDCG@5 0.4987; L6보다 악화
+- L6 wall time 12.15s, L12 reranking 9.66s on RTX 3090
+
+### Consequence
+Paragraph-level recovery를 성공으로 주장하지 않는다. Page-level rescue architecture와 평가 단위의 일치 여부를 먼저 확인하고, 유망하지 않으면 QASPER branch를 중단한다.

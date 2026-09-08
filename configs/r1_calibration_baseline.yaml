@@ -1,0 +1,30 @@
+seed: 42
+dataset:
+  split: validation
+  archive: data/raw/qasper/qasper-train-dev-v0.3.tgz
+  manifest: outputs/r1_qasper_recovery_splits/calibration.json
+dense_model:
+  id: BAAI/bge-small-en-v1.5
+  local_path: cache/huggingface/models--BAAI--bge-small-en-v1.5/snapshots/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a
+  query_prefix: "Represent this sentence for searching relevant passages: "
+  max_length: 512
+  batch_size: 32
+reranker:
+  id: cross-encoder/ms-marco-MiniLM-L-6-v2
+  local_path: cache/huggingface/models--cross-encoder--ms-marco-MiniLM-L-6-v2/snapshots/233902d25c440f23af6f7d6e94d2946bac0bee0a
+  max_length: 512
+  batch_size: 32
+candidate_pool:
+  section_dense_top_k: 10
+  bm25_top_k: 10
+  adjacent_radius: 1
+retrieval:
+  bm25_k1: 1.2
+  bm25_b: 0.75
+evaluation:
+  cutoffs: [1, 5, 10]
+gate:
+  min_recall_at_5: 0.65
+  min_ndcg_at_5: 0.50
+outputs:
+  root: outputs/r1_calibration_baseline

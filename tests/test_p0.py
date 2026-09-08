@@ -184,6 +184,13 @@ def test_recovery_split_allocator_keeps_boundary_paper_whole():
     assert remaining == [("c", "5")]
 
 
+def test_recovery_split_relevance_uses_exact_canonical_evidence():
+    from caproute.cli.run_qasper_recovery_split import mapped_relevant_indices
+    paper = {"abstract": "Alpha", "full_text": [{"paragraphs": ["Beta"]}]}
+    qa = {"answers": [{"answer": {"unanswerable": False, "evidence": ["Beta"]}}]}
+    assert mapped_relevant_indices(paper, qa) == {1}
+
+
 def test_tatr_span_postprocessing_merges_claimed_grid_cells():
     from caproute.cli.tatr_structure_preflight import grid_cells
     items = [
