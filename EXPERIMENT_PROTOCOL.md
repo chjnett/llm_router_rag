@@ -154,6 +154,8 @@ nDCG@5 >= 0.50
 
 통과 전 parser representation/router 효과를 측정하지 않는다. 이 cohort에서 고른 설정은 별도 document-disjoint split에서 다시 고정 평가한다.
 
+개발 100문항의 R1.1~R1.3이 Gate를 통과하지 못했으므로 해당 cohort 탐색은 종료한다. Recovery split은 paper-disjoint하게 calibration 200, certification 200, final 443 answerable questions로 고정한다. Certification/final 결과를 보고 recovery method를 변경하지 않는다.
+
 ---
 
 ## P8 — QA

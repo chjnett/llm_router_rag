@@ -61,3 +61,29 @@ BM25 top-10과 dense top-10의 합집합(평균 15.15개)을 MiniLM cross-encode
 | Title query + section passage | 0.3326 | 0.4489 | 0.2575 | 0.2299 | 악화, 폐기 |
 
 Section metadata는 candidate 생성과 첫 relevant 순위를 개선했지만 Recall@5 0.65/nDCG@5 0.50 Gate에는 미달했다. 논문 제목을 질문에 반복하는 방식은 semantic signal을 희석한 것으로 추정되며 사용하지 않는다.
+
+## R1.3 adjacent-window rescue 결과
+
+Section-aware dense top-10과 BM25 top-10을 합치고 각 후보의 인접 단락 ±1을 추가한 뒤 MiniLM으로 재순위화했다.
+
+| 지표 | 결과 | Gate | 판정 |
+|---|---:|---:|---|
+| 평균 seed / expanded candidates | 15.41 / 29.06 | - | - |
+| Candidate Recall | 0.9278 | - | 충분한 후보 상한 |
+| Recall@5 | 0.6161 | >=0.65 | FAIL (-0.0339) |
+| nDCG@5 | 0.5103 | >=0.50 | PASS |
+| MRR | 0.5363 | - | 최고 관측값 |
+| GPU wall time | 6.41s / 97 questions | - | preflight 비용 |
+
+한 지표만 통과했으므로 전체 Gate는 실패다. 개발 문항에서 조합을 더 탐색하지 않는다.
+
+## 고정 recovery split
+
+| Split | Papers | Answerable questions | 용도 |
+|---|---:|---:|---|
+| Development | 34 | 100 | 완료된 진단, 재사용 금지 |
+| Calibration | 62 | 200 | recovery 방법/설정 선택 |
+| Certification | 60 | 200 | 동결 방법 독립 검증 |
+| Final | 123 | 443 | 최종 보고 |
+
+모든 split은 paper-disjoint다. Development에 한 질문이라도 포함된 paper는 그 paper의 다른 질문까지 후속 split에서 제외했다.

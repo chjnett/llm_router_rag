@@ -158,13 +158,13 @@
     <div class="status-row">
       <article class="panel verdict">
         <span class="badge">RAG R0 · PASS</span>
-        <strong>Section context는 검색을 개선했지만 R1.2 Recall@5 55.62%로 Gate 65%에 미달했다.</strong>
-        <p>Recall@10은 75.56%, MRR은 0.491로 개선됐습니다. 제목을 query에 추가한 방식은 33.26%로 악화되어 폐기하며, Routing은 계속 잠급니다.</p>
+        <strong>R1.3은 nDCG@5를 통과했지만 Recall@5 61.61%로 Gate 65%에 미달했다.</strong>
+        <p>인접 문맥으로 candidate Recall 92.78%, MRR 0.536까지 개선됐습니다. 기준은 완화하지 않고 development 탐색을 종료했으며 Routing은 계속 잠급니다.</p>
       </article>
       <aside class="panel next">
         <span class="eyebrow">Next action</span>
         <div class="step">R1.1 Retrieval Repair</div>
-        <p>개발 cohort 과적합을 막기 위해 adjacent-window/section candidate rescue를 한 번만 더 시험합니다. 실패하면 같은 100문항 탐색을 멈추고 별도 split과 전체 논문 preflight로 이동합니다.</p>
+        <p>Paper-disjoint calibration 200 / certification 200 / final 443문항을 고정했습니다. 다음 recovery 방법 선택은 calibration에서만 하며 독립 결과로 재조정하지 않습니다.</p>
       </aside>
     </div>
 
@@ -265,6 +265,8 @@
     <section id="log">
       <div class="section-head"><div><span class="eyebrow">Experiment log</span><h2>무슨 일이 있었는가</h2></div><p>실패와 protocol 차이를 포함한 요약 로그입니다.</p></div>
       <div class="log">
+        <div class="log-row"><time>09-08</time><span class="kind">R1.3 FAIL</span><span>Adjacent rescue candidate R 92.78%, R@5 61.61% FAIL, nDCG@5 0.5103 PASS. 개발 탐색 종료.</span></div>
+        <div class="log-row"><time>09-08</time><span class="kind">SPLIT FREEZE</span><span>Paper-disjoint calibration 62/200, certification 60/200, final 123/443 고정. 숫자는 papers/questions.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">R1.2 FAIL</span><span>Section passage R@5 55.62%, R@10 75.56%, nDCG@5 0.4484. 개선됐지만 동결 Gate 미달.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">VARIANT DROP</span><span>Title query + section passage는 R@5 33.26%로 악화. 폐기하고 추가 조합 탐색을 1회로 제한.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">RERANK FAIL</span><span>Candidate Recall 77.05%였지만 MiniLM top-5 Recall 51.90%, nDCG@5 0.4296. Section-aware 표현 수리로 이동.</span></div>

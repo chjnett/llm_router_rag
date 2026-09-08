@@ -68,7 +68,11 @@ Cheap text index로 먼저 검색하고, 불확실하거나 visual cue가 있는
 
 R1.2 결과: passage에 title/section metadata를 붙이면 Recall@5 0.5562, Recall@10 0.7556, MRR 0.4913으로 개선됐지만 Gate는 실패했다. 제목을 query에도 붙인 variant는 Recall@5 0.3326으로 악화되어 폐기한다. 개발 cohort에서 허용할 마지막 저비용 수리는 adjacent-window 또는 section-aware candidate rescue 한 번이며, 이후에도 실패하면 QASPER formulation을 멈추고 별도 split/전체 논문 preflight 설계로 이동한다.
 
-### 2. 전체 논문 분포 preflight — R1.1 통과 후
+R1.3 결과: section dense와 BM25 후보에 인접 단락 ±1을 추가하자 candidate Recall은 0.9278, nDCG@5는 0.5103으로 올라갔지만 Recall@5는 0.6161로 Gate 0.65에 미달했다. 기준을 완화하지 않고 development 100문항 탐색을 종료했다.
+
+다음 문서 단위 분할을 고정했다: development 34 papers/100 questions, calibration 62/200, certification 60/200, final 123/443. Development paper의 나머지 질문도 다른 split에 넣지 않았다. 다음 recovery 방법 선택은 calibration에서만 수행한다.
+
+### 2. 전체 논문 분포 preflight — retrieval recovery 확인 후
 
 - 처음부터 30~50편을 수작업 라벨링하지 않는다.
 - 10편의 born-digital complete paper로 비용·페이지 유형·text coverage와 downstream retrieval 차이를 먼저 측정한다.

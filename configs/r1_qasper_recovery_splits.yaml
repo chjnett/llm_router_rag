@@ -1,0 +1,11 @@
+seed: 42
+dataset:
+  split: validation
+  archive: data/raw/qasper/qasper-train-dev-v0.3.tgz
+  development_audit: outputs/r0_qasper_audit/audit.json
+splits:
+  calibration_min_questions: 200
+  certification_min_questions: 200
+  ordering: paper_id_then_question_id
+outputs:
+  root: outputs/r1_qasper_recovery_splits

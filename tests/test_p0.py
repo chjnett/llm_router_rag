@@ -172,6 +172,18 @@ def test_contextual_qasper_paragraphs_preserve_canonical_index_order():
     assert "Section: Method" in contextual[1]
 
 
+def test_adjacent_rescue_expansion_is_bounded_and_stable():
+    from caproute.cli.run_qasper_adjacent_rescue import expand_adjacent
+    assert expand_adjacent([0, 2], 4, 1) == [0, 1, 2, 3]
+
+
+def test_recovery_split_allocator_keeps_boundary_paper_whole():
+    from caproute.cli.freeze_qasper_recovery_splits import allocate_whole_papers
+    selected, remaining = allocate_whole_papers([("a", "1"), ("a", "2"), ("b", "3"), ("b", "4"), ("c", "5")], 3)
+    assert selected == [("a", "1"), ("a", "2"), ("b", "3"), ("b", "4")]
+    assert remaining == [("c", "5")]
+
+
 def test_tatr_span_postprocessing_merges_claimed_grid_cells():
     from caproute.cli.tatr_structure_preflight import grid_cells
     items = [

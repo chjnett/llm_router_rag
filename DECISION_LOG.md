@@ -507,3 +507,49 @@ Section-aware passage는 유용한 개선으로 보존하지만 R1.2 Gate는 FAI
 
 ### Consequence
 Section metadata는 이후 representation에 유지할 후보지만 성공으로 승격하지 않는다. R1.3 이후에는 같은 100문항에서 추가 조합을 반복 탐색하지 않고 별도 split을 만든다.
+
+---
+
+## Decision 023
+
+### Date
+2026-09-08
+
+### Trigger
+마지막 허용 development 실험으로 section dense/BM25 후보와 인접 단락 ±1을 결합해 재순위화했다.
+
+### Decision
+R1.3을 near-miss FAIL로 판정하고 development 100문항 탐색을 종료한다. Recall 기준을 0.65에서 완화하지 않는다.
+
+### Evidence
+- mean seed/expanded candidates: 15.41/29.06
+- candidate Recall 0.9278
+- Recall@5 0.6161 (Gate 0.65, FAIL)
+- nDCG@5 0.5103 (Gate 0.50, PASS)
+- MRR 0.5363, wall time 6.41 seconds
+
+### Consequence
+Adjacent context는 유망 신호로 보존하지만 성공 주장을 하지 않는다. 같은 질문에서 추가 조합 탐색을 금지하고 paper-disjoint recovery split을 만든다.
+
+---
+
+## Decision 024
+
+### Date
+2026-09-08
+
+### Trigger
+R1 개발 탐색 종료 후 recovery 방법 선택과 독립 검증을 분리해야 했다.
+
+### Decision
+QASPER validation의 answerable questions를 paper 단위로 development/calibration/certification/final에 고정한다.
+
+### Evidence
+- development: 34 papers / 100 questions
+- calibration: 62 papers / 200 questions
+- certification: 60 papers / 200 questions
+- final: 123 papers / 443 questions
+- 교집합 paper 0; automated tests 20 passed
+
+### Consequence
+다음 recovery 방법 선택은 calibration에서만 한다. Certification/final 결과는 설정 선택에 사용하지 않는다.

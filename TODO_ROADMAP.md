@@ -87,7 +87,9 @@ Frozen rule: exact table count AND GriTS-Top ≥ 0.80 AND GriTS-Loc ≥ 0.50.
 - [x] R1.1 retrieval failure stratification — dense hit@5 59.79%; neither 28/97; long-paper/multi-evidence 병목
 - [x] R1.1 lightweight re-ranking preflight — **FAIL** (Recall@5 0.5190, nDCG@5 0.4296)
 - [x] R1.2 section-aware chunk/query formulation — **FAIL Gate**, section passage R@5 0.5562 / R@10 0.7556
-- [ ] R1.3 adjacent-window or section-aware candidate rescue (개발 cohort 마지막 저비용 수리)
+- [x] R1.3 adjacent-window + section candidate rescue — **near-miss FAIL** (R@5 0.6161, nDCG@5 0.5103)
+- [x] QASPER document-disjoint recovery splits 고정 — calibration 200 / certification 200 / final 443
+- [ ] R1 recovery method를 calibration에서 선택 (development 100 재사용 금지)
 - [ ] Strong both-fail repair 후보 평가 (RAG retrieval 차이 확인 전 보류)
 
 ---
