@@ -71,7 +71,15 @@ Frozen rule: exact table count AND GriTS-Top ≥ 0.80 AND GriTS-Loc ≥ 0.50.
 - [x] Table Transformer 초기 structure 계산 — 분모 오류 발견 및 superseded
 - [x] TATR spanning/header postprocessing 및 시각 audit — PASS (Top 0.894, Loc 0.510, p50 127.67ms)
 - [x] TATR 300-page screening — **FAIL near-miss** (Top 0.866, Loc 0.494, p50 135.79ms)
-- [ ] Query-time page/table rescue RAG pivot protocol 작성
+- [x] Query-time page/table rescue RAG pivot protocol 작성
+
+### RAG Pivot R0
+
+- [x] QASPER text-control 및 SPIQA multimodal 순서 결정
+- [x] R0 evidence audit 기준 고정
+- [ ] QASPER metadata cache 및 hash
+- [ ] validation 100-question manifest 고정
+- [ ] evidence type/mapping audit
 - [ ] Strong both-fail repair 후보 평가
 
 ---

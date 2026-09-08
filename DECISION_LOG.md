@@ -372,3 +372,24 @@ P1과 동일하게 미대응 페이지를 not-evaluable로 별도 보고하고, 
 
 ### Consequence
 TATR의 빠른 검출·topology 결과는 보조 evidence로 보존하지만 primary ingestion router 후보로 승격하지 않는다. 다음 Gate는 parser 자체 GriTS가 아니라 fixed downstream retrieval/QA utility와 실제 Strong rescue 비용으로 정의해야 한다.
+
+---
+
+## Decision 017
+
+### Date
+2026-09-08
+
+### Trigger
+Downstream RAG pivot에 사용할 데이터셋의 접근성과 현재 약 10GB 디스크 제약을 검토했다.
+
+### Decision
+QASPER validation 100문항 evidence audit을 text-control 첫 Gate로 사용하고, 통과 후 SPIQA test-A의 table/figure subset으로 확장한다. MMVQA/PDF-MVQA는 Google Drive 분할 배포 접근성을 확인한 뒤 외부 평가 후보로 유지한다.
+
+### Evidence
+- QASPER: 1,005 validation questions / 281 papers, human supporting evidence 제공
+- SPIQA: table/figure scientific QA에 적합하지만 전체 배포 크기 약 33.6GB
+- 현재 C: 여유 공간 약 10GB
+
+### Consequence
+QASPER 결과를 multimodal 최종 주장으로 사용하지 않는다. R0는 evidence/chunk/page alignment와 retrieval baseline 가능성만 검증한다.

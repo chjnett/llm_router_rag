@@ -1,0 +1,13 @@
+seed: 42
+dataset:
+  id: allenai/qasper
+  split: validation
+  sample_questions: 100
+  answerable_only: true
+  ordering: paper_id_then_question_id
+  cache_root: data/raw/qasper
+outputs:
+  root: outputs/r0_qasper_audit
+gate:
+  min_usable_evidence_questions: 80
+  min_text_evidence_mapping_rate: 0.90
