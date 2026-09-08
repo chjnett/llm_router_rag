@@ -1,0 +1,14 @@
+seed: 42
+dataset:
+  annotations: data/raw/pubtables/PubTables-1M-Image_Page_Detection_PASCAL_VOC
+  split_file: data/raw/pubtables/PubTables-1M-Image_Page_Detection_PASCAL_VOC/preflight_filelist.txt
+  image_root: data/raw/pubtables/PubTables-1M-Image_Page_Detection_PASCAL_VOC/images
+  pdf_root: data/raw/pubtables/pdfs
+  sample_size: 20
+  exclude_document_ids: [PMC6067716]
+model:
+  id: microsoft/table-transformer-detection
+  threshold: 0.90
+  device: cuda
+outputs:
+  root: outputs/tatr_detection_preflight
