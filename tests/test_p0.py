@@ -120,6 +120,20 @@ def test_pymupdf_candidate_name_and_settings_affect_fingerprint():
     assert candidate.name == "pymupdf_refine"
 
 
+def test_tatr_span_postprocessing_merges_claimed_grid_cells():
+    from caproute.cli.tatr_structure_preflight import grid_cells
+    items = [
+        ("table row", [0, 0, 100, 50]), ("table row", [0, 50, 100, 100]),
+        ("table column", [0, 0, 50, 100]), ("table column", [50, 0, 100, 100]),
+        ("table spanning cell", [0, 0, 100, 50]),
+    ]
+    atomic = grid_cells(items, include_spans=False)
+    merged = grid_cells(items, include_spans=True)
+    assert len(atomic) == 4
+    assert len(merged) == 3
+    assert any(cell["row_nums"] == [0] and cell["column_nums"] == [0, 1] for cell in merged)
+
+
 def test_grits_identity_and_missing_table_contract():
     cells = [
         {"row_nums": [0], "column_nums": [0], "bbox": [0.0, 0.0, 0.5, 1.0]},

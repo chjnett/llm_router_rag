@@ -38,3 +38,12 @@ PASS: 20/20 completed, table-count proxy 1.000, model-only p50 17.36 ms, p95 33.
 ## Structure Result
 
 FAIL: exact table count 80%, mean GriTS-Top 0.671, mean GriTS-Loc 0.392, end-to-end p50 129.76 ms, p95 179.73 ms, peak CUDA allocation 408,653,312 bytes. Latency passed, Top and Loc failed. Because this preflight intentionally omitted spanning/header synthesis, the next action is postprocessing audit rather than a 300-page run.
+
+## Frozen Span-aware Postprocessing
+
+- Keep detection/structure thresholds and the same 20 pages unchanged.
+- Treat `table spanning cell` and `table projected row header` as merge candidates.
+- A merge candidate claims every row/column whose axis overlap covers at least 50% of that row/column interval.
+- Replace claimed atomic grid cells only when the candidate spans at least two grid positions.
+- Compare atomic and span-aware GriTS in the same run; do not select per-page winners.
+- Continue to visual audit only if aggregate Top or Loc improves. The original structure Gate remains Top >=0.70 and Loc >=0.50.
