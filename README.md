@@ -85,7 +85,8 @@ caproute-rag/
 - P0 Gate: **PASS** — topology/location screening과 시각 audit 완료
 - P1 Oracle: Cheap sufficient `11.43%`, Strong sufficient `58.37%`, both-fail `38.37%`
 - P1 Oracle saving: `9.86%` (사전 목표 `15%` 미달), P1 Gate: **FAIL**
-- TATR 20-page span-aware preflight: Top `0.894`, Loc `0.510`, p50 `127.67 ms` — **PASS**
-- 다음 단계: P2를 잠근 상태로 TATR 300-page screening과 P1 Oracle 재검증
+- TATR 20-page span-aware preflight: Top `0.894`, Loc `0.510`, p50 `127.67 ms` — PASS
+- TATR 300-page screening: Top `0.866`, Loc `0.494`, p50 `135.79 ms` — **FAIL near-miss**
+- 다음 단계: P2를 잠그고 downstream RAG의 query-time page/table rescue pivot protocol 설계
 
 실행 경로와 완료 조건은 `P0_IMPLEMENTATION_PLAN.md`, `P1_IMPLEMENTATION_PLAN.md`, 현재 판단은 `docs/P0_PHASE_REPORT.md`, `docs/P1_PHASE_REPORT.md`를 따른다.

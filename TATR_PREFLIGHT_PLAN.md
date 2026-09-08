@@ -58,3 +58,7 @@ This calculation incorrectly included four pages without matching structure XML 
 ## Frozen 300-page Expansion
 
 Use the identical models, thresholds, rendering, crop padding, span rule and P1 evaluable-cohort contract. The aggregate screening Gate remains Top >=0.70, Loc >=0.50 and p50 <333.61 ms. This run may unlock a TATR/Docling Oracle calculation, not P2 directly.
+
+## 300-page Result
+
+**FAIL (near miss).** Completed 300/300; evaluable 245 and not-evaluable 55. Exact table count 99.18%, GriTS-Top 0.866, GriTS-Loc 0.494, end-to-end p50 135.79 ms, p95 219.79 ms, peak CUDA allocation 411,431,424 bytes. Top and latency passed; Loc missed the frozen 0.50 threshold by 0.006. The threshold is not relaxed and TATR/Docling Oracle is not promoted as a primary result.

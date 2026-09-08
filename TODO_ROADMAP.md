@@ -70,7 +70,8 @@ Frozen rule: exact table count AND GriTS-Top ≥ 0.80 AND GriTS-Loc ≥ 0.50.
 - [x] Table Transformer detection 20-page preflight — PASS (proxy 1.000, model p50 17.36ms)
 - [x] Table Transformer 초기 structure 계산 — 분모 오류 발견 및 superseded
 - [x] TATR spanning/header postprocessing 및 시각 audit — PASS (Top 0.894, Loc 0.510, p50 127.67ms)
-- [ ] TATR 300-page cached screening 및 P1 Oracle 재계산
+- [x] TATR 300-page screening — **FAIL near-miss** (Top 0.866, Loc 0.494, p50 135.79ms)
+- [ ] Query-time page/table rescue RAG pivot protocol 작성
 - [ ] Strong both-fail repair 후보 평가
 
 ---

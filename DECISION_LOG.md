@@ -348,3 +348,27 @@ P1과 동일하게 미대응 페이지를 not-evaluable로 별도 보고하고, 
 
 ### Consequence
 초기 0.671/0.392 결과는 삭제하지 않고 superseded로 기록한다. 다음은 300페이지 전체에서 cache, 비용 및 P1 Oracle saving을 다시 계산하는 단계다.
+
+---
+
+## Decision 016
+
+### Date
+2026-09-08
+
+### Trigger
+20페이지 PASS 후 동일한 span-aware TATR 파이프라인을 300페이지로 확대했다.
+
+### Decision
+300페이지 screening을 near-miss FAIL로 판정한다. Loc 기준을 0.50에서 사후 완화하지 않고 TATR/Docling 기반 P2를 시작하지 않는다. 사전에 합의한 대로 downstream RAG의 query-time page/table rescue로 연구 protocol을 피벗한다.
+
+### Evidence
+- completed 300/300, evaluable 245, not-evaluable 55
+- exact table count 99.18%
+- GriTS-Top 0.866 (PASS)
+- GriTS-Loc 0.494 (0.50 기준 FAIL, -0.006)
+- end-to-end p50 135.79 ms, p95 219.79 ms (PASS)
+- peak CUDA allocation 411,431,424 bytes
+
+### Consequence
+TATR의 빠른 검출·topology 결과는 보조 evidence로 보존하지만 primary ingestion router 후보로 승격하지 않는다. 다음 Gate는 parser 자체 GriTS가 아니라 fixed downstream retrieval/QA utility와 실제 Strong rescue 비용으로 정의해야 한다.
