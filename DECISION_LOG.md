@@ -440,3 +440,26 @@ BM25 단독 결과로 parser routing을 시작하지 않는다. 같은 질문·�
 
 ### Consequence
 lexical baseline은 구현과 평가 sanity check를 통과했지만 evidence recovery가 낮다. Dense 검색도 낮으면 문서 처리 라우팅 전에 retrieval formulation을 수리한다.
+
+---
+
+## Decision 020
+
+### Date
+2026-09-08
+
+### Trigger
+동일 97문항에 frozen BGE-small-en-v1.5 dense 및 BM25+dense reciprocal-rank fusion을 실행했다.
+
+### Decision
+R1 baseline은 완료하지만 parser representation 및 routing 단계는 보류한다. 현재 병목은 document processing 차이보다 evidence retrieval이며, 다음은 failure stratification과 lightweight re-ranking preflight다.
+
+### Evidence
+- Dense Recall@1/5/10: 0.1406/0.5414/0.6872; MRR 0.3959; nDCG@5 0.3846
+- RRF Recall@1/5/10: 0.1922/0.4978/0.6350; MRR 0.4137; nDCG@5 0.3839
+- top-5 candidate union Recall 0.6453; top-10 union Recall 0.7705
+- RTX 3090 wall time: 3.44 seconds for 97 questions / 34 papers
+- automated tests: 16 passed
+
+### Consequence
+Dense는 BM25보다 Recall@5를 10.46%p 높였지만 절대 회수율은 낮다. 단순 RRF의 Recall 하락도 실패 결과로 보존한다. Retrieval 수리 전에는 selective parser의 효용을 평가하지 않는다.

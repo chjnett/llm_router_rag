@@ -1,0 +1,18 @@
+seed: 42
+dataset:
+  split: validation
+  archive: data/raw/qasper/qasper-train-dev-v0.3.tgz
+  audit: outputs/r0_qasper_audit/audit.json
+  bm25_results: outputs/r1_qasper_bm25/results.json
+model:
+  id: BAAI/bge-small-en-v1.5
+  local_path: cache/huggingface/models--BAAI--bge-small-en-v1.5/snapshots/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a
+  query_prefix: "Represent this sentence for searching relevant passages: "
+  max_length: 512
+  batch_size: 32
+retrieval:
+  cutoffs: [1, 5, 10]
+  hybrid_method: reciprocal_rank_fusion
+  rrf_k: 60
+outputs:
+  root: outputs/r1_qasper_dense

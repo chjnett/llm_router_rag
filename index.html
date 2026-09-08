@@ -158,13 +158,13 @@
     <div class="status-row">
       <article class="panel verdict">
         <span class="badge">RAG R0 · PASS</span>
-        <strong>QASPER 100문항의 증거-단락 매핑률 93.68%로 고정 기준 90%를 통과했다.</strong>
-        <p>100문항 모두 사용 가능한 텍스트 증거를 가집니다. 단, 표·그림 증거는 0건이므로 현재 결과는 text-control이며 멀티모달 성능 주장이 아닙니다.</p>
+        <strong>R0는 통과했지만 R1 dense Recall@5가 54.14%라 parser routing을 아직 시작하지 않는다.</strong>
+        <p>Dense는 BM25보다 10.46%p 개선됐지만 증거 절반 가까이를 놓칩니다. 단순 hybrid도 49.78%로 하락해, 현재 병목은 라우터가 아니라 검색입니다.</p>
       </article>
       <aside class="panel next">
         <span class="eyebrow">Next action</span>
-        <div class="step">R1 Retrieval Baseline</div>
-        <p>Oracle과 BM25 측정을 마쳤습니다. BM25 Recall@5는 43.68%로 낮아, 동일 조건의 frozen dense·hybrid 검색으로 다음 판정점을 확인합니다.</p>
+        <div class="step">R1.1 Retrieval Repair</div>
+        <p>미회수 문항을 길이·질문 유형·증거 위치별로 분석하고 top-10 후보 합집합(상한 77.05%)을 경량 재순위화합니다. Routing은 계속 잠급니다.</p>
       </aside>
     </div>
 
@@ -208,7 +208,8 @@
         <div class="phase complete"><span class="id">P0-B · COMPLETE</span><strong>Official Quality</strong><p>Top/Loc 및 시각 audit 완료. Content는 후속 보완.</p></div>
         <div class="phase"><span class="id">P1 · FAIL / REPAIR</span><strong>Capability / Oracle</strong><p>Oracle 절감 9.86%. 파서 조합 개선 후 재검증.</p></div>
         <div class="phase complete"><span class="id">R0 · PASS</span><strong>QASPER Evidence Audit</strong><p>100 usable, exact paragraph mapping 93.68%.</p></div>
-        <div class="phase"><span class="id">R1 · ACTIVE</span><strong>Retrieval Baselines</strong><p>Oracle → BM25 → dense → hybrid 순서로 평가.</p></div>
+        <div class="phase complete"><span class="id">R1 · COMPLETE</span><strong>Retrieval Baselines</strong><p>Dense R@5 54.14%; RRF 49.78%.</p></div>
+        <div class="phase"><span class="id">R1.1 · ACTIVE</span><strong>Retrieval Repair</strong><p>Failure stratification과 candidate re-ranking.</p></div>
       </div>
     </section>
 
@@ -264,6 +265,8 @@
     <section id="log">
       <div class="section-head"><div><span class="eyebrow">Experiment log</span><h2>무슨 일이 있었는가</h2></div><p>실패와 protocol 차이를 포함한 요약 로그입니다.</p></div>
       <div class="log">
+        <div class="log-row"><time>09-08</time><span class="kind">R1 DENSE</span><span>BGE dense Recall@5 54.14%, nDCG@5 0.3846. RTX 3090에서 97문항/34논문 3.44초.</span></div>
+        <div class="log-row"><time>09-08</time><span class="kind">HYBRID FAIL</span><span>단순 RRF Recall@5 49.78%로 dense보다 하락. top-10 후보 합집합 상한은 77.05%; 재순위화 전 routing 보류.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">R1 BM25</span><span>97문항: Recall@1/5/10 16.90%/43.68%/56.65%, MRR 0.3645, nDCG@5 0.3238. Dense 비교 전 routing 보류.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">R0 PASS</span><span>QASPER 100/100 usable, 텍스트 증거 163/174 exact mapping(93.68%). R1 Oracle·BM25 허용.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">LIMIT</span><span>동결 100문항의 evidence type은 paragraph 100, 표·그림 0. 현재 결과는 text-control이며 multimodal 주장이 아님.</span></div>

@@ -82,8 +82,10 @@ Frozen rule: exact table count AND GriTS-Top ≥ 0.80 AND GriTS-Loc ≥ 0.50.
 - [x] evidence type/mapping audit — **PASS (100 usable, 93.68% exact mapping)**
 - [x] R1 Oracle evidence retrieval
 - [x] R1 BM25 baseline — Recall@5 0.4368, nDCG@5 0.3238
-- [ ] R1 frozen dense baseline
-- [ ] R1 BM25+dense hybrid baseline
+- [x] R1 frozen dense baseline — Recall@5 0.5414, nDCG@5 0.3846
+- [x] R1 BM25+dense RRF — Recall@5 0.4978 (**dense보다 하락**)
+- [ ] R1.1 retrieval failure stratification
+- [ ] R1.1 lightweight re-ranking preflight
 - [ ] Strong both-fail repair 후보 평가 (RAG retrieval 차이 확인 전 보류)
 
 ---

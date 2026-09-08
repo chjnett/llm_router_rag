@@ -2,7 +2,7 @@
 
 ## 현재 판정
 
-**진행 중.** Oracle과 BM25를 완료했다. BM25 Recall@5가 43.68%이므로 lexical retrieval만으로 parser routing 실험을 시작하지 않는다. 동결 dense 및 hybrid 결과를 먼저 확인한다.
+**BASELINE 완료 / ROUTING 보류.** Oracle, BM25, frozen BGE dense 및 RRF hybrid를 완료했다. Dense가 BM25보다 개선됐지만 Recall@5 54.14%는 parser representation 차이를 검증하기에 낮다. Stop Rule에 따라 chunk/query/re-ranking을 먼저 수리한다.
 
 ## 평가 계약
 
@@ -18,9 +18,13 @@
 |---|---:|---:|---:|---:|---:|
 | Oracle evidence ranking | 0.7738 | 0.9936 | 1.0000 | 1.0000 | 1.0000 |
 | BM25 | 0.1690 | 0.4368 | 0.5665 | 0.3645 | 0.3238 |
+| BGE-small-en-v1.5 dense | 0.1406 | **0.5414** | **0.6872** | 0.3959 | **0.3846** |
+| BM25+dense RRF | **0.1922** | 0.4978 | 0.6350 | **0.4137** | 0.3839 |
 
 Oracle Recall@1이 1.0이 아닌 이유는 일부 문항에 정답 증거 단락이 여러 개이기 때문이다. Oracle은 첫 위치부터 relevant evidence를 반환하지만 Recall은 전체 relevant 단락 중 회수 비율로 계산한다.
 
+Dense inference는 RTX 3090에서 97문항, 34개 고유 논문에 3.44초가 걸렸다. BM25 top-5와 dense top-5의 합집합은 Recall 64.53%, top-10 합집합은 77.05%다. 두 검색기는 상호 보완적이지만 고정 RRF가 Recall@5를 49.78%로 낮췄으므로 RRF를 성공 결과로 포장하지 않는다.
+
 ## 다음 판정점
 
-고정된 영어 scientific retrieval embedding으로 dense baseline을 실행한다. dense도 증거를 충분히 회수하지 못하면 parser 선택기를 학습하기 전에 chunk/evidence 정렬과 query formulation을 보완한다.
+라우팅은 계속 잠근다. 먼저 미회수 문항을 evidence length, question type, paragraph position별로 분석하고, 후보 합집합 안에서 lightweight re-ranking이 Recall@5를 올릴 수 있는지 검증한다. 같은 frozen 100문항에서 임의로 threshold를 조정하지 않는다.

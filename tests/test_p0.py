@@ -151,6 +151,11 @@ def test_bm25_and_retrieval_metrics_rank_matching_evidence_first():
     assert metrics["ndcg_at_5"] == 1.0
 
 
+def test_reciprocal_rank_fusion_rewards_consensus():
+    from caproute.cli.run_qasper_dense import reciprocal_rank_fusion
+    assert reciprocal_rank_fusion([[0, 1, 2], [2, 1, 0]], k=60)[0] == 0
+
+
 def test_tatr_span_postprocessing_merges_claimed_grid_cells():
     from caproute.cli.tatr_structure_preflight import grid_cells
     items = [
