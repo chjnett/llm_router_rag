@@ -61,6 +61,14 @@ Frozen rule: exact table count AND GriTS-Top ≥ 0.80 AND GriTS-Loc ≥ 0.50.
 
 **현재 판정: FAIL.** 기준을 사후 변경하지 않는다. P2는 잠그고 Cheap/Strong 후보 교체 또는 설정 개선을 같은 cohort와 기준으로 재검증한다.
 
+### Repair Screening
+
+- [x] PyMuPDF union/refine 300-page 평가 — FAIL (Oracle saving 9.17%)
+- [x] PyMuPDF text/text 300-page 평가 — FAIL (0%)
+- [x] PyMuPDF raw-lines 300-page 평가 — FAIL (9.81%)
+- [ ] 독립 lightweight table parser preflight
+- [ ] Strong both-fail repair 후보 평가
+
 ---
 
 # Week 3 — P2 Router

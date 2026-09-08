@@ -234,3 +234,25 @@ P1 Gate를 FAIL로 판정하고 P2 router 학습을 잠근다. 관측 결과에 
 
 ### Consequence
 Capability-aware routing 가설 전체를 기각하지는 않는다. 다만 현재 parser pair의 Cheap coverage가 낮고 both-fail이 높으므로, 다음 실험은 router가 아니라 parser pair repair/screening이다.
+
+---
+
+## Decision 011
+
+### Date
+2026-09-08
+
+### Trigger
+추가 다운로드 없이 PyMuPDF의 union/refine, text, raw-lines 전략을 동일한 P1 기준으로 300페이지 실행했다.
+
+### Decision
+PyMuPDF 설정 탐색을 중단하고 별도의 lightweight table parser 후보 screening으로 전환한다. P2는 계속 잠근다.
+
+### Evidence
+- union+refine: Cheap sufficient 10.61%, Oracle saving 9.17%
+- text/text: table-count proxy 0.931이나 Cheap sufficient 0%, Oracle saving 0%
+- raw-lines: Cheap sufficient 11.43%, Oracle saving 9.81%
+- 모든 후보의 사전 목표: Oracle saving >=15%
+
+### Consequence
+표 개수를 맞히는 것과 셀 구조를 충분히 복원하는 것은 다르다는 음성 결과를 보존한다. 다음 Cheap 후보는 PyMuPDF parameter variant가 아니라 독립 구현이어야 한다.

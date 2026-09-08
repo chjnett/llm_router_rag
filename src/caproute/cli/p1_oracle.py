@@ -47,9 +47,11 @@ def main() -> None:
     root = config_path.parent.parent
     cfg = load_config(config_path)
     dataset, prediction_cfg = cfg["dataset"], cfg["predictions"]
-    output_root = root / prediction_cfg["output_root"]
     parsers = {
-        role: _load_predictions(_latest_prediction_windows(output_root, prediction_cfg[f"{role}_parser"]))
+        role: _load_predictions(_latest_prediction_windows(
+            root / prediction_cfg.get(f"{role}_output_root", prediction_cfg["output_root"]),
+            prediction_cfg[f"{role}_parser"],
+        ))
         for role in ("cheap", "strong")
     }
     keys = sorted(set(parsers["cheap"]) & set(parsers["strong"]))

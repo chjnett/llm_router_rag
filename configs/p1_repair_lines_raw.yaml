@@ -1,0 +1,23 @@
+seed: 42
+dataset:
+  expected_pages: 300
+  detection_root: data/raw/pubtables/PubTables-1M-Image_Page_Detection_PASCAL_VOC/val
+  structure_root: data/raw/pubtables/PubTables-1M-Structure/val
+predictions:
+  output_root: outputs/p1_repair
+  cheap_output_root: outputs/p1_repair
+  strong_output_root: outputs/p0
+  cheap_parser: pymupdf_lines_raw
+  strong_parser: docling
+sufficiency:
+  require_exact_table_count: true
+  min_grits_top: 0.80
+  min_grits_loc: 0.50
+cost:
+  cheap_ms_p50: 94.45400000549853
+  strong_ms_p50: 667.2213000711054
+gate:
+  min_oracle_saving: 0.15
+  max_cheap_strong_cost_ratio: 0.50
+outputs:
+  root: outputs/p1_repair/oracle_lines_raw
