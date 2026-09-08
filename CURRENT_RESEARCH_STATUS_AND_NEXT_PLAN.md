@@ -76,6 +76,8 @@ Calibration 결과: exact-mapped 187문항에서 section dense Recall@5 0.5979, 
 
 R1-P 결과: 10/10 PDFs, 103 pages를 파싱했고 evidence 57/59(96.61%)를 page에 매핑했다. 34문항의 page Recall@5는 0.8971, adjacent ±1 rescue Recall은 0.9706이었다. 이는 실제 page-level rescue가 유망하다는 preflight 신호지만 평균 7.53 candidate pages의 Strong 처리 비용은 아직 측정하지 않았다. 다음은 같은 10편에서 Always Text와 query-time Strong rescue의 실제 비용·품질 R2-P다.
 
+R2-P 결과: cached 34-query workload에서 adjacent 전략은 103페이지 중 80페이지만 Strong 처리해 page recall 0.9706, Strong 시간 18.26% 절감으로 조건부 PASS했다. 그러나 캐시 없는 반복 처리는 93.63초로 Always Strong 37.05초보다 152.68% 비싸다. Cheap/Strong evidence usable rate가 모두 100%여서 QASPER text-control에서는 Strong 품질 이득도 없다. QASPER GPU 확대를 중단하고 작은 table/figure multimodal preflight로 이동한다.
+
 ### 2. 전체 논문 분포 preflight — retrieval recovery 확인 후
 
 - 처음부터 30~50편을 수작업 라벨링하지 않는다.

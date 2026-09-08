@@ -1,0 +1,26 @@
+seed: 42
+dataset:
+  page_mapping_results: outputs/r1_page_mapping/page_mapping_results.json
+  pdf_root: data/raw/qasper/pdfs_r1p
+  qasper_archive: data/raw/qasper/qasper-train-dev-v0.3.tgz
+  calibration_results: outputs/r1_calibration_baseline/results.json
+strong_parser:
+  name: docling
+  options:
+    device: cuda
+    do_ocr: false
+    do_table_structure: true
+    num_threads: 4
+benchmark:
+  warmup_pages: 1
+  power_interval_seconds: 0.1
+cache:
+  root: cache/r2_docling_pages
+gate:
+  min_page_recall: 0.95
+  min_unique_strong_page_reduction: 0.20
+  min_strong_latency_saving: 0.10
+quality_proxy:
+  min_evidence_token_coverage: 0.80
+outputs:
+  root: outputs/r2_page_rescue_cost

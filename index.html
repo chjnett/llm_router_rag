@@ -158,13 +158,13 @@
     <div class="status-row">
       <article class="panel verdict">
         <span class="badge">RAG R0 · PASS</span>
-        <strong>10-PDF page mapping preflight는 Recall@5 89.71%로 통과했다.</strong>
-        <p>Paragraph R@5는 63.03%였지만 같은 페이지의 인접 문맥이 evidence를 보완했습니다. 단, 34문항 소표본이며 Strong 처리 비용은 아직 측정하지 않았습니다.</p>
+        <strong>Cached page rescue는 품질 97.06%를 유지하며 Strong 시간을 18.26% 줄였다.</strong>
+        <p>조건부 PASS입니다. 캐시가 없으면 152.68% 더 비싸고, QASPER에서는 Strong text 품질 이득이 없어 다음 GPU는 multimodal 소표본에 사용합니다.</p>
       </article>
       <aside class="panel next">
         <span class="eyebrow">Next action</span>
         <div class="step">R1.1 Retrieval Repair</div>
-        <p>같은 10편에서 Always Text와 top-page Strong rescue의 GPU seconds·latency·quality를 측정합니다. 평균 7.53 candidate pages 비용을 확인하기 전 Router는 학습하지 않습니다.</p>
+        <p>표·그림 evidence가 있는 20~50문항 데이터 접근성을 먼저 점검하고 Always Text 대 visual retrieval GPU preflight를 실행합니다. 전체 ColPali와 Router는 잠금 상태입니다.</p>
       </aside>
     </div>
 
@@ -265,6 +265,10 @@
     <section id="log">
       <div class="section-head"><div><span class="eyebrow">Experiment log</span><h2>무슨 일이 있었는가</h2></div><p>실패와 protocol 차이를 포함한 요약 로그입니다.</p></div>
       <div class="log">
+        <div class="log-row"><time>09-08</time><span class="kind">R2-P PASS*</span><span>Cached adjacent: recall 97.06%, unique pages -22.33%, Strong time 37.05→30.29s(-18.26%).</span></div>
+        <div class="log-row"><time>09-08</time><span class="kind">CACHE LIMIT</span><span>No shared cache 256 calls/93.63s로 Always Strong보다 152.68% 비쌈. Persistent cache 필수.</span></div>
+        <div class="log-row"><time>09-08</time><span class="kind">GPU ANOMALY</span><span>Docling monolithic run stall/native exit. 20-page 이하 배치와 checkpoint로 103/103 복구.</span></div>
+        <div class="log-row"><time>09-08</time><span class="kind">TEXT CONTROL</span><span>Cheap/Strong evidence usable 모두 100%. QASPER에서 Strong gain 없어 multimodal preflight로 이동.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">R1-P PASS</span><span>10 PDFs/103 pages, evidence mapping 96.61%, 34문항 page R@5 89.71%, hit@5 91.18%.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">COST OPEN</span><span>Adjacent rescue hit 97.06%이나 평균 7.53 pages 처리. Strong/VLM 실제 비용 전 성공 주장 금지.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">CAL FAIL</span><span>187문항 best L6 R@5 63.03% FAIL, nDCG@5 0.5122 PASS. Certification/Final 잠금.</span></div>

@@ -198,6 +198,11 @@ def test_page_mapping_normalizes_hyphenated_line_breaks_and_scores_coverage():
     assert result["page"] == 0
 
 
+def test_page_rescue_adjacent_expansion_stays_inside_document():
+    from caproute.cli.run_page_rescue_cost import adjacent_pages
+    assert adjacent_pages([0, 3], 4) == {0, 1, 2, 3}
+
+
 def test_tatr_span_postprocessing_merges_claimed_grid_cells():
     from caproute.cli.tatr_structure_preflight import grid_cells
     items = [

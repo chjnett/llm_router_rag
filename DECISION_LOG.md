@@ -602,3 +602,26 @@ R1-P page mapping preflight를 PASS한다. Query-time page rescue의 비용·품
 
 ### Consequence
 Paragraph-level Recall 실패가 page-level rescue 실패와 동일하지 않음을 확인했다. 다음 단계는 Strong 처리 비용을 실제로 지불했을 때 Always Strong 대비 경제성이 있는지 측정하는 것이며, 품질 수치만으로 성공을 주장하지 않는다.
+
+---
+
+## Decision 027
+
+### Date
+2026-09-08
+
+### Trigger
+10편/103페이지를 Docling CUDA로 처리해 Always Strong과 cached query-time page rescue의 실제 Strong 시간을 비교하고 evidence text 보존을 확인했다.
+
+### Decision
+R2-P를 cache-dependent CONDITIONAL PASS로 판정한다. QASPER GPU 확대는 중단하고 작은 table/figure multimodal P1-V로 이동한다. Router와 전체 ColPali indexing은 계속 잠근다.
+
+### Evidence
+- Always Strong 37.05s, p50/p95 205.51/1022.44ms
+- adjacent: recall 0.9706, 80/103 unique pages, 30.29s, saving 18.26% — Gate PASS
+- no shared cache: 256 calls, 93.63s, Always Strong 대비 152.68% 비쌈
+- Cheap/Strong evidence usable rate: 100%/100%; Strong text gain 없음
+- monolithic Docling: one stall and one native process exit; <=20-page batches로 복구
+
+### Consequence
+제안 방식은 persistent page cache가 있는 multi-query workload로 범위를 제한해야 한다. Strong quality benefit은 text-control이 아니라 multimodal evidence에서 별도로 증명한다.

@@ -92,7 +92,10 @@ Frozen rule: exact table count AND GriTS-Top ≥ 0.80 AND GriTS-Loc ≥ 0.50.
 - [x] R1 recovery calibration — **FAIL** (best R@5 0.6303, nDCG@5 0.5122)
 - [x] MiniLM-L12 비교 — L6보다 악화, 폐기
 - [x] R1-P 10 complete-PDF evidence page mapping — **PREFLIGHT PASS** (page R@5 0.8971)
-- [ ] R2-P 10-paper Always Text vs query-time Strong rescue 비용·품질 preflight
+- [x] R2-P 10-paper cost preflight — **CONDITIONAL PASS** (cached workload: recall 0.9706, time -18.26%)
+- [x] Cheap/Strong output evidence coverage — 둘 다 100%, QASPER text에서 Strong gain 없음
+- [ ] P1-V small multimodal dataset access/manifest audit
+- [ ] P1-V 20~50 question Always Text vs visual retrieval GPU preflight
 - [ ] Strong both-fail repair 후보 평가 (RAG retrieval 차이 확인 전 보류)
 
 ---
