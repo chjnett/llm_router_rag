@@ -112,6 +112,14 @@ def test_p1_sufficiency_requires_all_frozen_conditions():
     assert not is_sufficient({**metrics, "grits_top_mean": 0.799}, rule)
 
 
+def test_pymupdf_candidate_name_and_settings_affect_fingerprint():
+    from caproute.parsers.cheap import PyMuPDFParser
+    base = PyMuPDFParser({"detect_tables": True})
+    candidate = PyMuPDFParser({"detect_tables": True, "table_settings": {"refine": True}}, "pymupdf_refine")
+    assert base.fingerprint != candidate.fingerprint
+    assert candidate.name == "pymupdf_refine"
+
+
 def test_grits_identity_and_missing_table_contract():
     cells = [
         {"row_nums": [0], "column_nums": [0], "bbox": [0.0, 0.0, 0.5, 1.0]},

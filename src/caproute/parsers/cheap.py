@@ -10,7 +10,11 @@ class PyMuPDFParser(DocumentParser):
     name = "pymupdf"
     role = "cheap"
     version = getattr(fitz, "VersionBind", "unknown")
-    adapter_version = "2"
+    adapter_version = "3"
+
+    def __init__(self, options=None, name: str = "pymupdf") -> None:
+        super().__init__(options)
+        self.name = name
 
     def parse(self, item: DocumentInput) -> CanonicalDocument:
         document = fitz.open(item.source_path)
@@ -25,7 +29,8 @@ class PyMuPDFParser(DocumentParser):
                     blocks.append(Block(f"p{index}-text-{number}", "text", [x0, y0, x1, y1], text.strip(), 1.0))
             if self.options.get("detect_tables", True) and hasattr(page, "find_tables"):
                 try:
-                    for number, table in enumerate(page.find_tables().tables):
+                    settings = dict(self.options.get("table_settings", {}))
+                    for number, table in enumerate(page.find_tables(**settings).tables):
                         blocks.append(Block(
                             f"p{index}-table-{number}", "table", list(table.bbox), "", None,
                             {

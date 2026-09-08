@@ -88,7 +88,7 @@ class DoclingParser(DocumentParser):
 def build_parser(name: str, options=None) -> DocumentParser:
     if name == "docling":
         return DoclingParser(options)
-    if name == "pymupdf":
+    if name == "pymupdf" or name.startswith("pymupdf_"):
         from caproute.parsers.cheap import PyMuPDFParser
-        return PyMuPDFParser(options)
+        return PyMuPDFParser(options, name=name)
     raise ValueError(f"Unknown parser: {name}")
