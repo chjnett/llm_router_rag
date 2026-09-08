@@ -5,6 +5,7 @@ import time
 from pathlib import Path
 
 import torch
+import pymupdf
 from PIL import Image
 from transformers import AutoImageProcessor, TableTransformerForObjectDetection
 
@@ -35,7 +36,12 @@ def main() -> None:
     rows, latencies = [], []
     with torch.inference_mode():
         for sample in samples:
-            image = Image.open(sample.image_path).convert("RGB")
+            if sample.image_path.exists():
+                image = Image.open(sample.image_path).convert("RGB")
+            else:
+                with pymupdf.open(sample.item.source_path) as pdf:
+                    pixmap = pdf[sample.item.page_index or 0].get_pixmap(matrix=pymupdf.Matrix(2, 2), alpha=False)
+                    image = Image.frombytes("RGB", (pixmap.width, pixmap.height), pixmap.samples)
             inputs = {key: value.to(device) for key, value in processor(images=image, return_tensors="pt").items()}
             if device.type == "cuda": torch.cuda.synchronize()
             started = time.perf_counter()
