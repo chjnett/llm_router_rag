@@ -278,3 +278,25 @@ PyMuPDF 설정 탐색을 중단하고 별도의 lightweight table parser 후보 
 
 ### Consequence
 비용 조건은 만족하지만 구조 개선 신호가 없다. 다음 후보는 단순 PDF 선 휴리스틱이 아닌 lightweight learned table-structure model을 우선 검토한다.
+
+---
+
+## Decision 013
+
+### Date
+2026-09-08
+
+### Trigger
+Microsoft Table Transformer detection 모델을 고정 threshold 0.90으로 RTX 3090에서 20페이지 preflight했다.
+
+### Decision
+TATR detection branch를 PASS하고 structure-recognition 20-page GriTS preflight 구현을 허용한다.
+
+### Evidence
+- completed 20/20
+- table-count F1 proxy 1.000
+- model-only p50 17.36 ms, p95 33.67 ms
+- peak CUDA allocation 230,491,648 bytes
+
+### Consequence
+검출 결과만으로 P1 품질을 주장하지 않는다. 다음 단계에서 detection crop과 structure model을 연결하고 렌더링·전처리를 포함한 end-to-end 비용 및 GriTS-Top/Loc을 측정한다.

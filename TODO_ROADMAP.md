@@ -67,7 +67,8 @@ Frozen rule: exact table count AND GriTS-Top ≥ 0.80 AND GriTS-Loc ≥ 0.50.
 - [x] PyMuPDF text/text 300-page 평가 — FAIL (0%)
 - [x] PyMuPDF raw-lines 300-page 평가 — FAIL (9.81%)
 - [x] pdfplumber 독립 lightweight parser 20-page preflight — STOP (proxy 0.183, p50 95.97ms)
-- [ ] 다음 lightweight 구조 모델 후보 선정
+- [x] Table Transformer detection 20-page preflight — PASS (proxy 1.000, model p50 17.36ms)
+- [ ] Table Transformer structure 20-page GriTS preflight
 - [ ] Strong both-fail repair 후보 평가
 
 ---

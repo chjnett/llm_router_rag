@@ -21,3 +21,7 @@ Test whether a learned PubTables-1M table detector provides enough detection sig
 - peak VRAM < 4 GB
 
 This is only a detector preflight, not P1 sufficiency evidence. Passing permits implementation of the paired structure-recognition model and 20-page GriTS preflight. Failing stops the TATR branch.
+
+## Detection Result
+
+PASS: 20/20 completed, table-count proxy 1.000, model-only p50 17.36 ms, p95 33.67 ms, peak CUDA allocation 230,491,648 bytes. PDF rendering and processor time are excluded from this model-only latency and must be included in the later end-to-end parser measurement.
