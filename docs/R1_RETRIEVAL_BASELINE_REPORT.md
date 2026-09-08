@@ -28,3 +28,36 @@ Dense inference는 RTX 3090에서 97문항, 34개 고유 논문에 3.44초가 �
 ## 다음 판정점
 
 라우팅은 계속 잠근다. 먼저 미회수 문항을 evidence length, question type, paragraph position별로 분석하고, 후보 합집합 안에서 lightweight re-ranking이 Recall@5를 올릴 수 있는지 검증한다. 같은 frozen 100문항에서 임의로 threshold를 조정하지 않는다.
+
+## 실패 계층화 결과
+
+- dense top-5 hit: 58/97 (59.79%)
+- BM25/dense 모두 hit: 40, dense만 hit: 18, BM25만 hit: 11, 둘 다 miss: 28
+- single-evidence hit@5: 65.00%; multiple-evidence: 51.35%
+- 100단락 초과 논문 hit@5: 20.00% (5문항뿐이므로 탐색적 결과)
+
+BM25-only 11문항 때문에 lexical 후보를 버리면 안 되며, 둘 다 놓친 28문항 때문에 reranking만으로 전체 문제를 해결할 수도 없다. Reranker 결과는 후보 생성 병목과 순위 병목을 분리하는 preflight로 해석한다.
+
+## R1.1 lightweight reranker 결과
+
+BM25 top-10과 dense top-10의 합집합(평균 15.15개)을 MiniLM cross-encoder로 재순위화했다.
+
+| 지표 | 결과 | Gate | 판정 |
+|---|---:|---:|---|
+| Candidate Recall | 0.7705 | - | 상한 확인 |
+| Recall@5 | 0.5190 | >=0.65 | FAIL |
+| nDCG@5 | 0.4296 | >=0.50 | FAIL |
+| MRR | 0.4719 | - | dense 0.3959 대비 개선 |
+| GPU wall time | 1.61s / 97 questions | - | 저비용 |
+
+첫 relevant paragraph를 위로 올리는 효과는 있었지만 복수 증거 회수와 top-5 recall은 개선하지 못했다. 이 reranker는 채택하지 않는다.
+
+## R1.2 section/title context 결과
+
+| Variant | Recall@5 | Recall@10 | MRR | nDCG@5 | 판정 |
+|---|---:|---:|---:|---:|---|
+| Plain dense | 0.5414 | 0.6872 | 0.3959 | 0.3846 | 기준 |
+| Section-aware passage | **0.5562** | **0.7556** | **0.4913** | **0.4484** | 개선, Gate FAIL |
+| Title query + section passage | 0.3326 | 0.4489 | 0.2575 | 0.2299 | 악화, 폐기 |
+
+Section metadata는 candidate 생성과 첫 relevant 순위를 개선했지만 Recall@5 0.65/nDCG@5 0.50 Gate에는 미달했다. 논문 제목을 질문에 반복하는 방식은 semantic signal을 희석한 것으로 추정되며 사용하지 않는다.

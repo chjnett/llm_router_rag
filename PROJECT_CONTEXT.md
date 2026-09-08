@@ -86,7 +86,7 @@ PubTables에서 개발한 routing policy가 SciTSR 등 외부 scientific documen
 
 Main contribution은 하나로 유지한다.
 
-Query-time VLM rescue는 extension이다.
+초기 ingestion-only parser pair는 Oracle Gate를 통과하지 못했다. 현재 main **후보**는 query-time selective Strong/visual rescue이며, R1.1 retrieval Gate와 후속 cost-quality Gate를 통과해야만 main architecture로 승격한다. ColPali는 별도 visual baseline/후보 경로다.
 
 ---
 
@@ -102,4 +102,3 @@ Capability-aware routing can identify pages where inexpensive processing is suff
 Selective strong processing preserves downstream scientific retrieval/QA utility while reducing ingestion cost relative to Always Strong.
 
 이 세 Claim과 직접 관련 없는 기능은 Main 실험 이후로 미룬다.
-

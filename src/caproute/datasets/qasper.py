@@ -46,6 +46,21 @@ def canonical_paragraphs(paper: dict[str, Any]) -> list[str]:
     return [text for text in paragraphs if normalize_evidence(text)]
 
 
+def contextual_paragraphs(paper: dict[str, Any]) -> list[str]:
+    """Return index-aligned paragraphs with document and section context."""
+    title = paper.get("title", "").strip()
+    rows: list[tuple[str, str]] = [("Abstract", paper.get("abstract", ""))]
+    rows.extend(
+        (section.get("section_name", ""), paragraph)
+        for section in paper.get("full_text", [])
+        for paragraph in section.get("paragraphs", [])
+    )
+    return [
+        f"Title: {title}\nSection: {section}\n{text}"
+        for section, text in rows if normalize_evidence(text)
+    ]
+
+
 @dataclass(frozen=True)
 class EvidenceAudit:
     paper_id: str

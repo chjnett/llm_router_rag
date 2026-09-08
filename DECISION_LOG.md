@@ -463,3 +463,47 @@ R1 baseline은 완료하지만 parser representation 및 routing 단계는 보�
 
 ### Consequence
 Dense는 BM25보다 Recall@5를 10.46%p 높였지만 절대 회수율은 낮다. 단순 RRF의 Recall 하락도 실패 결과로 보존한다. Retrieval 수리 전에는 selective parser의 효용을 평가하지 않는다.
+
+---
+
+## Decision 021
+
+### Date
+2026-09-08
+
+### Trigger
+BM25 top-10과 dense top-10 합집합을 고정 MiniLM cross-encoder로 재순위화했다.
+
+### Decision
+R1.1 reranker를 FAIL로 판정하고 채택하지 않는다. Parser routing, ColPali 및 전체 논문 확장은 계속 보류하며 section-aware chunk/query formulation을 다음 진단으로 수행한다.
+
+### Evidence
+- candidate Recall 0.7705, mean candidates 15.15
+- reranked Recall@5 0.5190 (Gate 0.65)
+- reranked nDCG@5 0.4296 (Gate 0.50)
+- MRR 0.4719; GPU wall time 1.61 seconds
+
+### Consequence
+현재 문제는 단순 candidate reranking만으로 해결되지 않는다. Canonical paragraph가 section/title context를 잃는 표현 문제를 먼저 검증한다.
+
+---
+
+## Decision 022
+
+### Date
+2026-09-08
+
+### Trigger
+Plain paragraph가 잃은 paper title/section context를 passage와 query에 선택적으로 추가해 frozen BGE retrieval을 비교했다.
+
+### Decision
+Section-aware passage는 유용한 개선으로 보존하지만 R1.2 Gate는 FAIL로 판정한다. Title query variant는 폐기한다. 개발 cohort의 반복 사용을 제한하기 위해 저비용 R1.3 수리를 한 번만 더 허용한다.
+
+### Evidence
+- section passage Recall@5/10: 0.5562/0.7556; MRR 0.4913; nDCG@5 0.4484
+- title query + section passage Recall@5/10: 0.3326/0.4489
+- Gate: Recall@5 >=0.65 and nDCG@5 >=0.50 — FAIL
+- automated tests: 18 passed
+
+### Consequence
+Section metadata는 이후 representation에 유지할 후보지만 성공으로 승격하지 않는다. R1.3 이후에는 같은 100문항에서 추가 조합을 반복 탐색하지 않고 별도 split을 만든다.

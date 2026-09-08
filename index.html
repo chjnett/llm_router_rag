@@ -158,13 +158,13 @@
     <div class="status-row">
       <article class="panel verdict">
         <span class="badge">RAG R0 · PASS</span>
-        <strong>R0는 통과했지만 R1 dense Recall@5가 54.14%라 parser routing을 아직 시작하지 않는다.</strong>
-        <p>Dense는 BM25보다 10.46%p 개선됐지만 증거 절반 가까이를 놓칩니다. 단순 hybrid도 49.78%로 하락해, 현재 병목은 라우터가 아니라 검색입니다.</p>
+        <strong>Section context는 검색을 개선했지만 R1.2 Recall@5 55.62%로 Gate 65%에 미달했다.</strong>
+        <p>Recall@10은 75.56%, MRR은 0.491로 개선됐습니다. 제목을 query에 추가한 방식은 33.26%로 악화되어 폐기하며, Routing은 계속 잠급니다.</p>
       </article>
       <aside class="panel next">
         <span class="eyebrow">Next action</span>
         <div class="step">R1.1 Retrieval Repair</div>
-        <p>미회수 문항을 길이·질문 유형·증거 위치별로 분석하고 top-10 후보 합집합(상한 77.05%)을 경량 재순위화합니다. Routing은 계속 잠급니다.</p>
+        <p>개발 cohort 과적합을 막기 위해 adjacent-window/section candidate rescue를 한 번만 더 시험합니다. 실패하면 같은 100문항 탐색을 멈추고 별도 split과 전체 논문 preflight로 이동합니다.</p>
       </aside>
     </div>
 
@@ -265,6 +265,10 @@
     <section id="log">
       <div class="section-head"><div><span class="eyebrow">Experiment log</span><h2>무슨 일이 있었는가</h2></div><p>실패와 protocol 차이를 포함한 요약 로그입니다.</p></div>
       <div class="log">
+        <div class="log-row"><time>09-08</time><span class="kind">R1.2 FAIL</span><span>Section passage R@5 55.62%, R@10 75.56%, nDCG@5 0.4484. 개선됐지만 동결 Gate 미달.</span></div>
+        <div class="log-row"><time>09-08</time><span class="kind">VARIANT DROP</span><span>Title query + section passage는 R@5 33.26%로 악화. 폐기하고 추가 조합 탐색을 1회로 제한.</span></div>
+        <div class="log-row"><time>09-08</time><span class="kind">RERANK FAIL</span><span>Candidate Recall 77.05%였지만 MiniLM top-5 Recall 51.90%, nDCG@5 0.4296. Section-aware 표현 수리로 이동.</span></div>
+        <div class="log-row"><time>09-08</time><span class="kind">R1.1 AUDIT</span><span>Dense hit@5 58/97. BM25-only 11, dense-only 18, 둘 다 miss 28. 복수 증거와 긴 논문에서 하락.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">R1 DENSE</span><span>BGE dense Recall@5 54.14%, nDCG@5 0.3846. RTX 3090에서 97문항/34논문 3.44초.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">HYBRID FAIL</span><span>단순 RRF Recall@5 49.78%로 dense보다 하락. top-10 후보 합집합 상한은 77.05%; 재순위화 전 routing 보류.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">R1 BM25</span><span>97문항: Recall@1/5/10 16.90%/43.68%/56.65%, MRR 0.3645, nDCG@5 0.3238. Dense 비교 전 routing 보류.</span></div>

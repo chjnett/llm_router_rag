@@ -1,6 +1,6 @@
 # Architecture
 
-## Main Architecture
+## Original Ingestion Architecture (P1 Oracle FAIL)
 
 ```text
 Scientific PDF
@@ -181,9 +181,9 @@ feature 예:
 
 ---
 
-## 8. Query-Time Visual Rescue
+## 8. Current Candidate: Query-Time Selective Rescue
 
-Extension only.
+현재 feasibility 후보이며 아직 검증된 Main 결과가 아니다. R1.1 retrieval repair Gate 통과 전에는 Strong/VLM rescue를 구현하지 않는다.
 
 ```text
 Question
@@ -201,5 +201,6 @@ Confidence / Query Type
         Answer
 ```
 
-Main 결과가 통과한 뒤 구현한다.
+## 9. Candidate Visual Retrieval Branch
 
+ColPali는 parser가 아니라 visual retriever로 취급한다. 작은 multimodal preflight에서 Always Text, Always ColPali, Rule Selective, Oracle Selective의 retrieval 품질·GPU 시간·index bytes를 비교한 뒤에만 routing 경로로 승격한다.

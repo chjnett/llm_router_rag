@@ -71,7 +71,7 @@
 - A/B/C/D option parsing
 - task-specific answer extractors
 
-## 첫 번째 작업
+## 신규 repository에서의 첫 번째 작업
 
 코딩을 바로 시작하지 말고 먼저 `MIGRATION_PLAN.md`를 실제 기존 repository 분석 결과로 채워라.
 
@@ -104,33 +104,22 @@
 
 그 후에만 P0 구현을 시작하라.
 
-## 지금 구현할 범위: P0만
+## 현재 repository의 작업 범위
 
-P0 목표:
+P0/P1은 완료되었고 현재 parser pair의 Oracle Gate는 실패했다. `CURRENT_RESEARCH_STATUS_AND_NEXT_PLAN.md`와 최신 `DECISION_LOG.md`를 읽고 활성 Gate만 수행한다. 현재는 QASPER R1.1 retrieval repair preflight이며 parser Router는 잠겨 있다.
 
-1. repository scaffold
-2. config system
-3. logging / seed / environment metadata
-4. PubTables-1M subset loader
-5. Cheap Parser interface
-6. Strong Parser interface
-7. Canonical IR
-8. parsing quality evaluator
-9. latency / VRAM benchmark harness
-10. raw prediction caching
-11. 300~500 sample screening 실행 가능 구조
-
-## 아직 하지 말 것
+## 현재 아직 하지 말 것
 
 - Router training
 - threshold tuning
-- QASPER RAG
 - SPIQA RAG
 - PDF-MVQA full retrieval
 - ColPali full baseline
 - Query-time VLM rescue
 - 전체 dataset inference
 - 대규모 hyperparameter sweep
+
+작은 ColPali/멀티모달 preflight도 R1.1 Gate와 데이터 접근성 확인 후에만 수행한다.
 
 ## 절대 지켜야 할 연구 규칙
 
@@ -152,4 +141,3 @@ P0 목표:
 Gate가 FAIL이면 다음 Phase로 자동 진행하지 않는다.
 
 먼저 실패 원인을 분석하고 다음 후보를 제안한다.
-

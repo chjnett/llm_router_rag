@@ -143,6 +143,17 @@ PDF-MVQA.
 - Proposed
 - Visual baseline
 
+### R1.1 Retrieval Repair Gate
+
+QASPER 100문항은 text-control 개발 cohort다. BM25 top-10과 frozen dense top-10 후보에서 고정 lightweight reranker를 평가한다.
+
+```text
+Recall@5 >= 0.65
+nDCG@5 >= 0.50
+```
+
+통과 전 parser representation/router 효과를 측정하지 않는다. 이 cohort에서 고른 설정은 별도 document-disjoint split에서 다시 고정 평가한다.
+
 ---
 
 ## P8 — QA
@@ -168,6 +179,8 @@ ColPali / ViDoRe-compatible setup.
 - GPU time
 - visual-heavy subset
 
+전체 실행 전에 20~50 question/page preflight를 수행한다. full dataset 다운로드 전에 manifest, disk budget, index bytes/page를 확인한다.
+
 ---
 
 ## P10 — Extension
@@ -177,4 +190,3 @@ Main 결과가 성공했을 때만:
 - query-time rescue
 - top-k page reprocessing
 - rescue trigger ablation
-

@@ -156,6 +156,22 @@ def test_reciprocal_rank_fusion_rewards_consensus():
     assert reciprocal_rank_fusion([[0, 1, 2], [2, 1, 0]], k=60)[0] == 0
 
 
+def test_analysis_bucket_is_closed_on_boundary():
+    from caproute.cli.analyze_qasper_retrieval import bucket
+    assert bucket(128, (128, 256), ("short", "medium", "long")) == "short"
+    assert bucket(129, (128, 256), ("short", "medium", "long")) == "medium"
+    assert bucket(999, (128, 256), ("short", "medium", "long")) == "long"
+
+
+def test_contextual_qasper_paragraphs_preserve_canonical_index_order():
+    from caproute.datasets.qasper import canonical_paragraphs, contextual_paragraphs
+    paper = {"title": "Paper", "abstract": "Summary", "full_text": [{"section_name": "Method", "paragraphs": ["Details"]}]}
+    assert canonical_paragraphs(paper) == ["Summary", "Details"]
+    contextual = contextual_paragraphs(paper)
+    assert contextual[0].endswith("Summary")
+    assert "Section: Method" in contextual[1]
+
+
 def test_tatr_span_postprocessing_merges_claimed_grid_cells():
     from caproute.cli.tatr_structure_preflight import grid_cells
     items = [
