@@ -1,0 +1,12 @@
+seed: 42
+dataset:
+  split: validation
+  archive: data/raw/qasper/qasper-train-dev-v0.3.tgz
+  audit: outputs/r0_qasper_audit/audit.json
+retrieval:
+  tokenizer: unicode_alphanumeric_lower
+  bm25_k1: 1.2
+  bm25_b: 0.75
+  cutoffs: [1, 5, 10]
+outputs:
+  root: outputs/r1_qasper_bm25

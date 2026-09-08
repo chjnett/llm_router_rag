@@ -77,10 +77,14 @@ Frozen rule: exact table count AND GriTS-Top ≥ 0.80 AND GriTS-Loc ≥ 0.50.
 
 - [x] QASPER text-control 및 SPIQA multimodal 순서 결정
 - [x] R0 evidence audit 기준 고정
-- [ ] QASPER metadata cache 및 hash
-- [ ] validation 100-question manifest 고정
-- [ ] evidence type/mapping audit
-- [ ] Strong both-fail repair 후보 평가
+- [x] QASPER metadata cache 및 hash
+- [x] validation 100-question manifest 고정
+- [x] evidence type/mapping audit — **PASS (100 usable, 93.68% exact mapping)**
+- [x] R1 Oracle evidence retrieval
+- [x] R1 BM25 baseline — Recall@5 0.4368, nDCG@5 0.3238
+- [ ] R1 frozen dense baseline
+- [ ] R1 BM25+dense hybrid baseline
+- [ ] Strong both-fail repair 후보 평가 (RAG retrieval 차이 확인 전 보류)
 
 ---
 

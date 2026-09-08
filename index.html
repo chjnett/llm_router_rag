@@ -157,14 +157,14 @@
 
     <div class="status-row">
       <article class="panel verdict">
-        <span class="badge">TATR 300 · NEAR-MISS FAIL</span>
-        <strong>Top과 속도는 통과했지만 Loc 0.494로 고정 기준 0.500에 미달했다.</strong>
-        <p>300/300 완주, Top 0.866, p50 135.79ms입니다. 기준은 완화하지 않으며 P2를 잠그고 downstream RAG의 선택적 page/table rescue로 피벗합니다.</p>
+        <span class="badge">RAG R0 · PASS</span>
+        <strong>QASPER 100문항의 증거-단락 매핑률 93.68%로 고정 기준 90%를 통과했다.</strong>
+        <p>100문항 모두 사용 가능한 텍스트 증거를 가집니다. 단, 표·그림 증거는 0건이므로 현재 결과는 text-control이며 멀티모달 성능 주장이 아닙니다.</p>
       </article>
       <aside class="panel next">
         <span class="eyebrow">Next action</span>
-        <div class="step">Parser pair repair</div>
-        <p>QASPER validation 100문항으로 evidence/chunk 정렬을 먼저 검증합니다. 통과 후 BM25·dense baseline과 SPIQA table/figure subset으로 확장합니다.</p>
+        <div class="step">R1 Retrieval Baseline</div>
+        <p>Oracle과 BM25 측정을 마쳤습니다. BM25 Recall@5는 43.68%로 낮아, 동일 조건의 frozen dense·hybrid 검색으로 다음 판정점을 확인합니다.</p>
       </aside>
     </div>
 
@@ -207,7 +207,8 @@
         <div class="phase complete"><span class="id">P0-A · COMPLETE</span><strong>Harness & Cost</strong><p>Canonical IR, cache, latency, VRAM, power, 300-page 실행 완료.</p></div>
         <div class="phase complete"><span class="id">P0-B · COMPLETE</span><strong>Official Quality</strong><p>Top/Loc 및 시각 audit 완료. Content는 후속 보완.</p></div>
         <div class="phase"><span class="id">P1 · FAIL / REPAIR</span><strong>Capability / Oracle</strong><p>Oracle 절감 9.86%. 파서 조합 개선 후 재검증.</p></div>
-        <div class="phase"><span class="id">P2+ · LOCKED</span><strong>Router & RAG</strong><p>분류기, calibration, external dataset, retrieval·QA 평가.</p></div>
+        <div class="phase complete"><span class="id">R0 · PASS</span><strong>QASPER Evidence Audit</strong><p>100 usable, exact paragraph mapping 93.68%.</p></div>
+        <div class="phase"><span class="id">R1 · ACTIVE</span><strong>Retrieval Baselines</strong><p>Oracle → BM25 → dense → hybrid 순서로 평가.</p></div>
       </div>
     </section>
 
@@ -263,6 +264,9 @@
     <section id="log">
       <div class="section-head"><div><span class="eyebrow">Experiment log</span><h2>무슨 일이 있었는가</h2></div><p>실패와 protocol 차이를 포함한 요약 로그입니다.</p></div>
       <div class="log">
+        <div class="log-row"><time>09-08</time><span class="kind">R1 BM25</span><span>97문항: Recall@1/5/10 16.90%/43.68%/56.65%, MRR 0.3645, nDCG@5 0.3238. Dense 비교 전 routing 보류.</span></div>
+        <div class="log-row"><time>09-08</time><span class="kind">R0 PASS</span><span>QASPER 100/100 usable, 텍스트 증거 163/174 exact mapping(93.68%). R1 Oracle·BM25 허용.</span></div>
+        <div class="log-row"><time>09-08</time><span class="kind">LIMIT</span><span>동결 100문항의 evidence type은 paragraph 100, 표·그림 0. 현재 결과는 text-control이며 multimodal 주장이 아님.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">RAG R0</span><span>QASPER 100-question evidence audit → retrieval baseline → SPIQA multimodal 순서와 Gate 고정.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">DISK</span><span>SPIQA 전체 약 33.6GB는 현재 약 10GB 여유에 부적합. metadata/subset 우선 전략 채택.</span></div>
         <div class="log-row"><time>09-08</time><span class="kind">300 FAIL</span><span>TATR 300/300: Top 0.866 PASS, Loc 0.494 near-miss FAIL, p50 135.79ms PASS.</span></div>

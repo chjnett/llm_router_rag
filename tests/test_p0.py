@@ -120,6 +120,37 @@ def test_pymupdf_candidate_name_and_settings_affect_fingerprint():
     assert candidate.name == "pymupdf_refine"
 
 
+def test_qasper_evidence_audit_records_unique_tied_and_float_evidence():
+    from caproute.datasets.qasper import audit_question
+    paper = {
+        "abstract": "Repeated paragraph.",
+        "full_text": [{"paragraphs": ["Repeated paragraph.", "Unique evidence."]}],
+    }
+    qa = {
+        "question_id": "q1", "question": "Why?",
+        "answers": [{"answer": {"unanswerable": False, "evidence": [
+            "Repeated paragraph.", "Unique evidence.", "FLOAT SELECTED", "Missing evidence."
+        ]}}],
+    }
+    result = audit_question("p1", paper, qa)
+    assert result.evidence_type == "mixed"
+    assert result.textual_evidence_count == 3
+    assert result.unique_mapping_count == 1
+    assert result.tied_mapping_count == 1
+    assert len(result.unmapped_evidence) == 1
+
+
+def test_bm25_and_retrieval_metrics_rank_matching_evidence_first():
+    from caproute.evaluation.retrieval import bm25_rank, retrieval_metrics
+    documents = ["cats sleep on mats", "transformers retrieve scientific evidence", "unrelated text"]
+    ranking = bm25_rank("scientific evidence retrieval", documents)
+    assert ranking[0] == 1
+    metrics = retrieval_metrics(ranking, {1})
+    assert metrics["recall_at_1"] == 1.0
+    assert metrics["mrr"] == 1.0
+    assert metrics["ndcg_at_5"] == 1.0
+
+
 def test_tatr_span_postprocessing_merges_claimed_grid_cells():
     from caproute.cli.tatr_structure_preflight import grid_cells
     items = [

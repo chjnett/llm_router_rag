@@ -393,3 +393,50 @@ QASPER validation 100문항 evidence audit을 text-control 첫 Gate로 사용하
 
 ### Consequence
 QASPER 결과를 multimodal 최종 주장으로 사용하지 않는다. R0는 evidence/chunk/page alignment와 retrieval baseline 가능성만 검증한다.
+
+---
+
+## Decision 018
+
+### Date
+2026-09-08
+
+### Trigger
+동결된 QASPER validation 100문항에서 human evidence와 canonical paragraph의 정렬을 측정했다.
+
+### Decision
+R0 evidence audit을 PASS하고 R1 retrieval baseline을 허용한다. 다음 실행 순서는 Oracle evidence retrieval 후 BM25이며, dense/hybrid는 BM25 결과 확인 뒤 수행한다.
+
+### Evidence
+- selected/usable questions: 100/100
+- textual evidence items: 174
+- mapped items: 163 (93.68%; Gate 90%)
+- unique/tied/unmapped: 163/0/11
+- evidence types: paragraph 100, figure/table 0, mixed 0
+- automated tests: 14 passed
+
+### Consequence
+현재 표본은 text-control로만 사용한다. 첫 100문항에 표·그림 증거가 없으므로 멀티모달 효과를 주장하지 않으며, SPIQA 평가 전까지 해당 한계를 모든 요약에 유지한다.
+
+---
+
+## Decision 019
+
+### Date
+2026-09-08
+
+### Trigger
+R0 고정 문항에 Oracle evidence ranking과 BM25 검색을 실행했다.
+
+### Decision
+BM25 단독 결과로 parser routing을 시작하지 않는다. 같은 질문·단락·지표를 유지한 frozen dense baseline과 hybrid를 다음 판정점으로 실행한다.
+
+### Evidence
+- evaluated/skipped: 97/3 questions
+- Oracle Recall@5 0.9936, nDCG@5 1.0000
+- BM25 Recall@1/5/10: 0.1690/0.4368/0.5665
+- BM25 MRR 0.3645, nDCG@5 0.3238
+- automated tests: 15 passed
+
+### Consequence
+lexical baseline은 구현과 평가 sanity check를 통과했지만 evidence recovery가 낮다. Dense 검색도 낮으면 문서 처리 라우팅 전에 retrieval formulation을 수리한다.
