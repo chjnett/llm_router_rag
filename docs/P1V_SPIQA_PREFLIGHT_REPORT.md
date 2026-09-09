@@ -109,6 +109,8 @@ Git에 보존되는 고정 정책과 인증 요약은 `artifacts/p1v_spiqa_selec
 
 Certification에서 R@1은 +3.70%p, R@5는 +1.23%p, MRR은 +0.0266 개선됐다. 그러나 paired bootstrap 95% CI는 R@1 `[-1.23,+9.88]%p`, MRR `[-0.0103,+0.0704]`이며 McNemar exact p=`0.375`다. Selector-only correct 4건, caption-only correct 1건이다.
 
+후속 SciVQA compute audit에서 13-feature selector가 ColSmol score·margin·entropy를 입력으로 사용한다는 점을 비용 관점에서 재검토했다. 여기서 말하는 route rate는 **최종 Strong 결과 선택률**이며 Strong 호출 절감률이 아니다. 현재 full selector는 두 경로를 모두 계산한 뒤 더 나은 결과를 고르는 quality fuser로 해석한다.
+
 따라서 point-estimate Gate는 PASS하지만 통계적으로 우월하거나 비열등하다고 인증하지 않는다. SPIQA test-A 118개 논문을 모두 개발/확인/학습/보정/인증에 배정했으므로 같은 데이터의 추가 튜닝을 금지한다. 다음 해제 조건은 새로운 external dataset 또는 더 큰 독립 certification cohort다.
 
 ## Reproduction

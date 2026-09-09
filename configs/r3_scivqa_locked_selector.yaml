@@ -1,0 +1,10 @@
+seed: 42
+bootstrap_samples: 10000
+policy_lock: artifacts/p1v_spiqa_selector_policy_lock.json
+external_results: outputs/r3_scivqa_external_retrieval/results.json
+gate:
+  min_r1_retention: 0.95
+  min_mrr_retention: 0.95
+  min_realized_strong_query_saving: 0.15
+outputs:
+  root: outputs/r3_scivqa_locked_selector

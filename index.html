@@ -147,32 +147,32 @@
   <main id="main">
     <div class="eyebrow">Capability-aware selective document processing</div>
     <h1>과학 논문 PDF를 언제 빠르게, 언제 강하게 처리할 것인가</h1>
-    <p class="lead">Cheap 문서 처리와 Strong/visual 처리를 질문별로 선택하는 연구입니다. SPIQA에서 두 경로의 보완성은 재현됐지만 실제 선택기는 독립 표본에서 성능이 하락해, 추가 GPU 확대보다 학습 데이터 확장이 먼저입니다.</p>
+    <p class="lead">Cheap 문서 처리와 Strong/visual 처리를 질문별로 선택하는 연구입니다. SciVQA 외부 데이터에서 품질 융합은 유의하게 성공했지만, 현재 selector가 Strong 점수를 먼저 요구해 실제 계산 절감은 0%였습니다. 다음은 Cheap-only early router입니다.</p>
     <div class="hero-meta">
-      <span>마지막 실험: <strong>2026-09-08 KST</strong></span>
-      <span>표본: <strong>300 pages / 300 documents</strong></span>
+      <span>마지막 실험: <strong>2026-09-09 KST</strong></span>
+      <span>외부 표본: <strong>235 papers / 1,440 queries</strong></span>
       <span>GPU: <strong>RTX 3090 24GB</strong></span>
       <span>Git: <strong>main · synced</strong></span>
     </div>
 
     <div class="status-row">
       <article class="panel verdict">
-        <span class="badge hold">P1-V · POINT PASS / STAT OPEN</span>
-        <strong>확대 선택기는 독립 인증에서 R@1을 67.9%에서 71.6%로 높였다.</strong>
-        <p>ColSmol 호출은 12.35%였지만 95% CI가 0을 포함합니다. 개선 신호는 보존하되 통계적 인증 전에는 성공을 확정하지 않습니다.</p>
+        <span class="badge hold">R3 · QUALITY PASS / COMPUTE FAIL</span>
+        <strong>SciVQA에서 품질은 유의하게 개선됐지만 현재 구조는 Strong 계산을 줄이지 못한다.</strong>
+        <p>R@1은 Always ColSmol 64.79%에서 69.65%로 상승했습니다. 그러나 Strong-derived feature 때문에 선택 전에 ColSmol이 이미 실행됩니다.</p>
       </article>
       <aside class="panel next">
         <span class="eyebrow">Next action</span>
-        <div class="step">External Cert</div>
-        <p>SPIQA test-A 118개 논문을 모두 분리 사용했습니다. 같은 표본 재튜닝 없이 새로운 multimodal dataset의 독립 인증 표본을 확보합니다.</p>
+        <div class="step">Early Router</div>
+        <p>Cheap/query/Caption 신호만으로 Strong 실행 여부를 먼저 결정합니다. 정책 잠금 뒤 SciVQA test를 한 번만 엽니다.</p>
       </aside>
     </div>
 
     <div class="metrics" aria-label="핵심 지표">
-      <div class="metric"><small>Certification R@1</small><strong>71.6%</strong><span>Caption 67.9% · +3.7%p</span></div>
-      <div class="metric"><small>ColSmol 호출률</small><strong>12.35%</strong><span>10 / 81 questions</span></div>
-      <div class="metric"><small>R@1 95% CI</small><strong>-1.2~9.9</strong><span>%p · 통계 미확정</span></div>
-      <div class="metric"><small>McNemar</small><strong>p=.375</strong><span>4 wins / 1 loss</span></div>
+      <div class="metric"><small>External selected R@1</small><strong>69.65%</strong><span>Always Strong 64.79% · +4.86%p</span></div>
+      <div class="metric"><small>R@1 95% CI</small><strong>3.47~6.25</strong><span>%p · 1,440 paired queries</span></div>
+      <div class="metric"><small>McNemar</small><strong>p=2.97e-12</strong><span>88 wins / 18 losses</span></div>
+      <div class="metric"><small>Real compute saving</small><strong>0%</strong><span>Strong-derived feature 때문에 FAIL</span></div>
     </div>
 
     <section id="reading">
@@ -221,7 +221,7 @@
         <div class="phase"><span class="id">P1 · FAIL / REPAIR</span><strong>Capability / Oracle</strong><p>Oracle 절감 9.86%. 파서 조합 개선 후 재검증.</p></div>
         <div class="phase complete"><span class="id">R0 · PASS</span><strong>QASPER Evidence Audit</strong><p>100 usable, exact paragraph mapping 93.68%.</p></div>
         <div class="phase complete"><span class="id">R1 · COMPLETE</span><strong>Retrieval Baselines</strong><p>Dense R@5 54.14%; RRF 49.78%.</p></div>
-        <div class="phase active"><span class="id">P1-V · CONDITIONAL</span><strong>Visual Selector</strong><p>Point Gate PASS, external statistical certification 필요.</p></div>
+        <div class="phase active"><span class="id">R3 · REPAIR</span><strong>Cheap-only Early Router</strong><p>외부 quality PASS, compute FAIL. causal pre-router 필요.</p></div>
       </div>
     </section>
 
@@ -233,8 +233,8 @@
         <tr><td>ColSmol-256M</td><td class="num">0.340</td><td class="num">0.750</td><td class="num">0.5147</td><td>Always strong 실패</td></tr>
         <tr><td>Caption/CLIP oracle</td><td class="num">0.810</td><td class="num">0.950</td><td class="num">0.8626</td><td>선택 가능성 상한</td></tr>
         <tr><td>Caption/ColSmol oracle</td><td class="num">0.770</td><td class="num">0.950</td><td class="num">0.8488</td><td>선택 가능성 상한</td></tr>
-        <tr><td>학습 ColSmol selector</td><td class="num"><strong>0.620</strong></td><td class="num">0.870</td><td class="num">0.7285</td><td>36% route · Gate FAIL</td></tr>
-        <tr><td>확대 locked selector</td><td class="num"><strong>0.716</strong></td><td class="num">0.951</td><td class="num">0.8244</td><td>별도 81q · 12.35% route</td></tr>
+        <tr><td>학습 ColSmol selector</td><td class="num"><strong>0.620</strong></td><td class="num">0.870</td><td class="num">0.7285</td><td>Strong 선택 36% · Gate FAIL</td></tr>
+        <tr><td>확대 locked selector</td><td class="num"><strong>0.716</strong></td><td class="num">0.951</td><td class="num">0.8244</td><td>별도 81q · Strong 선택 12.35%</td></tr>
       </tbody></table></div>
       <p class="caption">앞의 다섯 행과 초기 selector는 100문항 확인 표본, 확대 locked selector는 별도 81문항 인증 표본입니다. Oracle은 정답을 본 이상적 상한이며 실제 시스템 성능이 아닙니다.</p>
     </section>
@@ -291,12 +291,15 @@
     <section id="log">
       <div class="section-head"><div><span class="eyebrow">Experiment log</span><h2>무슨 일이 있었는가</h2></div><p>실패와 protocol 차이를 포함한 요약 로그입니다.</p></div>
       <div class="log">
+        <div class="log-row"><time>09-09</time><span class="kind">COST CORRECTION</span><span>Full selector는 ColSmol score 특징을 요구해 실제 Strong compute saving 0%. 선택률을 호출률로 해석하지 않음.</span></div>
+        <div class="log-row"><time>09-09</time><span class="kind">SCIVQA QUALITY</span><span>1,440q frozen fusion R@1 64.79→69.65%, 95% CI +3.47~+6.25%p, McNemar p=2.97e-12.</span></div>
+        <div class="log-row"><time>09-09</time><span class="kind">EXTERNAL BASE</span><span>SciVQA Caption/ColSmol/Oracle R@1 36.53/64.79/73.96%. 235 papers, SPIQA overlap 0.</span></div>
         <div class="log-row"><time>09-09</time><span class="kind">500M STOP</span><span>원본 50q에서 256M→500M: R@1 58→58%, MRR .7209→.7229. VRAM·저장공간 증가 대비 이득 없어 256M 유지.</span></div>
         <div class="log-row"><time>09-09</time><span class="kind">MODEL FREEZE</span><span>ColSmol-256M + 원본 해상도를 동결. SPIQA test-A 추가 탐색을 종료하고 외부 table/figure 데이터로 이동.</span></div>
         <div class="log-row"><time>09-09</time><span class="kind">RESOLUTION PASS</span><span>동일 50q/ColSmol-256M에서 224px→원본 이미지: R@1 36→58%(+22%p), MRR .5727→.7209.</span></div>
         <div class="log-row"><time>09-09</time><span class="kind">TABLE GAIN</span><span>원본 해상도에서 표 R@1 52→80%, 그림 R@1 20→36%. 다음은 동일 표본의 ColSmol-500M 1회 비교.</span></div>
         <div class="log-row"><time>09-09</time><span class="kind">DISK CLEAN</span><span>오프라인 로드 검증 후 중복 256M cache 약 479MiB만 삭제. 추론 cache·원본 데이터·두 Git 저장소는 보존.</span></div>
-        <div class="log-row"><time>09-09</time><span class="kind">CERT OPEN</span><span>81q locked policy: R@1 67.90→71.60%, MRR 0.7978→0.8244, ColSmol route 12.35%.</span></div>
+        <div class="log-row"><time>09-09</time><span class="kind">CERT OPEN</span><span>81q locked policy: R@1 67.90→71.60%, MRR 0.7978→0.8244, ColSmol result selected 12.35%.</span></div>
         <div class="log-row"><time>09-09</time><span class="kind">STAT OPEN</span><span>R@1 difference 95% CI -1.23~+9.88%p, McNemar p=.375. 점 추정 PASS이나 통계 인증 미완료.</span></div>
         <div class="log-row"><time>09-09</time><span class="kind">POLICY LOCK</span><span>Train 286 + calibration 94에서 threshold .392054 고정 후 certification 81을 한 번만 평가.</span></div>
         <div class="log-row"><time>09-09</time><span class="kind">STALL RECOVERY</span><span>Online model init가 6h 이상 정지. 중단 후 502MB local snapshot/offline mode로 세 분할 정상 완료.</span></div>

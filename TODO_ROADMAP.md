@@ -104,15 +104,19 @@ Frozen rule: exact table count AND GriTS-Top ≥ 0.80 AND GriTS-Loc ≥ 0.50.
 - [x] P1-V input resolution screen — 256M R@1 0.36→0.58, MRR 0.5727→0.7209
 - [x] P1-V ColSmol-500M screen — STOP (R@1 동일 0.58, MRR +0.002, 표 R@1 -0.04)
 - [x] visual representation freeze — ColSmol-256M + original-resolution
-- [ ] 새 external multimodal cohort에서 통계적 certification
-- [ ] external cohort의 license/image access/question-reference mapping audit
+- [x] SciVQA validation license/image/caption/question-reference audit — PASS (235 papers, 240 images, 1,440 answerable)
+- [x] Frozen full selector external quality evaluation — PASS (R@1 0.6479→0.6965, CI excludes 0)
+- [x] Realized compute audit — **FAIL** (Strong-derived features 때문에 Strong compute saving 0%)
+- [ ] Cheap-only early router 학습·calibration lock
+- [ ] SciVQA test manifest를 policy lock 이후 생성
+- [ ] SciVQA test one-shot compute-aware certification
 - [ ] Strong both-fail repair 후보 평가 (RAG retrieval 차이 확인 전 보류)
 
 ---
 
 # Week 3 — P2 Router
 
-**현재 잠금:** 확대 selector는 certification 점 추정 R@1 `0.679→0.716`으로 PASS했지만 95% CI가 0을 포함한다. 같은 SPIQA test-A 재튜닝은 금지하며 external certification 전에는 Full P2로 승격하지 않는다.
+**현재 잠금:** full 13-feature selector는 SciVQA validation에서 품질 개선이 통계적으로 재현됐지만 Strong-derived 특징 때문에 계산을 줄이지 못한다. Cheap-only early router와 미개봉 SciVQA test 인증 전에는 Full P2로 승격하지 않는다.
 
 - [ ] feature extractor
 - [ ] Logistic Regression

@@ -2,7 +2,7 @@
 
 ## 한 줄 결론
 
-SPIQA 초기 50→100 selector는 실패했지만, 남은 논문을 train 286 / calibration 94 / certification 81로 완전히 분리한 확대 정책은 인증 점 추정 R@1 `0.679→0.716`, MRR `0.7978→0.8244`, ColSmol route `12.35%`로 Gate를 통과했다. 다만 95% CI가 0을 포함하고 McNemar p=`0.375`이므로 **성능 개선 신호는 있으나 통계적 인증은 미완료**다. 같은 test-A 재튜닝을 금지하고 external certification으로 이동한다.
+SciVQA validation 1,440질의에서 frozen selector의 R@1은 Always ColSmol `0.6479`에서 `0.6965`로 유의하게 상승했다(95% CI `[+0.0347,+0.0625]`). 그러나 selector가 ColSmol 점수 특징을 요구해 **실제 Strong 계산 절감은 0%**다. 현재 결과는 quality fusion PASS / compute-aware routing FAIL이며, 다음은 Cheap-only early router를 잠근 뒤 미개봉 SciVQA test에서 1회 인증하는 것이다.
 
 ## 무엇이 확인됐는가
 
@@ -18,14 +18,16 @@ SPIQA 초기 50→100 selector는 실패했지만, 남은 논문을 train 286 / 
 | QASPER R2-P | cached adjacent recall 97.06%, Strong time -18.26% | cache 조건부 PASS |
 | SPIQA CLIP confirmation | caption R@1 0.65, oracle 0.81 | 보완성 PASS |
 | SPIQA ColSmol confirmation | caption R@1 0.65, oracle 0.77 | 보완성 PASS |
-| SPIQA initial selector | R@1 0.62, MRR 0.7285, route 36% | 50→100 확인 FAIL |
-| SPIQA expanded selector | R@1 0.716, MRR 0.8244, route 12.35% | point PASS, 통계 INCONCLUSIVE |
+| SPIQA initial selector | R@1 0.62, MRR 0.7285, Strong 선택 36% | 50→100 확인 FAIL |
+| SPIQA expanded selector | R@1 0.716, MRR 0.8244, Strong 선택 12.35% | point PASS, 통계 INCONCLUSIVE |
+| SciVQA external quality | R@1 0.6479→0.6965, CI excludes 0 | quality fusion PASS |
+| SciVQA realized compute | Strong-derived 특징으로 사전 계산 필요 | saving 0%, routing FAIL |
 
 ## P1-V multimodal 결론
 
 Visual retrieval을 항상 쓰는 방식은 실패했다. 100문항에서 CLIP R@1은 0.41, ColSmol은 0.34로 caption 0.65보다 낮다. Oracle 결합은 각각 0.81/0.77이므로 질문별 보완성은 존재한다. 그러나 추론 가능 신호로 학습한 ColSmol 선택기는 train R@1 0.90에서 confirmation R@1 0.62로 무너졌다. 현재 병목은 GPU 모델 크기가 아니라 **선택 정책의 데이터 효율과 일반화**다. 상세 수치는 `docs/P1V_SPIQA_PREFLIGHT_REPORT.md`에 있다.
 
-확대 실험에서 별도 train/calibration 380문항을 확보하고 정책을 인증 전에 잠갔다. Certification의 R@1 차이는 +3.70%p였지만 bootstrap 95% CI `[-1.23,+9.88]%p`, McNemar p=`0.375`다. 다음 허용 작업은 test-A 재튜닝이 아니라 새로운 external multimodal cohort의 접근성·라이선스·크기를 점검하는 것이다.
+확대 실험에서 별도 train/calibration 380문항을 확보하고 정책을 인증 전에 잠갔다. Certification의 R@1 차이는 +3.70%p였지만 bootstrap 95% CI `[-1.23,+9.88]%p`, McNemar p=`0.375`다. SciVQA에서 품질 일반화는 확인했지만 비용 인과성이 실패했으므로, 다음 허용 작업은 Strong 특징을 제거한 early router 수리다.
 
 ## 현재 결과를 어떻게 이해해야 하는가
 
@@ -138,3 +140,13 @@ Logistic Regression → ExtraTrees → XGBoost 순서다. Calibration/Certificat
 동일 50문항·원본 해상도에서 ColSmol-500M도 한 번 비교했다. 전체 R@1은 0.58로 동일했고 MRR은 0.7209→0.7229(+0.002)에 그쳤다. 표 R@1은 0.80→0.76으로 하락하고 그림 R@1은 0.36→0.40으로 상승했다. 50문항 중 MRR 개선 7건, 악화 6건, 동일 37건이다. Peak VRAM은 3.92→4.38GiB, 로컬 모델 저장공간은 약 479→954MiB로 증가했다.
 
 따라서 현재 pair에서는 **ColSmol-256M + 원본 해상도**를 동결하고 500M은 채택하지 않는다. 세부 수치·결과/가중치 hash는 `artifacts/p1v_spiqa_model_resolution_screen.json`에 보존한다. SPIQA test-A에서 추가 모델/threshold 탐색을 하지 않고 외부 table/figure scientific-document 데이터 검증으로 이동한다.
+
+## 2026-09-09 SciVQA 외부 validation
+
+MIT 라이선스 SciVQA validation에서 unanswerable 240개를 결과 전에 제외하고, SPIQA와 겹치지 않는 235논문·240그림·1,440 answerable 질문을 고정했다.
+
+Caption R@1/R@5/MRR은 0.3653/0.4986/0.4336, ColSmol-256M 원본은 0.6479/0.7701/0.7070, Oracle은 0.7396/0.8451/0.7908이었다. frozen 13-feature selector는 0.6965/0.7938/0.7447로 Always ColSmol보다 R@1 +4.86%p였다. R@1 차이 95% CI는 [+3.47,+6.25]%p이고 McNemar p=`2.97e-12`다.
+
+그러나 이것은 **quality fusion PASS / compute routing FAIL**이다. 현 selector는 ColSmol top score·margin·entropy를 입력으로 쓰므로 Caption을 선택할 때도 Strong 계산을 이미 수행한다. Strong 선택률 80.63%를 호출률로 해석할 수 없고 실제 Strong query compute 절감은 0%다.
+
+다음 아키텍처는 (1) Cheap/query/Caption 신호만 쓰는 early router가 ColSmol 실행 여부를 먼저 결정하고, (2) Strong을 실행한 경우에만 현재 full selector를 optional late fusion으로 사용하는 2단 구조다. SciVQA validation은 구조 개발 자료로 전환하고, 아직 열지 않은 SciVQA test를 최종 1회 외부 인증에 사용한다. 상세 보고서는 `docs/R3_SCIVQA_EXTERNAL_REPORT.md`다.

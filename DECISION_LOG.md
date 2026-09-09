@@ -722,3 +722,29 @@ Oracle 보완성만으로 deployable routing을 주장할 수 없다. 다음 해
 
 ### Artifact
 `artifacts/p1v_spiqa_model_resolution_screen.json`
+
+---
+
+## Decision 032
+
+### Date
+2026-09-09
+
+### Trigger
+SciVQA validation 235논문·240그림·1,440 answerable 질문에서 Caption, ColSmol, frozen SPIQA selector를 외부 평가했다.
+
+### Decision
+외부 품질 보완성은 PASS하지만 현재 selector의 compute-aware routing Gate는 FAIL로 판정한다. SciVQA validation은 architecture-development evidence로 전환한다.
+
+### Evidence
+- Caption/ColSmol/Oracle R@1: 0.3653/0.6479/0.7396
+- Frozen selector R@1 0.6965, Always ColSmol 대비 +0.0486, 95% CI [+0.0347,+0.0625]
+- Selected-only/Strong-only correct 88/18, McNemar p=`2.97e-12`
+- Strong result selection 80.63%, but realized Strong compute saving 0%
+- 원인: 13-feature selector가 Strong score·margin·entropy를 요구함
+
+### Consequence
+현재 모델은 라우터가 아니라 post-retrieval quality fuser로 명명한다. Cheap-only early router를 먼저 실행하는 2단 구조를 개발하고, SciVQA test는 그 정책을 잠근 뒤에만 연다.
+
+### Artifact
+`artifacts/r3_scivqa_external_summary.json`

@@ -183,14 +183,14 @@ feature 예:
 
 ## 8. Current Candidate: Query-Time Selective Rescue
 
-현재 feasibility 후보이며 아직 검증된 Main 결과가 아니다. R1.1 retrieval repair Gate 통과 전에는 Strong/VLM rescue를 구현하지 않는다.
+SciVQA validation에서 Caption/ColSmol 결과의 보완성과 frozen selector의 품질 일반화는 확인했다. 그러나 구현된 13-feature selector는 Strong score·margin·entropy를 요구하므로 post-retrieval fuser이며 Strong 실행을 건너뛰지 못한다.
 
 ```text
 Question
    ↓
-Retrieve
+Cheap caption retrieve
    ↓
-Confidence / Query Type
+Early confidence / Query Type
    ├─ sufficient → Answer
    └─ uncertain / visual-heavy
           ↓
@@ -204,3 +204,37 @@ Confidence / Query Type
 ## 9. Candidate Visual Retrieval Branch
 
 ColPali는 parser가 아니라 visual retriever로 취급한다. 작은 multimodal preflight에서 Always Text, Always ColPali, Rule Selective, Oracle Selective의 retrieval 품질·GPU 시간·index bytes를 비교한 뒤에만 routing 경로로 승격한다.
+
+## 10. Required Two-Stage Router
+
+```text
+Question + Cheap caption scores
+              │
+              ▼
+    Early Router (Cheap-only)
+        /                 \
+skip Strong            run Strong
+    │                       │
+Caption rank        ColSmol query + MaxSim
+    │                       │
+    │              Optional Late Fuser
+    └───────────────┬───────┘
+                    ▼
+               Final evidence
+```
+
+Early Router 입력은 Strong 실행 전에 얻을 수 있는 특징으로 제한한다.
+
+- candidate count
+- question length
+- table/figure/graph/chart keyword
+- Caption BGE top score, margin, normalized entropy
+
+현재 13-feature 모델의 Strong score·margin·entropy와 두 경로 difference 특징은 Late Fuser에서만 사용할 수 있다. Late Fuser의 선택률은 비용 절감률로 보고하지 않는다.
+
+다음 one-shot Gate는 미개봉 SciVQA test에서 측정한다.
+
+- Always Strong 대비 R@1 및 MRR retention ≥ 95%
+- 실제로 생략한 ColSmol query encoding + MaxSim ≥ 15%
+- peak allocated VRAM ≤ 22GB
+- policy와 threshold는 test manifest 생성 전에 lock

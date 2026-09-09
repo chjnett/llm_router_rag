@@ -37,11 +37,11 @@
       <div class="kicker">Scientific PDF RAG · 쉬운 설명서</div>
       <h1>모든 논문을 비싸게 읽지 않고,<br>필요할 때만 강하게 본다</h1>
       <p class="lead">CapRoute는 “작은 LLM과 큰 LLM 중 무엇을 쓸까?”보다 앞단의 문제를 다룹니다. 과학 논문 PDF를 텍스트로 빠르게 처리할지, 그림과 표까지 이해하는 강한 처리기를 호출할지를 질문별로 선택합니다.</p>
-      <div class="meta"><span>대상: 영문 born-digital 과학 논문 PDF</span><span>GPU: RTX 3090 24GB</span><span>현재 단계: 외부 데이터 인증 준비</span></div>
+      <div class="meta"><span>대상: 영문 born-digital 과학 논문 PDF</span><span>GPU: RTX 3090 24GB</span><span>현재 단계: Cheap-only early router 수리</span></div>
     </div>
     <div class="summary">
       <div><span class="kicker">한 문장으로</span><strong>먼저 저렴한 텍스트 검색으로 답을 찾고, 그 결과가 부족할 가능성이 높은 질문만 시각 검색기로 다시 확인한다.</strong><p>목표는 최고 모델보다 더 높은 정답률을 약속하는 것이 아니라, 적은 Strong 호출로 텍스트 기준선의 품질을 지키거나 개선하는 것입니다.</p></div>
-      <div class="stamp"><span>독립 인증 점 추정</span><b>67.9 → 71.6%</b><span>R@1 · Strong 호출 12.35%<br>통계적 확정은 아직 아님</span></div>
+      <div class="stamp"><span>SciVQA 외부 품질</span><b>64.8 → 69.7%</b><span>R@1 · CI는 0 초과<br>실제 계산 절감 0%</span></div>
     </div>
 
     <section id="idea">
@@ -65,7 +65,7 @@
         </div>
         <div style="text-align:center;font-size:25px;padding:12px 0">↓</div>
         <div class="flow-grid">
-          <div class="node"><small>3 · OPTIONAL</small><h3>ColSmol 시각 검색</h3><p>선택된 질문만 이미지 다중 벡터 점수로 재검색합니다.</p></div>
+          <div class="node"><small>3 · CURRENTLY ALWAYS</small><h3>ColSmol 시각 검색</h3><p>현재 13-feature selector는 이 점수를 요구해 모든 질문에서 실행됩니다. 다음 버전에서만 optional이 됩니다.</p></div>
           <div class="arrow">→</div>
           <div class="node"><small>4 · MERGE</small><h3>최종 근거 선택</h3><p>라우터 결정에 따라 caption 순위 또는 visual 순위를 사용합니다.</p></div>
           <div class="arrow">→</div>
@@ -73,6 +73,7 @@
         </div>
       </div>
       <p class="caption">중요: ColSmol은 PDF parser나 답변 LLM이 아니라, 질문과 페이지 이미지를 비교하는 visual retriever입니다.</p>
+      <div class="callout" style="margin-top:13px"><strong>현재 구조의 핵심 수정점</strong><p>위 흐름은 목표 구조입니다. 구현된 full selector는 Strong score를 입력으로 사용하므로 먼저 Cheap-only early router를 추가해야 실제로 3단계를 건너뛸 수 있습니다.</p></div>
     </section>
 
     <section>
@@ -96,6 +97,7 @@
         <article class="card"><h3>비교 특징</h3><p>두 검색기의 top score·margin·entropy 차이와 후보 이미지 개수</p></article>
       </div>
       <div class="formula"><code>if p ≥ 0.392054 → ColSmol 순위 사용<br>else → Caption BGE 순위 사용</code></div>
+      <div class="callout"><strong>선택률 ≠ 호출 절감률</strong><p>현재 p를 계산하려면 ColSmol top score·margin·entropy가 필요합니다. 그래서 Caption을 선택해도 ColSmol 계산은 이미 끝났습니다. 이 모델은 현재 post-retrieval quality fuser이며, 비용 절감용 early router는 Cheap 특징만 써야 합니다.</p></div>
       <div class="two">
         <div class="callout"><strong>왜 margin을 보는가?</strong><p>1등과 2등 점수가 거의 같으면 검색기가 확신하지 못하는 상황일 수 있습니다. 단, margin 하나만으로 결정하지 않고 여러 신호를 함께 봅니다.</p></div>
         <div class="callout"><strong>왜 threshold를 잠그는가?</strong><p>인증 결과를 본 뒤 기준을 바꾸면 시험 문제에 답을 맞추는 것과 같습니다. Calibration에서 한 번 정하고 certification 결과가 나빠도 수정하지 않습니다.</p></div>
@@ -138,15 +140,16 @@
         <div class="event"><time>EXPANDED SELECTOR · CONDITIONAL</time><h3>R@1 67.9→71.6%, 통계는 미확정</h3><p>다음 단계는 같은 SPIQA 반복이 아니라 외부 데이터에서 고정 정책을 검증하는 것입니다.</p></div>
         <div class="event"><time>INPUT RESOLUTION · PASS</time><h3>ColSmol R@1 36→58%, MRR .573→.721</h3><p>같은 256M 모델에서 224px 대신 원본 이미지를 사용하자 표 R@1이 52→80%로 상승했습니다. 모델 크기 전에 전처리 손실을 확인해야 한다는 근거입니다.</p></div>
         <div class="event"><time>500M MODEL · STOP</time><h3>R@1은 58%로 동일, MRR은 +0.002</h3><p>그림은 조금 좋아졌지만 표는 하락했고 저장공간은 약 2배가 됐습니다. 현재는 256M+원본 해상도가 더 효율적입니다.</p></div>
+        <div class="event"><time>SCIVQA EXTERNAL · MIXED</time><h3>품질 +4.86%p, 실제 compute saving 0%</h3><p>통계적 품질 개선은 재현됐지만 Strong 점수 특징 때문에 계산을 건너뛸 수 없었습니다. Early router와 late fuser를 분리합니다.</p></div>
       </div>
     </section>
 
     <section>
       <div class="section-head"><div><div class="kicker">08 · What happens next</div><h2>다음 단계와 통과 조건</h2></div><p>GPU를 오래 돌리는 것 자체가 목표가 아닙니다. 새로운 독립 증거가 생기는 실험만 실행합니다.</p></div>
       <div class="two">
-        <div class="callout"><strong>1. External dataset audit</strong><p>영문 scientific paper의 table·figure 질문, 원본 이미지 접근성, 라이선스, 용량을 점검합니다. RTX 3090과 남은 디스크에 맞는 소표본부터 시작합니다.</p></div>
-        <div class="callout"><strong>2. Frozen external certification</strong><p>256M+원본 해상도와 선택 정책은 외부 데이터에서 고정해 평가합니다. 불가피한 데이터 매핑 변경은 결과를 보기 전에 문서화합니다.</p></div>
-        <div class="callout"><strong>3. Statistical decision</strong><p>품질 차이의 신뢰구간, McNemar, route rate, GPU 시간과 index storage를 함께 보고 P2/P3 승격을 결정합니다.</p></div>
+        <div class="callout"><strong>1. Cheap-only early router</strong><p>질문·후보 수·Caption score/margin/entropy만 보고 ColSmol 실행 여부를 먼저 결정합니다.</p></div>
+        <div class="callout"><strong>2. Policy lock</strong><p>SPIQA train/calibration에서 early threshold를 잠급니다. Strong-derived 특징은 비용 결정에 사용하지 않습니다.</p></div>
+        <div class="callout"><strong>3. SciVQA test one-shot</strong><p>아직 열지 않은 test 이미지와 질문에서 품질 95% 유지, 실제 Strong query 15% 절감을 한 번만 인증합니다.</p></div>
         <div class="callout"><strong>중단 조건</strong><p>외부 데이터에서 기준선보다 하락하거나 Strong 호출 비용이 이득을 상쇄하면 현재 모델 조합을 종료합니다. 사후 threshold 완화는 하지 않습니다.</p></div>
       </div>
     </section>
@@ -157,6 +160,7 @@
         <a class="doc" href="READING_GUIDE.md"><b>READING_GUIDE.md</b><span>전체 문서 읽기 순서</span></a>
         <a class="doc" href="CURRENT_RESEARCH_STATUS_AND_NEXT_PLAN.md"><b>CURRENT_RESEARCH_STATUS_AND_NEXT_PLAN.md</b><span>최신 판정과 다음 실험</span></a>
         <a class="doc" href="ARCHITECTURE.md"><b>ARCHITECTURE.md</b><span>원본 아키텍처 정의</span></a>
+        <a class="doc" href="docs/R3_SCIVQA_EXTERNAL_REPORT.md"><b>R3_SCIVQA_EXTERNAL_REPORT.md</b><span>외부 품질 PASS·compute FAIL 상세</span></a>
         <a class="doc" href="docs/P1V_SPIQA_PREFLIGHT_REPORT.md"><b>P1V_SPIQA_PREFLIGHT_REPORT.md</b><span>SPIQA·ColSmol 상세 결과</span></a>
         <a class="doc" href="EXPERIMENT_PROTOCOL.md"><b>EXPERIMENT_PROTOCOL.md</b><span>Gate와 split 규칙</span></a>
         <a class="doc" href="DECISION_LOG.md"><b>DECISION_LOG.md</b><span>실패·피봇의 시간순 근거</span></a>

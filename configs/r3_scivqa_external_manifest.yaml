@@ -1,0 +1,13 @@
+dataset:
+  json: data/raw/scivqa/data/validation_2025-07-03_09-06.json
+  images_zip: data/raw/scivqa/data/images_validation.zip
+  image_archive_prefix: images_validation
+  spiqa_json: data/raw/spiqa/test-A/SPIQA_testA.json
+selection:
+  excluded_qa_pair_types:
+    - unanswerable
+gate:
+  min_queries: 1000
+  min_images: 200
+outputs:
+  manifest: artifacts/r3_scivqa_external_manifest.json

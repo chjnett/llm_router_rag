@@ -10,10 +10,11 @@ Markdown을 읽기 전에 전체 흐름을 쉬운 말로 보고 싶다면 [archi
 |---:|---|---:|---|---|
 | 1 | [README.md](README.md) | 5분 | 프로젝트의 범위와 핵심 원칙을 빠르게 파악 | 무엇을 해결하는 연구인지 |
 | 2 | [CURRENT_RESEARCH_STATUS_AND_NEXT_PLAN.md](CURRENT_RESEARCH_STATUS_AND_NEXT_PLAN.md) | 10분 | 가장 최신 결과와 현재 판단 확인 | 어디까지 성공·실패했고 다음 단계가 무엇인지 |
-| 3 | [docs/P1V_SPIQA_PREFLIGHT_REPORT.md](docs/P1V_SPIQA_PREFLIGHT_REPORT.md) | 15분 | 최신 SPIQA·ColSmol 실험의 전체 근거 확인 | R@1 67.9→71.6%, route 12.35%, 통계 미확정의 의미 |
-| 4 | [ARCHITECTURE.md](ARCHITECTURE.md) | 10분 | Cheap→Strong 선택 처리 구조 이해 | 시스템 구성요소와 데이터 흐름 |
-| 5 | [DECISION_LOG.md](DECISION_LOG.md) | 10분 | 결과에 따라 방향을 바꾼 이유 확인 | 실패를 숨기지 않고 어떤 Gate로 결정했는지 |
-| 6 | [TODO_ROADMAP.md](TODO_ROADMAP.md) | 5분 | 완료·잠금·다음 작업 확인 | 지금 해야 할 일과 하지 말아야 할 일 |
+| 3 | [docs/R3_SCIVQA_EXTERNAL_REPORT.md](docs/R3_SCIVQA_EXTERNAL_REPORT.md) | 10분 | 최신 외부 검증과 compute Gate 실패 확인 | 품질 융합은 성공했지만 왜 아직 라우팅이 아닌지 |
+| 4 | [docs/P1V_SPIQA_PREFLIGHT_REPORT.md](docs/P1V_SPIQA_PREFLIGHT_REPORT.md) | 15분 | SPIQA·ColSmol 실험의 전체 근거 확인 | 해상도·모델·selector 결정 근거 |
+| 5 | [ARCHITECTURE.md](ARCHITECTURE.md) | 10분 | Cheap→Strong 선택 처리 구조 이해 | 시스템 구성요소와 데이터 흐름 |
+| 6 | [DECISION_LOG.md](DECISION_LOG.md) | 10분 | 결과에 따라 방향을 바꾼 이유 확인 | 실패를 숨기지 않고 어떤 Gate로 결정했는지 |
+| 7 | [TODO_ROADMAP.md](TODO_ROADMAP.md) | 5분 | 완료·잠금·다음 작업 확인 | 지금 해야 할 일과 하지 말아야 할 일 |
 
 ## 실험을 직접 실행하기 전에 추가로 읽을 문서
 
@@ -40,4 +41,4 @@ Markdown을 읽기 전에 전체 흐름을 쉬운 말로 보고 싶다면 [archi
 
 ## 현재 기억해야 할 결론
 
-> 확대된 locked selector는 독립 81문항에서 Caption R@1을 67.9%에서 71.6%로 높이고 ColSmol 호출을 12.35%로 제한했다. 그러나 95% 신뢰구간이 0을 포함하므로 통계적 성공으로 확정하지 않는다. 입력 해상도 실험에서는 256M R@1이 36%에서 58%로 상승했고, 500M은 전체 R@1을 더 높이지 못해 거절했다. 현재 표현은 `ColSmol-256M + 원본 해상도`이며 다음 단계는 외부 멀티모달 데이터셋의 독립 인증이다.
+> SciVQA validation에서 frozen selector는 Always ColSmol R@1 64.79%를 69.65%로 높였고 신뢰구간도 0을 넘었다. 하지만 Strong 점수 특징을 먼저 계산하므로 실제 Strong 계산 절감은 0%다. 현재 결과는 quality fusion 성공이지 compute-aware routing 성공이 아니다. 다음은 Cheap-only early router를 잠근 뒤 미개봉 SciVQA test에서 1회 인증하는 것이다.

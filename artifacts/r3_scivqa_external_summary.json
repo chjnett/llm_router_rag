@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "dataset": "katebor/SciVQA validation",
+  "license": "MIT",
+  "contract": {
+    "papers": 235,
+    "images": 240,
+    "answerable_queries": 1440,
+    "excluded_unanswerable_queries": 240,
+    "spiqa_paper_overlap": 0,
+    "manifest_sha256": "576b14d8e35230e52e50e1de74be6be7353263d19270cba29356985497555652"
+  },
+  "retrieval": {
+    "caption": {"recall_at_1": 0.36527777777777776, "recall_at_5": 0.4986111111111111, "mrr": 0.4336414263126483},
+    "colsmol_256m_original_resolution": {"recall_at_1": 0.6479166666666667, "recall_at_5": 0.7701388888888889, "mrr": 0.7070178715871575},
+    "oracle": {"recall_at_1": 0.7395833333333334, "recall_at_5": 0.8451388888888889, "mrr": 0.7907917241062671},
+    "indexing_seconds": 62.06789090007078,
+    "combined_query_seconds": 5.572319500031881,
+    "peak_vram_allocated_bytes": 4152179200,
+    "compressed_document_index_bytes": 49589715,
+    "result_sha256": "e5148793e57c92600333206c90acb274bdce56b2ac5ccf62681b1a82a0ba3d0c"
+  },
+  "frozen_post_retrieval_selector": {
+    "threshold": 0.39205427748257926,
+    "strong_selection_rate": 0.80625,
+    "realized_strong_compute_saving": 0.0,
+    "selected": {"recall_at_1": 0.6965277777777777, "recall_at_5": 0.79375, "mrr": 0.7446568636888473},
+    "recall_at_1_difference_vs_strong": {"mean": 0.04861111111111111, "ci95_low": 0.034722222222222224, "ci95_high": 0.0625},
+    "mrr_difference_vs_strong": {"mean": 0.037638992101689486, "ci95_low": 0.02581705440357879, "ci95_high": 0.05006910269213758},
+    "selected_only_correct": 88,
+    "strong_only_correct": 18,
+    "mcnemar_exact_p": 2.970770255782769e-12,
+    "quality_gate_passed": true,
+    "cost_gate_passed": false,
+    "overall_gate_passed": false,
+    "result_sha256": "76cb4a367a0c05cc6e0770ba19182da4cc83c3cfcbb09d548fe2a64a1bf91bd3"
+  },
+  "decision": {
+    "status": "QUALITY_FUSION_PASS_COMPUTE_ROUTING_FAIL",
+    "reason": "The current 13-feature selector consumes ColSmol score statistics and therefore cannot skip Strong query computation.",
+    "next": "Build a causally valid Cheap-only pre-router on development data and reserve SciVQA test for one-shot certification."
+  }
+}
