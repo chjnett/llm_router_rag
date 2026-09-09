@@ -748,3 +748,30 @@ SciVQA validation 235논문·240그림·1,440 answerable 질문에서 Caption, C
 
 ### Artifact
 `artifacts/r3_scivqa_external_summary.json`
+
+---
+
+## Decision 033
+
+### Date
+2026-09-09
+
+### Trigger
+Strong-derived 특징 때문에 compute-aware routing이 불가능했던 13-feature selector를 인과적으로 수리했다.
+
+### Decision
+질문과 Caption 검색만으로 계산되는 7-feature Logistic Regression을 early router로 동결한다. 임계값 `0.3281827436` 이상일 때만 ColSmol을 실행하며, SciVQA test를 열기 전에 정책 artifact를 커밋한다.
+
+### Evidence
+- SPIQA train/calibration: 286/94 questions, paper-disjoint
+- train/calibration AUC: 0.7953/0.8156
+- calibration selected R@1: 0.7553 (Always Strong 0.5532)
+- calibration selected MRR: 0.8389 (Always Strong 0.6865)
+- calibration Strong route 38.30%, realized query saving 61.70%
+- tests: 34 passed
+
+### Consequence
+내부 보정 성능을 외부 성공으로 주장하지 않는다. 이 lock 이후에만 미개봉 SciVQA test를 열어 95% quality retention, 15% Strong skip, 22GB VRAM Gate를 한 번 평가한다.
+
+### Artifact
+`artifacts/r4_spiqa_early_router_policy_lock.json`

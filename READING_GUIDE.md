@@ -10,11 +10,12 @@ Markdown을 읽기 전에 전체 흐름을 쉬운 말로 보고 싶다면 [archi
 |---:|---|---:|---|---|
 | 1 | [README.md](README.md) | 5분 | 프로젝트의 범위와 핵심 원칙을 빠르게 파악 | 무엇을 해결하는 연구인지 |
 | 2 | [CURRENT_RESEARCH_STATUS_AND_NEXT_PLAN.md](CURRENT_RESEARCH_STATUS_AND_NEXT_PLAN.md) | 10분 | 가장 최신 결과와 현재 판단 확인 | 어디까지 성공·실패했고 다음 단계가 무엇인지 |
-| 3 | [docs/R3_SCIVQA_EXTERNAL_REPORT.md](docs/R3_SCIVQA_EXTERNAL_REPORT.md) | 10분 | 최신 외부 검증과 compute Gate 실패 확인 | 품질 융합은 성공했지만 왜 아직 라우팅이 아닌지 |
-| 4 | [docs/P1V_SPIQA_PREFLIGHT_REPORT.md](docs/P1V_SPIQA_PREFLIGHT_REPORT.md) | 15분 | SPIQA·ColSmol 실험의 전체 근거 확인 | 해상도·모델·selector 결정 근거 |
-| 5 | [ARCHITECTURE.md](ARCHITECTURE.md) | 10분 | Cheap→Strong 선택 처리 구조 이해 | 시스템 구성요소와 데이터 흐름 |
-| 6 | [DECISION_LOG.md](DECISION_LOG.md) | 10분 | 결과에 따라 방향을 바꾼 이유 확인 | 실패를 숨기지 않고 어떤 Gate로 결정했는지 |
-| 7 | [TODO_ROADMAP.md](TODO_ROADMAP.md) | 5분 | 완료·잠금·다음 작업 확인 | 지금 해야 할 일과 하지 말아야 할 일 |
+| 3 | [docs/R4_EARLY_ROUTER_POLICY_LOCK.md](docs/R4_EARLY_ROUTER_POLICY_LOCK.md) | 5분 | 미개봉 test 전에 잠근 인과적 정책 확인 | 어떤 특징과 임계값으로 Strong 실행을 결정하는지 |
+| 4 | [docs/R3_SCIVQA_EXTERNAL_REPORT.md](docs/R3_SCIVQA_EXTERNAL_REPORT.md) | 10분 | 최신 외부 검증과 compute Gate 실패 확인 | 품질 융합은 성공했지만 왜 구조를 수리했는지 |
+| 5 | [docs/P1V_SPIQA_PREFLIGHT_REPORT.md](docs/P1V_SPIQA_PREFLIGHT_REPORT.md) | 15분 | SPIQA·ColSmol 실험의 전체 근거 확인 | 해상도·모델·selector 결정 근거 |
+| 6 | [ARCHITECTURE.md](ARCHITECTURE.md) | 10분 | Cheap→Strong 선택 처리 구조 이해 | 시스템 구성요소와 데이터 흐름 |
+| 7 | [DECISION_LOG.md](DECISION_LOG.md) | 10분 | 결과에 따라 방향을 바꾼 이유 확인 | 실패를 숨기지 않고 어떤 Gate로 결정했는지 |
+| 8 | [TODO_ROADMAP.md](TODO_ROADMAP.md) | 5분 | 완료·잠금·다음 작업 확인 | 지금 해야 할 일과 하지 말아야 할 일 |
 
 ## 실험을 직접 실행하기 전에 추가로 읽을 문서
 
@@ -41,4 +42,4 @@ Markdown을 읽기 전에 전체 흐름을 쉬운 말로 보고 싶다면 [archi
 
 ## 현재 기억해야 할 결론
 
-> SciVQA validation에서 frozen selector는 Always ColSmol R@1 64.79%를 69.65%로 높였고 신뢰구간도 0을 넘었다. 하지만 Strong 점수 특징을 먼저 계산하므로 실제 Strong 계산 절감은 0%다. 현재 결과는 quality fusion 성공이지 compute-aware routing 성공이 아니다. 다음은 Cheap-only early router를 잠근 뒤 미개봉 SciVQA test에서 1회 인증하는 것이다.
+> 기존 full selector는 품질 융합에는 성공했지만 계산 절감은 0%였다. 이를 수리한 Cheap-only early router는 임계값 0.328183으로 잠겼고 내부 calibration에서 Strong query 61.70%를 생략했다. 다음은 이 정책을 바꾸지 않고 미개봉 SciVQA test에서 한 번 검증하는 것이다.

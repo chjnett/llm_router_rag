@@ -2,7 +2,7 @@
 
 ## 한 줄 결론
 
-SciVQA validation 1,440질의에서 frozen selector의 R@1은 Always ColSmol `0.6479`에서 `0.6965`로 유의하게 상승했다(95% CI `[+0.0347,+0.0625]`). 그러나 selector가 ColSmol 점수 특징을 요구해 **실제 Strong 계산 절감은 0%**다. 현재 결과는 quality fusion PASS / compute-aware routing FAIL이며, 다음은 Cheap-only early router를 잠근 뒤 미개봉 SciVQA test에서 1회 인증하는 것이다.
+SciVQA validation의 13-feature selector는 품질 융합에는 성공했지만 Strong 계산 절감은 0%였다. 이를 수리한 7-feature Cheap-only early router를 SPIQA train/calibration에서 임계값 `0.3281827436`으로 동결했다. Calibration에서 Strong route 38.30%, 실제 query saving 61.70%, selected R@1 0.7553이었지만 이는 내부 결과다. 다음은 **정책을 Git에 먼저 고정한 뒤 미개봉 SciVQA test에서 1회 외부 인증**하는 것이다.
 
 ## 무엇이 확인됐는가
 
@@ -22,6 +22,7 @@ SciVQA validation 1,440질의에서 frozen selector의 R@1은 Always ColSmol `0.
 | SPIQA expanded selector | R@1 0.716, MRR 0.8244, Strong 선택 12.35% | point PASS, 통계 INCONCLUSIVE |
 | SciVQA external quality | R@1 0.6479→0.6965, CI excludes 0 | quality fusion PASS |
 | SciVQA realized compute | Strong-derived 특징으로 사전 계산 필요 | saving 0%, routing FAIL |
+| SPIQA Cheap-only early lock | R@1 0.7553, MRR 0.8389, Strong route 38.30% | 내부 calibration PASS, 외부 미검증 |
 
 ## P1-V multimodal 결론
 
@@ -150,3 +151,9 @@ Caption R@1/R@5/MRR은 0.3653/0.4986/0.4336, ColSmol-256M 원본은 0.6479/0.770
 그러나 이것은 **quality fusion PASS / compute routing FAIL**이다. 현 selector는 ColSmol top score·margin·entropy를 입력으로 쓰므로 Caption을 선택할 때도 Strong 계산을 이미 수행한다. Strong 선택률 80.63%를 호출률로 해석할 수 없고 실제 Strong query compute 절감은 0%다.
 
 다음 아키텍처는 (1) Cheap/query/Caption 신호만 쓰는 early router가 ColSmol 실행 여부를 먼저 결정하고, (2) Strong을 실행한 경우에만 현재 full selector를 optional late fusion으로 사용하는 2단 구조다. SciVQA validation은 구조 개발 자료로 전환하고, 아직 열지 않은 SciVQA test를 최종 1회 외부 인증에 사용한다. 상세 보고서는 `docs/R3_SCIVQA_EXTERNAL_REPORT.md`다.
+
+## 2026-09-09 Cheap-only early router 정책 잠금
+
+Strong 실행 전에 얻을 수 있는 7개 특징만 사용하는 Logistic Regression을 동결했다. 특징은 후보 수, 질문 길이, table/visual 표현, Caption top score·margin·entropy이며 ColSmol 파생값은 없다. 임계값은 `0.3281827436`이다.
+
+Calibration 94문항에서 Always Strong R@1/MRR `0.5532/0.6865` 대비 선택 결과는 `0.7553/0.8389`, Strong route는 `38.30%`였다. 실제 생략 가능한 Strong query 비율은 `61.70%`다. 단, 같은 SPIQA 도메인의 calibration 결과이므로 일반화 주장은 금지한다. 정책 artifact와 상세 계약은 각각 `artifacts/r4_spiqa_early_router_policy_lock.json`, `docs/R4_EARLY_ROUTER_POLICY_LOCK.md`에 있다.

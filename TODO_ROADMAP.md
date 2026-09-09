@@ -107,7 +107,7 @@ Frozen rule: exact table count AND GriTS-Top ≥ 0.80 AND GriTS-Loc ≥ 0.50.
 - [x] SciVQA validation license/image/caption/question-reference audit — PASS (235 papers, 240 images, 1,440 answerable)
 - [x] Frozen full selector external quality evaluation — PASS (R@1 0.6479→0.6965, CI excludes 0)
 - [x] Realized compute audit — **FAIL** (Strong-derived features 때문에 Strong compute saving 0%)
-- [ ] Cheap-only early router 학습·calibration lock
+- [x] Cheap-only early router 학습·calibration lock — threshold 0.328183, calibration Strong skip 61.70%
 - [ ] SciVQA test manifest를 policy lock 이후 생성
 - [ ] SciVQA test one-shot compute-aware certification
 - [ ] Strong both-fail repair 후보 평가 (RAG retrieval 차이 확인 전 보류)
