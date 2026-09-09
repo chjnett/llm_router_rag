@@ -775,3 +775,30 @@ Strong-derived 특징 때문에 compute-aware routing이 불가능했던 13-feat
 
 ### Artifact
 `artifacts/r4_spiqa_early_router_policy_lock.json`
+
+---
+
+## Decision 034
+
+### Date
+2026-09-09
+
+### Trigger
+Commit `195377d`로 정책을 잠근 뒤 SciVQA test 545논문·599그림·3,594질의를 한 번 평가했다.
+
+### Decision
+R4 compute-aware routing Gate를 FAIL로 판정한다. 품질 개선은 보존하지만 test에서 threshold·feature를 재조정하지 않는다. 즉시 큰 Strong 모델을 탐색하지 않고, 새 development corpus에서 corpus-size invariant/cost-sensitive router를 설계한다.
+
+### Evidence
+- Caption/Always Strong/Selected R@1: 0.2785/0.5431/0.5729
+- Always Strong/Selected MRR: 0.6045/0.6302
+- R@1 difference 95% CI: [+0.0239,+0.0359], McNemar p=`7.78e-25`
+- Strong route 89.65%, realized skip 10.35% < 15% Gate
+- peak allocated VRAM 4.04GiB
+- ColSmol R@5 0.6669 < 0.70 retrieval Gate
+
+### Consequence
+아키텍처의 품질 선택 가치는 외부 test에서 재현됐지만 목표 비용 절감은 재현되지 않았다. SPIQA의 candidate range 1–29와 SciVQA의 599 사이 분포 이동이 주요 진단이며, test는 향후 정책 선택에 재사용하지 않는다.
+
+### Artifact
+`artifacts/r4_scivqa_early_router_certification_summary.json`

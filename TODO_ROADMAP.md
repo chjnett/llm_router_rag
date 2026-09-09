@@ -108,15 +108,18 @@ Frozen rule: exact table count AND GriTS-Top ≥ 0.80 AND GriTS-Loc ≥ 0.50.
 - [x] Frozen full selector external quality evaluation — PASS (R@1 0.6479→0.6965, CI excludes 0)
 - [x] Realized compute audit — **FAIL** (Strong-derived features 때문에 Strong compute saving 0%)
 - [x] Cheap-only early router 학습·calibration lock — threshold 0.328183, calibration Strong skip 61.70%
-- [ ] SciVQA test manifest를 policy lock 이후 생성
-- [ ] SciVQA test one-shot compute-aware certification
+- [x] SciVQA test manifest를 policy lock 이후 생성 — 545 papers / 599 images / 3,594 queries
+- [x] SciVQA test one-shot compute-aware certification — **FAIL** (quality PASS, Strong skip 10.35% < 15%)
+- [ ] 새 development corpus에서 corpus-size invariant early features 설계
+- [ ] cost-sensitive/coverage-regularized router 비교
+- [ ] 새로운 unopened external holdout 확보 후 재인증
 - [ ] Strong both-fail repair 후보 평가 (RAG retrieval 차이 확인 전 보류)
 
 ---
 
 # Week 3 — P2 Router
 
-**현재 잠금:** full 13-feature selector는 SciVQA validation에서 품질 개선이 통계적으로 재현됐지만 Strong-derived 특징 때문에 계산을 줄이지 못한다. Cheap-only early router와 미개봉 SciVQA test 인증 전에는 Full P2로 승격하지 않는다.
+**현재 잠금:** Cheap-only early router는 SciVQA test에서 품질을 개선했지만 Strong skip 10.35%로 15% Gate에 실패했다. 같은 test에서 임계값·특징을 다시 조정하지 않으며 새 development/holdout 설계 전에는 Full P2로 승격하지 않는다.
 
 - [ ] feature extractor
 - [ ] Logistic Regression

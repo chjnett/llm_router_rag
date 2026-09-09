@@ -1,5 +1,7 @@
 import numpy as np
+import pytest
 
+from caproute.cli.evaluate_scivqa_early_router import early_probabilities
 from caproute.cli.freeze_spiqa_early_router_policy import early_features, routed_metrics
 
 
@@ -32,3 +34,15 @@ def test_routed_metrics_uses_strong_only_above_threshold() -> None:
     metrics, route_rate = routed_metrics(rows, np.asarray([0.1, 0.9]), 0.5)
     assert metrics["mrr"] == 1.0
     assert route_rate == 0.5
+
+
+def test_early_probabilities_rejects_changed_feature_contract() -> None:
+    lock = {
+        "feature_names": ["wrong"],
+        "scaler_mean": [0.0] * 7,
+        "scaler_scale": [1.0] * 7,
+        "coefficients": [0.0] * 7,
+        "intercept": 0.0,
+    }
+    with pytest.raises(ValueError, match="feature contract"):
+        early_probabilities([_row(1.0, 0.0)], lock)

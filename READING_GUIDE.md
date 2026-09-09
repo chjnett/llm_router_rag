@@ -10,8 +10,8 @@ Markdown을 읽기 전에 전체 흐름을 쉬운 말로 보고 싶다면 [archi
 |---:|---|---:|---|---|
 | 1 | [README.md](README.md) | 5분 | 프로젝트의 범위와 핵심 원칙을 빠르게 파악 | 무엇을 해결하는 연구인지 |
 | 2 | [CURRENT_RESEARCH_STATUS_AND_NEXT_PLAN.md](CURRENT_RESEARCH_STATUS_AND_NEXT_PLAN.md) | 10분 | 가장 최신 결과와 현재 판단 확인 | 어디까지 성공·실패했고 다음 단계가 무엇인지 |
-| 3 | [docs/R4_EARLY_ROUTER_POLICY_LOCK.md](docs/R4_EARLY_ROUTER_POLICY_LOCK.md) | 5분 | 미개봉 test 전에 잠근 인과적 정책 확인 | 어떤 특징과 임계값으로 Strong 실행을 결정하는지 |
-| 4 | [docs/R3_SCIVQA_EXTERNAL_REPORT.md](docs/R3_SCIVQA_EXTERNAL_REPORT.md) | 10분 | 최신 외부 검증과 compute Gate 실패 확인 | 품질 융합은 성공했지만 왜 구조를 수리했는지 |
+| 3 | [docs/R4_SCIVQA_EARLY_ROUTER_CERTIFICATION.md](docs/R4_SCIVQA_EARLY_ROUTER_CERTIFICATION.md) | 10분 | 최신 1회 외부 인증 확인 | 품질은 통과했지만 비용 Gate가 왜 실패했는지 |
+| 4 | [docs/R4_EARLY_ROUTER_POLICY_LOCK.md](docs/R4_EARLY_ROUTER_POLICY_LOCK.md) | 5분 | test 전에 잠근 인과적 정책 확인 | 어떤 특징과 임계값으로 Strong 실행을 결정했는지 |
 | 5 | [docs/P1V_SPIQA_PREFLIGHT_REPORT.md](docs/P1V_SPIQA_PREFLIGHT_REPORT.md) | 15분 | SPIQA·ColSmol 실험의 전체 근거 확인 | 해상도·모델·selector 결정 근거 |
 | 6 | [ARCHITECTURE.md](ARCHITECTURE.md) | 10분 | Cheap→Strong 선택 처리 구조 이해 | 시스템 구성요소와 데이터 흐름 |
 | 7 | [DECISION_LOG.md](DECISION_LOG.md) | 10분 | 결과에 따라 방향을 바꾼 이유 확인 | 실패를 숨기지 않고 어떤 Gate로 결정했는지 |
@@ -42,4 +42,4 @@ Markdown을 읽기 전에 전체 흐름을 쉬운 말로 보고 싶다면 [archi
 
 ## 현재 기억해야 할 결론
 
-> 기존 full selector는 품질 융합에는 성공했지만 계산 절감은 0%였다. 이를 수리한 Cheap-only early router는 임계값 0.328183으로 잠겼고 내부 calibration에서 Strong query 61.70%를 생략했다. 다음은 이 정책을 바꾸지 않고 미개봉 SciVQA test에서 한 번 검증하는 것이다.
+> Cheap-only early router는 SciVQA test에서 Always Strong보다 R@1/MRR을 높여 품질 Gate를 통과했다. 그러나 Strong query skip은 10.35%로 15% 비용 Gate에 실패했다. 같은 test에서 재튜닝하지 않고 새 development corpus와 holdout을 설계한다.

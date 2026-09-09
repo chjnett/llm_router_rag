@@ -2,7 +2,7 @@
 
 ## 한 줄 결론
 
-SciVQA validation의 13-feature selector는 품질 융합에는 성공했지만 Strong 계산 절감은 0%였다. 이를 수리한 7-feature Cheap-only early router를 SPIQA train/calibration에서 임계값 `0.3281827436`으로 동결했다. Calibration에서 Strong route 38.30%, 실제 query saving 61.70%, selected R@1 0.7553이었지만 이는 내부 결과다. 다음은 **정책을 Git에 먼저 고정한 뒤 미개봉 SciVQA test에서 1회 외부 인증**하는 것이다.
+Commit `195377d`로 잠근 7-feature Cheap-only early router를 SciVQA test 3,594질의에서 한 번 인증했다. 선택 R@1은 Always Strong `0.5431`보다 높은 `0.5729`, MRR은 `0.6045→0.6302`로 품질 Gate를 통과했다. 그러나 Strong query skip은 `10.35%`로 사전 기준 15%에 미달했다. **최종 판정은 quality PASS / cost FAIL이며, 같은 test에서 재튜닝하지 않는다.**
 
 ## 무엇이 확인됐는가
 
@@ -23,6 +23,7 @@ SciVQA validation의 13-feature selector는 품질 융합에는 성공했지만 
 | SciVQA external quality | R@1 0.6479→0.6965, CI excludes 0 | quality fusion PASS |
 | SciVQA realized compute | Strong-derived 특징으로 사전 계산 필요 | saving 0%, routing FAIL |
 | SPIQA Cheap-only early lock | R@1 0.7553, MRR 0.8389, Strong route 38.30% | 내부 calibration PASS, 외부 미검증 |
+| SciVQA test early certification | R@1 0.5431→0.5729, Strong skip 10.35% | quality PASS / cost FAIL |
 
 ## P1-V multimodal 결론
 
@@ -150,10 +151,16 @@ Caption R@1/R@5/MRR은 0.3653/0.4986/0.4336, ColSmol-256M 원본은 0.6479/0.770
 
 그러나 이것은 **quality fusion PASS / compute routing FAIL**이다. 현 selector는 ColSmol top score·margin·entropy를 입력으로 쓰므로 Caption을 선택할 때도 Strong 계산을 이미 수행한다. Strong 선택률 80.63%를 호출률로 해석할 수 없고 실제 Strong query compute 절감은 0%다.
 
-다음 아키텍처는 (1) Cheap/query/Caption 신호만 쓰는 early router가 ColSmol 실행 여부를 먼저 결정하고, (2) Strong을 실행한 경우에만 현재 full selector를 optional late fusion으로 사용하는 2단 구조다. SciVQA validation은 구조 개발 자료로 전환하고, 아직 열지 않은 SciVQA test를 최종 1회 외부 인증에 사용한다. 상세 보고서는 `docs/R3_SCIVQA_EXTERNAL_REPORT.md`다.
+다음 아키텍처는 (1) Cheap/query/Caption 신호만 쓰는 early router가 ColSmol 실행 여부를 먼저 결정하고, (2) Strong을 실행한 경우에만 현재 full selector를 optional late fusion으로 사용하는 2단 구조다. SciVQA validation은 구조 개발 자료, test는 완료된 1회 인증 자료로 고정하며 더 이상 정책 선택에 사용하지 않는다. 상세 보고서는 `docs/R3_SCIVQA_EXTERNAL_REPORT.md`와 `docs/R4_SCIVQA_EARLY_ROUTER_CERTIFICATION.md`다.
 
 ## 2026-09-09 Cheap-only early router 정책 잠금
 
 Strong 실행 전에 얻을 수 있는 7개 특징만 사용하는 Logistic Regression을 동결했다. 특징은 후보 수, 질문 길이, table/visual 표현, Caption top score·margin·entropy이며 ColSmol 파생값은 없다. 임계값은 `0.3281827436`이다.
 
 Calibration 94문항에서 Always Strong R@1/MRR `0.5532/0.6865` 대비 선택 결과는 `0.7553/0.8389`, Strong route는 `38.30%`였다. 실제 생략 가능한 Strong query 비율은 `61.70%`다. 단, 같은 SPIQA 도메인의 calibration 결과이므로 일반화 주장은 금지한다. 정책 artifact와 상세 계약은 각각 `artifacts/r4_spiqa_early_router_policy_lock.json`, `docs/R4_EARLY_ROUTER_POLICY_LOCK.md`에 있다.
+
+## 2026-09-09 SciVQA test one-shot 인증
+
+정책 잠금 뒤 처음 연 SciVQA test는 545논문·599그림·3,594 answerable 질문이며 SPIQA overlap은 0이다. Locked router의 R@1/MRR은 `0.5729/0.6302`로 Always Strong `0.5431/0.6045`보다 높았고 품질 차이의 95% CI도 0을 넘었다. Peak VRAM은 4.04GiB였다.
+
+하지만 Strong route가 89.65%여서 실제 query skip은 10.35%에 그쳤다. 사전 비용 Gate 15%를 완화하지 않으므로 전체 FAIL이다. SPIQA candidate 수 1–29와 SciVQA test의 599 사이 corpus-size shift가 주요 원인으로 관측됐다. 다음 작업은 더 큰 ColSmol이 아니라 별도 development corpus에서 corpus-size invariant feature와 cost-sensitive objective를 설계하는 것이다. 상세 내용은 `docs/R4_SCIVQA_EARLY_ROUTER_CERTIFICATION.md`에 있다.

@@ -74,8 +74,8 @@ def main() -> None:
         "images_zip_sha256": sha256_file(images_path),
         "spiqa_sha256": sha256_file(config["dataset"]["spiqa_json"]),
         "contract": {
-            "external_dataset": "katebor/SciVQA validation",
-            "usage": "one-shot external retrieval evaluation",
+            "external_dataset": config["dataset"].get("name", "katebor/SciVQA validation"),
+            "usage": config["dataset"].get("usage", "one-shot external retrieval evaluation"),
             "excluded_qa_pair_types": config["selection"]["excluded_qa_pair_types"],
             "spiqa_paper_overlap": len(selected_papers & excluded_papers),
             "papers": len(selected_papers),

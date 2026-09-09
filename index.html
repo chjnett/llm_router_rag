@@ -147,7 +147,7 @@
   <main id="main">
     <div class="eyebrow">Capability-aware selective document processing</div>
     <h1>과학 논문 PDF를 언제 빠르게, 언제 강하게 처리할 것인가</h1>
-    <p class="lead">Cheap 문서 처리와 Strong/visual 처리를 질문별로 선택하는 연구입니다. 품질만 융합하던 기존 selector를 수리해 Strong 실행 전에 판단하는 Cheap-only early router를 잠갔습니다. 다음은 미개봉 SciVQA test의 1회 외부 검증입니다.</p>
+    <p class="lead">Cheap 문서 처리와 Strong/visual 처리를 질문별로 선택하는 연구입니다. 잠긴 Cheap-only early router는 SciVQA test에서 품질을 개선했지만, Strong query 절감이 목표 15%보다 낮은 10.35%여서 최종 Gate는 실패했습니다.</p>
     <div class="hero-meta">
       <span>마지막 실험: <strong>2026-09-09 KST</strong></span>
       <span>외부 표본: <strong>235 papers / 1,440 queries</strong></span>
@@ -157,22 +157,22 @@
 
     <div class="status-row">
       <article class="panel verdict">
-        <span class="badge hold">R4 · EARLY POLICY LOCKED</span>
-        <strong>Strong 실행 전에 판단하는 인과적 조기 라우터를 잠갔다.</strong>
-        <p>SPIQA calibration에서 Strong route 38.30%, 실제 query saving 61.70%였습니다. 아직 내부 결과이므로 외부 test 전까지 성공을 주장하지 않습니다.</p>
+        <span class="badge hold">R4 · QUALITY PASS / COST FAIL</span>
+        <strong>외부 test에서 품질 개선은 재현됐지만 비용 목표는 재현되지 않았다.</strong>
+        <p>R@1 54.31→57.29%, MRR .6045→.6302. 그러나 Strong을 89.65% 호출해 실제 query saving은 10.35%였습니다.</p>
       </article>
       <aside class="panel next">
         <span class="eyebrow">Next action</span>
-        <div class="step">External One-shot</div>
-        <p>잠긴 threshold 0.328183을 바꾸지 않고 SciVQA test에서 품질 유지와 실제 Strong skip을 한 번만 측정합니다.</p>
+        <div class="step">New Dev + Holdout</div>
+        <p>같은 test를 재튜닝하지 않습니다. 새 개발 corpus에서 규모 불변 특징과 비용 인식 목표를 설계한 뒤 새로운 holdout으로 인증합니다.</p>
       </aside>
     </div>
 
     <div class="metrics" aria-label="핵심 지표">
-      <div class="metric"><small>Locked threshold</small><strong>0.328183</strong><span>test 전에 동결</span></div>
-      <div class="metric"><small>Calibration selected R@1</small><strong>75.53%</strong><span>Always Strong 55.32%</span></div>
-      <div class="metric"><small>Strong route</small><strong>38.30%</strong><span>94 calibration queries</span></div>
-      <div class="metric"><small>Real query saving</small><strong>61.70%</strong><span>외부 test 미검증</span></div>
+      <div class="metric"><small>Test selected R@1</small><strong>57.29%</strong><span>Always Strong 54.31%</span></div>
+      <div class="metric"><small>Test selected MRR</small><strong>0.6302</strong><span>Always Strong 0.6045</span></div>
+      <div class="metric"><small>Strong route</small><strong>89.65%</strong><span>3,594 external queries</span></div>
+      <div class="metric"><small>Real query saving</small><strong>10.35%</strong><span>목표 15% · FAIL</span></div>
     </div>
 
     <section id="reading">
@@ -180,10 +180,11 @@
       <div class="table-wrap"><table><thead><tr><th class="num">순서</th><th>문서</th><th class="num">시간</th><th>핵심 목적</th></tr></thead><tbody>
         <tr><td class="num">1</td><td><a href="README.md">README.md</a></td><td class="num">5분</td><td>연구 범위와 핵심 원칙</td></tr>
         <tr><td class="num">2</td><td><a href="CURRENT_RESEARCH_STATUS_AND_NEXT_PLAN.md">CURRENT_RESEARCH_STATUS_AND_NEXT_PLAN.md</a></td><td class="num">10분</td><td>최신 결과와 다음 방향</td></tr>
-        <tr><td class="num">3</td><td><a href="docs/P1V_SPIQA_PREFLIGHT_REPORT.md">P1V_SPIQA_PREFLIGHT_REPORT.md</a></td><td class="num">15분</td><td>최신 GPU 실험과 통계 해석</td></tr>
-        <tr><td class="num">4</td><td><a href="ARCHITECTURE.md">ARCHITECTURE.md</a></td><td class="num">10분</td><td>Cheap→Strong 처리 구조</td></tr>
-        <tr><td class="num">5</td><td><a href="DECISION_LOG.md">DECISION_LOG.md</a></td><td class="num">10분</td><td>실패·피벗 결정의 근거</td></tr>
-        <tr><td class="num">6</td><td><a href="TODO_ROADMAP.md">TODO_ROADMAP.md</a></td><td class="num">5분</td><td>완료·잠금·다음 작업</td></tr>
+        <tr><td class="num">3</td><td><a href="docs/R4_SCIVQA_EARLY_ROUTER_CERTIFICATION.md">R4_SCIVQA_EARLY_ROUTER_CERTIFICATION.md</a></td><td class="num">10분</td><td>최신 외부 품질 PASS·비용 FAIL</td></tr>
+        <tr><td class="num">4</td><td><a href="docs/R4_EARLY_ROUTER_POLICY_LOCK.md">R4_EARLY_ROUTER_POLICY_LOCK.md</a></td><td class="num">5분</td><td>test 전에 잠근 정책 계약</td></tr>
+        <tr><td class="num">5</td><td><a href="ARCHITECTURE.md">ARCHITECTURE.md</a></td><td class="num">10분</td><td>Cheap→Strong 처리 구조</td></tr>
+        <tr><td class="num">6</td><td><a href="DECISION_LOG.md">DECISION_LOG.md</a></td><td class="num">10분</td><td>실패·피벗 결정의 근거</td></tr>
+        <tr><td class="num">7</td><td><a href="TODO_ROADMAP.md">TODO_ROADMAP.md</a></td><td class="num">5분</td><td>완료·잠금·다음 작업</td></tr>
       </tbody></table></div>
     </section>
 
@@ -221,7 +222,7 @@
         <div class="phase"><span class="id">P1 · FAIL / REPAIR</span><strong>Capability / Oracle</strong><p>Oracle 절감 9.86%. 파서 조합 개선 후 재검증.</p></div>
         <div class="phase complete"><span class="id">R0 · PASS</span><strong>QASPER Evidence Audit</strong><p>100 usable, exact paragraph mapping 93.68%.</p></div>
         <div class="phase complete"><span class="id">R1 · COMPLETE</span><strong>Retrieval Baselines</strong><p>Dense R@5 54.14%; RRF 49.78%.</p></div>
-        <div class="phase active"><span class="id">R4 · LOCKED</span><strong>SciVQA Test One-shot</strong><p>Cheap-only 정책 잠금 완료. 외부 compute-aware Gate 평가 대기.</p></div>
+        <div class="phase active"><span class="id">R4 · FAIL</span><strong>Router Re-design</strong><p>외부 품질 PASS, 비용 FAIL. 새 development/holdout 필요.</p></div>
       </div>
     </section>
 
@@ -291,6 +292,8 @@
     <section id="log">
       <div class="section-head"><div><span class="eyebrow">Experiment log</span><h2>무슨 일이 있었는가</h2></div><p>실패와 protocol 차이를 포함한 요약 로그입니다.</p></div>
       <div class="log">
+        <div class="log-row"><time>09-09</time><span class="kind">R4 COST FAIL</span><span>SciVQA test 3,594q: R@1 54.31→57.29%, MRR .6045→.6302; Strong skip 10.35%로 15% Gate 실패.</span></div>
+        <div class="log-row"><time>09-09</time><span class="kind">SHIFT FOUND</span><span>SPIQA candidate 1–29 대비 SciVQA test 599. candidate_log와 Caption score 분포 이동으로 Strong route가 89.65%까지 증가.</span></div>
         <div class="log-row"><time>09-09</time><span class="kind">EARLY LOCK</span><span>Cheap-only 7-feature policy threshold 0.328183 동결. Calibration R@1 75.53%, Strong route 38.30%, 실제 query saving 61.70%.</span></div>
         <div class="log-row"><time>09-09</time><span class="kind">COST CORRECTION</span><span>Full selector는 ColSmol score 특징을 요구해 실제 Strong compute saving 0%. 선택률을 호출률로 해석하지 않음.</span></div>
         <div class="log-row"><time>09-09</time><span class="kind">SCIVQA QUALITY</span><span>1,440q frozen fusion R@1 64.79→69.65%, 95% CI +3.47~+6.25%p, McNemar p=2.97e-12.</span></div>

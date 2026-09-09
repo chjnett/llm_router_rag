@@ -232,11 +232,13 @@ Early Router 입력은 Strong 실행 전에 얻을 수 있는 특징으로 제�
 
 현재 13-feature 모델의 Strong score·margin·entropy와 두 경로 difference 특징은 Late Fuser에서만 사용할 수 있다. Late Fuser의 선택률은 비용 절감률로 보고하지 않는다.
 
-Early Router는 SPIQA train/calibration에서 threshold `0.3281827436`으로 동결했다. Calibration Strong route는 38.30%였고 실제 query skip은 61.70%였다. 이는 내부 정책 선택 결과이며 외부 일반화 근거가 아니다.
+Early Router는 SPIQA train/calibration에서 threshold `0.3281827436`으로 동결했다. Calibration Strong route는 38.30%였지만 SciVQA test에서는 89.65%로 증가해 실제 query skip이 10.35%에 그쳤다. 품질 retention은 R@1 105.48%, MRR 104.26%로 통과했지만 15% 비용 Gate는 실패했다.
 
-다음 one-shot Gate는 미개봉 SciVQA test에서 측정한다.
+SciVQA test one-shot Gate 결과는 다음과 같다.
 
 - Always Strong 대비 R@1 및 MRR retention ≥ 95%
 - 실제로 생략한 ColSmol query encoding + MaxSim ≥ 15%
 - peak allocated VRAM ≤ 22GB
 - policy와 threshold는 test manifest 생성 전에 lock
+
+전체 판정은 quality PASS / cost FAIL이다. 같은 test에서 threshold나 특징을 변경하지 않는다. 다음 버전은 새 development corpus에서 candidate count의 절대 규모에 의존하지 않는 특징과 cost-sensitive objective를 사용하고, 새로운 unopened holdout에서만 인증한다.

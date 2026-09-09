@@ -1,0 +1,15 @@
+dataset:
+  name: katebor/SciVQA test
+  usage: locked-policy one-shot external certification
+  json: data/raw/scivqa/data/test_2025-07-03_09-01.json
+  images_zip: data/raw/scivqa/data/images_test.zip
+  image_archive_prefix: images_test
+  spiqa_json: data/raw/spiqa/test-A/SPIQA_testA.json
+selection:
+  excluded_qa_pair_types:
+    - unanswerable
+gate:
+  min_queries: 1000
+  min_images: 200
+outputs:
+  manifest: artifacts/r4_scivqa_test_manifest.json

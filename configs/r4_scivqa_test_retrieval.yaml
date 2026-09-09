@@ -1,0 +1,24 @@
+seed: 42
+dataset:
+  manifest: artifacts/r4_scivqa_test_manifest.json
+  images_zip: data/raw/scivqa/data/images_test.zip
+caption_model:
+  id: BAAI/bge-small-en-v1.5
+  local_path: cache/huggingface/models--BAAI--bge-small-en-v1.5/snapshots/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a
+  query_prefix: "Represent this sentence for searching relevant passages: "
+  max_length: 256
+  batch_size: 32
+strong_model:
+  id: cache/colsmol-runtime/adapter
+  cache_folder: cache/colsmol-runtime
+  local_files_only: true
+  document_batch_size: 8
+  query_batch_size: 16
+  similarity_batch_size: 16
+gate:
+  min_questions: 1000
+  min_recall_at_5: 0.70
+  min_oracle_recall_at_1_gain: 0.05
+  max_peak_vram_bytes: 22000000000
+outputs:
+  root: outputs/r4_scivqa_test_retrieval

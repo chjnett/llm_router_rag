@@ -37,11 +37,11 @@
       <div class="kicker">Scientific PDF RAG · 쉬운 설명서</div>
       <h1>모든 논문을 비싸게 읽지 않고,<br>필요할 때만 강하게 본다</h1>
       <p class="lead">CapRoute는 “작은 LLM과 큰 LLM 중 무엇을 쓸까?”보다 앞단의 문제를 다룹니다. 과학 논문 PDF를 텍스트로 빠르게 처리할지, 그림과 표까지 이해하는 강한 처리기를 호출할지를 질문별로 선택합니다.</p>
-      <div class="meta"><span>대상: 영문 born-digital 과학 논문 PDF</span><span>GPU: RTX 3090 24GB</span><span>현재 단계: Early policy 잠금 완료 · 외부 test 대기</span></div>
+      <div class="meta"><span>대상: 영문 born-digital 과학 논문 PDF</span><span>GPU: RTX 3090 24GB</span><span>현재 단계: 외부 비용 Gate 실패 · Router 재설계</span></div>
     </div>
     <div class="summary">
       <div><span class="kicker">한 문장으로</span><strong>먼저 저렴한 텍스트 검색으로 답을 찾고, 그 결과가 부족할 가능성이 높은 질문만 시각 검색기로 다시 확인한다.</strong><p>목표는 최고 모델보다 더 높은 정답률을 약속하는 것이 아니라, 적은 Strong 호출로 텍스트 기준선의 품질을 지키거나 개선하는 것입니다.</p></div>
-      <div class="stamp"><span>Early router 내부 보정</span><b>61.7% 절감</b><span>Strong query skip<br>외부 test 미검증</span></div>
+      <div class="stamp"><span>SciVQA test</span><b>10.35% 절감</b><span>Strong query skip<br>목표 15% · FAIL</span></div>
     </div>
 
     <section id="idea">
@@ -73,7 +73,7 @@
         </div>
       </div>
       <p class="caption">중요: ColSmol은 PDF parser나 답변 LLM이 아니라, 질문과 페이지 이미지를 비교하는 visual retriever입니다.</p>
-      <div class="callout" style="margin-top:13px"><strong>구조 수리 완료, 외부 검증은 아직</strong><p>Strong 점수를 요구하던 full selector와 비용 결정을 분리했습니다. Early router는 Cheap 특징만 사용하므로 실제로 3단계를 건너뛸 수 있지만, 절감과 품질 유지의 외부 재현 여부는 SciVQA test에서 확인해야 합니다.</p></div>
+      <div class="callout" style="margin-top:13px"><strong>인과 구조는 수리했지만 비용 일반화는 실패</strong><p>Early router는 실제로 Strong 계산을 건너뛸 수 있고 외부 품질도 개선했습니다. 다만 SciVQA test에서 Strong skip이 10.35%에 그쳐 사전 목표 15%를 통과하지 못했습니다.</p></div>
     </section>
 
     <section>
@@ -140,7 +140,8 @@
         <div class="event"><time>EXPANDED SELECTOR · CONDITIONAL</time><h3>R@1 67.9→71.6%, 통계는 미확정</h3><p>다음 단계는 같은 SPIQA 반복이 아니라 외부 데이터에서 고정 정책을 검증하는 것입니다.</p></div>
         <div class="event"><time>INPUT RESOLUTION · PASS</time><h3>ColSmol R@1 36→58%, MRR .573→.721</h3><p>같은 256M 모델에서 224px 대신 원본 이미지를 사용하자 표 R@1이 52→80%로 상승했습니다. 모델 크기 전에 전처리 손실을 확인해야 한다는 근거입니다.</p></div>
         <div class="event"><time>500M MODEL · STOP</time><h3>R@1은 58%로 동일, MRR은 +0.002</h3><p>그림은 조금 좋아졌지만 표는 하락했고 저장공간은 약 2배가 됐습니다. 현재는 256M+원본 해상도가 더 효율적입니다.</p></div>
-        <div class="event"><time>SCIVQA EXTERNAL · MIXED</time><h3>품질 +4.86%p, 실제 compute saving 0%</h3><p>통계적 품질 개선은 재현됐지만 Strong 점수 특징 때문에 계산을 건너뛸 수 없었습니다. Early router와 late fuser를 분리합니다.</p></div>
+        <div class="event"><time>SCIVQA VALIDATION · MIXED</time><h3>품질 +4.86%p, 실제 compute saving 0%</h3><p>통계적 품질 개선은 재현됐지만 Strong 점수 특징 때문에 계산을 건너뛸 수 없었습니다. Early router와 late fuser를 분리했습니다.</p></div>
+        <div class="event"><time>SCIVQA TEST · COST FAIL</time><h3>품질 +2.98%p, Strong skip 10.35%</h3><p>인과적 early router의 품질은 재현됐지만 15% 절감 Gate에 실패했습니다. Candidate 규모 1–29→599의 분포 이동이 주요 원인입니다.</p></div>
       </div>
     </section>
 
@@ -149,8 +150,8 @@
       <div class="two">
         <div class="callout"><strong>1. Cheap-only early router · 완료</strong><p>질문·후보 수·Caption score/margin/entropy만 보는 7-feature 정책을 구현했습니다.</p></div>
         <div class="callout"><strong>2. Policy lock · 완료</strong><p>SPIQA train/calibration에서 threshold 0.328183을 잠갔습니다. 내부 Strong skip은 61.70%입니다.</p></div>
-        <div class="callout"><strong>3. SciVQA test one-shot</strong><p>아직 열지 않은 test 이미지와 질문에서 품질 95% 유지, 실제 Strong query 15% 절감을 한 번만 인증합니다.</p></div>
-        <div class="callout"><strong>중단 조건</strong><p>외부 데이터에서 기준선보다 하락하거나 Strong 호출 비용이 이득을 상쇄하면 현재 모델 조합을 종료합니다. 사후 threshold 완화는 하지 않습니다.</p></div>
+        <div class="callout"><strong>3. SciVQA test one-shot · FAIL</strong><p>품질 retention은 100%를 넘었지만 실제 Strong skip 10.35%로 비용 기준 15%를 통과하지 못했습니다.</p></div>
+        <div class="callout"><strong>4. 다음 허용 작업</strong><p>같은 test는 잠급니다. 새 development corpus에서 corpus-size invariant 특징과 cost-sensitive objective를 만들고 새로운 holdout에서만 다시 인증합니다.</p></div>
       </div>
     </section>
 
@@ -160,6 +161,7 @@
         <a class="doc" href="READING_GUIDE.md"><b>READING_GUIDE.md</b><span>전체 문서 읽기 순서</span></a>
         <a class="doc" href="CURRENT_RESEARCH_STATUS_AND_NEXT_PLAN.md"><b>CURRENT_RESEARCH_STATUS_AND_NEXT_PLAN.md</b><span>최신 판정과 다음 실험</span></a>
         <a class="doc" href="ARCHITECTURE.md"><b>ARCHITECTURE.md</b><span>원본 아키텍처 정의</span></a>
+        <a class="doc" href="docs/R4_SCIVQA_EARLY_ROUTER_CERTIFICATION.md"><b>R4_SCIVQA_EARLY_ROUTER_CERTIFICATION.md</b><span>외부 품질 PASS·비용 FAIL 상세</span></a>
         <a class="doc" href="docs/R3_SCIVQA_EXTERNAL_REPORT.md"><b>R3_SCIVQA_EXTERNAL_REPORT.md</b><span>외부 품질 PASS·compute FAIL 상세</span></a>
         <a class="doc" href="docs/P1V_SPIQA_PREFLIGHT_REPORT.md"><b>P1V_SPIQA_PREFLIGHT_REPORT.md</b><span>SPIQA·ColSmol 상세 결과</span></a>
         <a class="doc" href="EXPERIMENT_PROTOCOL.md"><b>EXPERIMENT_PROTOCOL.md</b><span>Gate와 split 규칙</span></a>
