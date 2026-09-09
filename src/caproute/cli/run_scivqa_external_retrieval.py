@@ -95,7 +95,8 @@ def main() -> None:
             strong_scores = np.asarray(strong_scores_batch[offset])
             caption_ranking = np.argsort(-caption_scores, kind="stable").tolist()
             strong_ranking = np.argsort(-strong_scores, kind="stable").tolist()
-            relevant = {int(row["relevant_index"])}
+            relevant = {int(value) for value in row.get("relevant_indices", [row.get("relevant_index")])}
+            relevant.discard(None)
             caption_metrics = retrieval_metrics(caption_ranking, relevant)
             strong_metrics = retrieval_metrics(strong_ranking, relevant)
             oracle_ranking = caption_ranking if caption_metrics["mrr"] >= strong_metrics["mrr"] else strong_ranking
