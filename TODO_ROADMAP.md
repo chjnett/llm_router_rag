@@ -101,7 +101,11 @@ Frozen rule: exact table count AND GriTS-Top ≥ 0.80 AND GriTS-Loc ≥ 0.50.
 - [x] P1-V independent train/calibration 380 questions 확보 — 66 papers
 - [x] P1-V policy lock before certification — threshold 0.392054
 - [x] P1-V independent certification 81 questions — point Gate PASS, statistical INCONCLUSIVE
+- [x] P1-V input resolution screen — 256M R@1 0.36→0.58, MRR 0.5727→0.7209
+- [x] P1-V ColSmol-500M screen — STOP (R@1 동일 0.58, MRR +0.002, 표 R@1 -0.04)
+- [x] visual representation freeze — ColSmol-256M + original-resolution
 - [ ] 새 external multimodal cohort에서 통계적 certification
+- [ ] external cohort의 license/image access/question-reference mapping audit
 - [ ] Strong both-fail repair 후보 평가 (RAG retrieval 차이 확인 전 보류)
 
 ---

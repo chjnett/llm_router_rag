@@ -36,6 +36,17 @@ SPIQA test-A의 224px 이미지와 메타데이터만 사용했다. 첫 50문항
 
 R@1은 +22%p, MRR은 +0.1481 개선됐다. 원본 이미지의 중앙 크기는 502×252이고 최대 크기는 1097×1411이다. 표 검색 개선은 크지만 figure R@1 0.36은 아직 낮아 500M 모델 비교의 명시적 분석 축으로 남긴다.
 
+### 500M model-size screen
+
+동일 원본 이미지와 50문항에서 ColSmol-500M을 한 번 비교했다.
+
+| Model | R@1 | R@5 | MRR | Table R@1 | Figure R@1 | Peak VRAM | Runtime storage |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| ColSmol-256M | **0.580** | 0.940 | 0.7209 | **0.800** | 0.360 | **3.92 GiB** | **479 MiB** |
+| ColSmol-500M | **0.580** | 0.940 | **0.7229** | 0.760 | **0.400** | 4.38 GiB | 954 MiB |
+
+500M은 전체 R@1을 개선하지 않았고 MRR 차이는 +0.002다. 표 성능 하락과 저장공간 약 2배 증가를 감수할 근거가 없어 현재 조합에서는 거절한다. 256M+원본 해상도를 동결하고 외부 데이터로 이동한다.
+
 ### 100-question paper-disjoint confirmation
 
 | Method | R@1 | R@5 | MRR | nDCG@5 |
@@ -67,6 +78,7 @@ Visual 모델을 항상 사용하는 것은 caption baseline보다 명확히 나
 | CLIP, 100q/221 images | 0.75 GiB | 0.88 s | 1.30 s |
 | ColSmol, 50q/98 images | 4.01 GiB | 35.16 s | 3.85 s |
 | ColSmol original resolution, 50q/98 images | 3.92 GiB | 23.92 s | 4.01 s |
+| ColSmol-500M original resolution, 50q/98 images | 4.38 GiB | 24.87 s | 3.98 s |
 | ColSmol, 100q/221 images | 4.04 GiB | 79.14 s | 7.18 s |
 
 ColSmol compressed document index는 50문항 표본 26.7MB, 확인 표본 60.2MB다.
@@ -106,6 +118,7 @@ Certification에서 R@1은 +3.70%p, R@5는 +1.23%p, MRR은 +0.0266 개선됐다.
 .venv\Scripts\python.exe -m caproute.cli.run_spiqa_clip_preflight --config configs\p1v_spiqa_clip_confirmation.yaml
 .venv-colsmol\Scripts\python.exe -m caproute.cli.run_spiqa_colsmol_preflight --config configs\p1v_spiqa_colsmol_preflight.yaml
 .venv-colsmol\Scripts\python.exe -m caproute.cli.run_spiqa_colsmol_preflight --config configs\p1v_spiqa_colsmol_preflight_fullres.yaml
+.venv-colsmol\Scripts\python.exe -m caproute.cli.run_spiqa_colsmol_preflight --config configs\p1v_spiqa_colsmol_500m_preflight_fullres.yaml
 .venv-colsmol\Scripts\python.exe -m caproute.cli.run_spiqa_colsmol_preflight --config configs\p1v_spiqa_colsmol_confirmation.yaml
 .venv\Scripts\python.exe -m caproute.cli.evaluate_spiqa_selector --config configs\p1v_spiqa_colsmol_selector.yaml
 .venv\Scripts\python.exe -m caproute.cli.freeze_spiqa_router_splits --config configs\p1v_spiqa_router_splits.yaml

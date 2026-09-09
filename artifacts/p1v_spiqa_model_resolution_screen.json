@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "purpose": "Development-only input-resolution and model-size engineering screen",
+  "cohort": {
+    "dataset": "SPIQA test-A",
+    "papers": 12,
+    "questions": 50,
+    "images": 98,
+    "use": "model engineering only; not certification"
+  },
+  "runs": [
+    {
+      "model": "vidore/colSmol-256M",
+      "input": "224x224",
+      "recall_at_1": 0.36,
+      "recall_at_5": 0.94,
+      "mrr": 0.5727142857142857,
+      "table_recall_at_1": 0.52,
+      "figure_recall_at_1": 0.20,
+      "indexing_seconds": 35.15752000012435,
+      "query_seconds": 3.8507581000449136,
+      "peak_vram_allocated_bytes": 4308703232,
+      "compressed_index_bytes": 26711208
+    },
+    {
+      "model": "vidore/colSmol-256M",
+      "input": "original-resolution",
+      "recall_at_1": 0.58,
+      "recall_at_5": 0.94,
+      "mrr": 0.7208571428571429,
+      "table_recall_at_1": 0.80,
+      "figure_recall_at_1": 0.36,
+      "indexing_seconds": 23.923149199807085,
+      "query_seconds": 4.007109299767762,
+      "peak_vram_allocated_bytes": 4205920768,
+      "compressed_index_bytes": 17970077,
+      "result_sha256": "94916ae02a0971c75c9739246d50c9b585fb019fbc6b7aa838de2ef3727bea50"
+    },
+    {
+      "model": "vidore/colSmol-500M",
+      "base_model": "vidore/ColSmolVLM-Instruct-500M-base",
+      "input": "original-resolution",
+      "recall_at_1": 0.58,
+      "recall_at_5": 0.94,
+      "mrr": 0.7228571428571428,
+      "table_recall_at_1": 0.76,
+      "figure_recall_at_1": 0.40,
+      "indexing_seconds": 24.86970060004387,
+      "query_seconds": 3.9779185000807047,
+      "peak_vram_allocated_bytes": 4705797120,
+      "compressed_index_bytes": 17993180,
+      "result_sha256": "60e8ac6d4ea26f065de254caa5f41828320a6d90bdc79853c904d3943c78fe6e",
+      "base_weight_sha256": "372c77891315124fa1de5f6b75b370e1a2240c5b323334d54018df1045ad9177",
+      "adapter_weight_sha256": "8f9d12efede94dc2793a2524694d66f638cd0f818f7b15aef769de0336a8e9cc"
+    }
+  ],
+  "paired_256m_vs_500m": {
+    "questions_improved_by_mrr": 7,
+    "questions_degraded_by_mrr": 6,
+    "questions_unchanged_by_mrr": 37,
+    "recall_at_1_difference": 0.0,
+    "mrr_difference": 0.002
+  },
+  "decision": {
+    "selected": "vidore/colSmol-256M with original-resolution images",
+    "status": "500M_REJECTED_FOR_CURRENT_PAIR",
+    "reason": "500M did not improve overall R@1 and only changed MRR by +0.002 while increasing model storage and peak VRAM. It also reduced table R@1 by 4 percentage points.",
+    "next": "Freeze the 256M original-resolution representation and move to an external table/figure scientific-document dataset. Do not tune further on SPIQA test-A."
+  }
+}

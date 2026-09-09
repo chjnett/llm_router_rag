@@ -696,3 +696,29 @@ Oracle 보완성만으로 deployable routing을 주장할 수 없다. 다음 해
 
 ### Operational anomaly
 네트워크 메타데이터 조회를 허용한 3분할 연속 ColSmol 실행이 6시간 이상 모델 초기화에서 정지했고 결과 파일은 0개였다. 실행을 중단하고 502MB local runtime snapshot을 구성해 HF/Transformers offline 모드로 재실행했으며 train/calibration/certification을 각각 185.60/70.04/64.68초에 완료했다.
+
+---
+
+## Decision 031
+
+### Date
+2026-09-09
+
+### Trigger
+현재 visual retriever 성능이 낮은 원인이 224×224 입력 손실인지 256M 모델 용량인지 분리하기 위해, 동결 초기 preflight 50문항에서 원본 해상도와 ColSmol-500M을 순차 비교했다.
+
+### Decision
+`ColSmol-256M + original-resolution`을 동결한다. ColSmol-500M은 현재 pair에서 채택하지 않으며 SPIQA test-A의 추가 model/threshold 탐색을 종료한다.
+
+### Evidence
+- 256M 224px→원본: R@1 0.36→0.58, MRR 0.5727→0.7209
+- 256M 원본 표/그림 R@1: 0.80/0.36
+- 500M 원본: R@1 0.58, MRR 0.7229, 표/그림 R@1 0.76/0.40
+- 256M 대비 500M MRR 개선/악화/동일 질문: 7/6/37
+- Peak VRAM 3.92→4.38GiB, runtime storage 약 479→954MiB
+
+### Consequence
+현재 개선의 주원인은 모델 확대보다 입력 해상도 손실 제거다. 500M weight는 결과 hash와 공식 model ID를 기록한 뒤 디스크에서 제거한다. 다음 증거는 새로운 external table/figure scientific-document cohort에서 수집한다.
+
+### Artifact
+`artifacts/p1v_spiqa_model_resolution_screen.json`

@@ -291,6 +291,8 @@
     <section id="log">
       <div class="section-head"><div><span class="eyebrow">Experiment log</span><h2>무슨 일이 있었는가</h2></div><p>실패와 protocol 차이를 포함한 요약 로그입니다.</p></div>
       <div class="log">
+        <div class="log-row"><time>09-09</time><span class="kind">500M STOP</span><span>원본 50q에서 256M→500M: R@1 58→58%, MRR .7209→.7229. VRAM·저장공간 증가 대비 이득 없어 256M 유지.</span></div>
+        <div class="log-row"><time>09-09</time><span class="kind">MODEL FREEZE</span><span>ColSmol-256M + 원본 해상도를 동결. SPIQA test-A 추가 탐색을 종료하고 외부 table/figure 데이터로 이동.</span></div>
         <div class="log-row"><time>09-09</time><span class="kind">RESOLUTION PASS</span><span>동일 50q/ColSmol-256M에서 224px→원본 이미지: R@1 36→58%(+22%p), MRR .5727→.7209.</span></div>
         <div class="log-row"><time>09-09</time><span class="kind">TABLE GAIN</span><span>원본 해상도에서 표 R@1 52→80%, 그림 R@1 20→36%. 다음은 동일 표본의 ColSmol-500M 1회 비교.</span></div>
         <div class="log-row"><time>09-09</time><span class="kind">DISK CLEAN</span><span>오프라인 로드 검증 후 중복 256M cache 약 479MiB만 삭제. 추론 cache·원본 데이터·두 Git 저장소는 보존.</span></div>
