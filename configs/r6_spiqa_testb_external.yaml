@@ -11,8 +11,8 @@ caption_model:
   max_length: 256
   batch_size: 32
 strong_model:
-  id: vidore/colSmol-256M
-  cache_folder: cache/huggingface
+  id: cache/colsmol-runtime/adapter
+  cache_folder: cache/colsmol-runtime
   local_files_only: true
   document_batch_size: 8
   query_batch_size: 16
