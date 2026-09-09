@@ -1,5 +1,7 @@
 # CapRoute 현재 필독 문서 가이드
 
+Markdown을 읽기 전에 전체 흐름을 쉬운 말로 보고 싶다면 [architecture_explained.html](architecture_explained.html)을 먼저 연다.
+
 ## 가장 짧은 읽기 순서
 
 현재 결과와 다음 판단만 이해하려면 아래 6개 문서를 순서대로 읽으면 된다. 예상 총 소요 시간은 약 45~60분이다.

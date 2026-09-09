@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CapRoute scientific PDF RAG 연구의 전체 아키텍처를 쉽게 설명하는 문서">
+  <title>CapRoute 아키텍처 쉬운 설명서</title>
+  <style>
+    :root{--ink:#111;--sub:#5d5d59;--line:#d9d9d4;--soft:#f5f5f2;--mid:#e9e9e5;--max:1180px}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#fff;color:var(--ink);font-family:Inter,Pretendard,"Noto Sans KR","Segoe UI",sans-serif;line-height:1.65}
+    a{color:inherit}header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line)}
+    .top{max-width:var(--max);margin:auto;padding:13px 22px;display:flex;align-items:center;gap:18px}.brand{font-weight:850;letter-spacing:-.03em;white-space:nowrap}.top nav{margin-left:auto;display:flex;gap:4px;overflow:auto}.top nav a{text-decoration:none;color:var(--sub);font-size:13px;padding:7px 9px;border-radius:4px;white-space:nowrap}.top nav a:hover{background:var(--soft);color:var(--ink)}
+    main{max-width:var(--max);margin:auto;padding:48px 22px 90px}.hero{max-width:900px}.kicker{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--sub)}h1{font-size:clamp(34px,6vw,64px);line-height:1.02;letter-spacing:-.055em;margin:12px 0 20px}h2{font-size:28px;line-height:1.2;letter-spacing:-.035em;margin:0 0 12px}h3{font-size:17px;letter-spacing:-.015em;margin:0 0 7px}p{margin:0}.lead{font-size:19px;color:#383835;max-width:840px}.meta{display:flex;gap:10px 24px;flex-wrap:wrap;margin-top:24px;color:var(--sub);font-size:13px}
+    section{padding-top:72px}.section-head{display:grid;grid-template-columns:1fr minmax(260px,480px);gap:30px;align-items:end;margin-bottom:20px}.section-head p{color:var(--sub);font-size:14px}
+    .summary{margin-top:34px;border:2px solid var(--ink);border-radius:12px;padding:28px;display:grid;grid-template-columns:1.4fr .6fr;gap:25px}.summary strong{font-size:25px;line-height:1.35;letter-spacing:-.025em}.summary p{color:var(--sub);margin-top:10px}.stamp{border-left:1px solid var(--line);padding-left:24px}.stamp b{display:block;font-size:34px;letter-spacing:-.05em}.stamp span{font-size:13px;color:var(--sub)}
+    .analogy{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.card{border:1px solid var(--line);border-radius:9px;padding:21px;background:#fff}.card .num{font-size:12px;color:var(--sub);font-weight:800}.card strong{display:block;font-size:18px;margin:7px 0}.card p,.card li{font-size:14px;color:var(--sub)}
+    .flow{border:1px solid var(--line);border-radius:12px;padding:24px;background:var(--soft);overflow:auto}.flow-grid{display:grid;grid-template-columns:1fr 48px 1fr 48px 1fr;gap:8px;align-items:center;min-width:850px}.node{background:#fff;border:1px solid #aaa;border-radius:8px;padding:17px;min-height:116px}.node.primary{border:2px solid #111}.node small{display:block;color:var(--sub);font-weight:750;margin-bottom:5px}.node p{font-size:13px;color:var(--sub)}.arrow{text-align:center;font-size:25px}.branch{display:grid;gap:7px}.branch .node{min-height:auto;padding:11px 14px}.caption{font-size:12px;color:var(--sub);margin-top:10px}
+    .compare{width:100%;border-collapse:collapse;border:1px solid var(--line)}.compare th,.compare td{text-align:left;padding:13px 14px;border-bottom:1px solid var(--line);vertical-align:top}.compare th{background:var(--soft);font-size:12px;color:var(--sub)}.compare td{font-size:14px}.compare tr:last-child td{border-bottom:0}.num-right{text-align:right!important;font-variant-numeric:tabular-nums}.table-wrap{overflow:auto;border-radius:8px}
+    .steps{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}.step{border:1px solid var(--line);border-radius:9px;padding:21px;display:grid;grid-template-columns:42px 1fr;gap:14px}.step-index{width:36px;height:36px;border:1px solid #111;border-radius:50%;display:grid;place-items:center;font-weight:850}.step p{font-size:14px;color:var(--sub)}
+    .formula{border-left:4px solid #111;background:var(--soft);padding:20px 23px;margin:16px 0}.formula code{font-family:"Cascadia Code",Consolas,monospace;font-size:16px}.explain{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.explain .card{background:var(--soft)}
+    .split{display:grid;grid-template-columns:286fr 94fr 81fr;gap:4px;height:72px}.split div{border:1px solid #111;display:grid;place-items:center;text-align:center;font-size:13px;font-weight:800}.split div span{display:block;font-weight:400;color:var(--sub);font-size:11px}
+    .callout{border:1px solid #111;padding:20px;border-radius:9px}.callout strong{display:block;font-size:18px;margin-bottom:5px}.callout p{color:var(--sub);font-size:14px}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .timeline{border-left:2px solid #111;margin-left:9px;padding-left:25px;display:grid;gap:18px}.event{position:relative}.event:before{content:"";position:absolute;left:-31px;top:7px;width:10px;height:10px;background:#fff;border:2px solid #111;border-radius:50%}.event time{font-size:12px;color:var(--sub);font-weight:800}.event p{font-size:14px;color:var(--sub)}
+    .status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.metric{border:1px solid var(--line);padding:18px;border-radius:8px}.metric small{display:block;color:var(--sub);font-weight:750}.metric b{font-size:28px;display:block;letter-spacing:-.04em;margin:5px 0}.metric span{font-size:12px;color:var(--sub)}
+    .term{border-bottom:1px dotted #444;cursor:help;position:relative}.term:hover:after,.term:focus:after{content:attr(data-tip);position:absolute;bottom:calc(100% + 7px);left:0;width:min(310px,75vw);background:#111;color:#fff;padding:9px 11px;border-radius:5px;font-size:12px;font-weight:400;line-height:1.5;z-index:50}
+    details{border:1px solid var(--line);border-radius:8px;padding:0 16px}summary{font-weight:800;cursor:pointer;padding:15px 0}details p{font-size:14px;color:var(--sub);padding-bottom:16px}.docs{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.doc{border:1px solid var(--line);border-radius:7px;padding:15px;text-decoration:none}.doc:hover{border-color:#111;background:var(--soft)}.doc b{display:block}.doc span{font-size:12px;color:var(--sub)}
+    footer{border-top:1px solid var(--line);color:var(--sub);font-size:12px}footer div{max-width:var(--max);margin:auto;padding:22px;display:flex;justify-content:space-between;gap:15px}
+    @media(max-width:850px){.top nav{display:none}.summary,.section-head,.two{grid-template-columns:1fr}.stamp{border-left:0;border-top:1px solid var(--line);padding:18px 0 0}.analogy,.explain,.status-grid{grid-template-columns:repeat(2,1fr)}.steps,.docs{grid-template-columns:1fr}}
+    @media(max-width:560px){main{padding:34px 15px 65px}.top{padding:12px 15px}.analogy,.explain,.status-grid{grid-template-columns:1fr}.split{height:auto;display:grid;grid-template-columns:1fr}.split div{padding:12px}.summary{padding:20px}h2{font-size:24px}}
+    @media print{header{display:none}main{padding:0}.card,.step,.flow,.callout,table{break-inside:avoid}section{padding-top:38px}}
+  </style>
+</head>
+<body>
+  <header><div class="top"><div class="brand">CapRoute / Easy Architecture</div><nav aria-label="페이지 목차"><a href="#idea">핵심 아이디어</a><a href="#flow">전체 흐름</a><a href="#router">판단 방법</a><a href="#experiment">실험</a><a href="#results">결과</a><a href="#limits">한계</a><a href="#docs">문서</a></nav></div></header>
+  <main>
+    <div class="hero">
+      <div class="kicker">Scientific PDF RAG · 쉬운 설명서</div>
+      <h1>모든 논문을 비싸게 읽지 않고,<br>필요할 때만 강하게 본다</h1>
+      <p class="lead">CapRoute는 “작은 LLM과 큰 LLM 중 무엇을 쓸까?”보다 앞단의 문제를 다룹니다. 과학 논문 PDF를 텍스트로 빠르게 처리할지, 그림과 표까지 이해하는 강한 처리기를 호출할지를 질문별로 선택합니다.</p>
+      <div class="meta"><span>대상: 영문 born-digital 과학 논문 PDF</span><span>GPU: RTX 3090 24GB</span><span>현재 단계: 외부 데이터 인증 준비</span></div>
+    </div>
+    <div class="summary">
+      <div><span class="kicker">한 문장으로</span><strong>먼저 저렴한 텍스트 검색으로 답을 찾고, 그 결과가 부족할 가능성이 높은 질문만 시각 검색기로 다시 확인한다.</strong><p>목표는 최고 모델보다 더 높은 정답률을 약속하는 것이 아니라, 적은 Strong 호출로 텍스트 기준선의 품질을 지키거나 개선하는 것입니다.</p></div>
+      <div class="stamp"><span>독립 인증 점 추정</span><b>67.9 → 71.6%</b><span>R@1 · Strong 호출 12.35%<br>통계적 확정은 아직 아님</span></div>
+    </div>
+
+    <section id="idea">
+      <div class="section-head"><div><div class="kicker">01 · Why</div><h2>도서관 사서로 비유하면 쉽다</h2></div><p>논문 한 편에는 본문, 수식, 표, 그래프가 섞여 있습니다. 모든 질문에 가장 비싼 분석을 적용하면 정확할 수 있지만 느리고 저장 공간도 커집니다.</p></div>
+      <div class="analogy">
+        <article class="card"><span class="num">CHEAP</span><strong>목차와 캡션부터 찾기</strong><p>텍스트 임베딩으로 빠르게 관련 표·그림 후보를 찾습니다. 싸고 빠르지만 이미지 내부 정보는 충분히 보지 못합니다.</p></article>
+        <article class="card"><span class="num">STRONG</span><strong>실제 페이지를 자세히 보기</strong><p>ColSmol 같은 시각 모델이 이미지 내용을 다중 벡터로 읽습니다. 더 풍부하지만 GPU 시간과 인덱스 비용이 듭니다.</p></article>
+        <article class="card"><span class="num">ROUTER</span><strong>누구에게 맡길지 결정하기</strong><p>Cheap 결과의 점수·간격·불확실성과 질문 표현을 보고 Strong 경로가 도움이 될 가능성을 예측합니다.</p></article>
+      </div>
+    </section>
+
+    <section id="flow">
+      <div class="section-head"><div><div class="kicker">02 · Current architecture</div><h2>현재 후보 아키텍처의 전체 흐름</h2></div><p>초기에는 PDF를 저장할 때 페이지별 parser를 선택하려 했습니다. Oracle 절감 상한이 9.86%에 그쳐 실패했고, 지금은 실제 질문이 들어온 뒤 필요한 페이지만 구제하는 구조로 피봇했습니다.</p></div>
+      <div class="flow">
+        <div class="flow-grid">
+          <div class="node primary"><small>1 · INGEST ONCE</small><h3>Cheap 문서 인덱스</h3><p>PDF 텍스트·캡션을 추출하고 BGE 임베딩을 저장합니다. 모든 질문이 이용하는 기본 경로입니다.</p></div>
+          <div class="arrow">→</div>
+          <div class="node primary"><small>2 · QUERY</small><h3>질문과 Cheap 검색</h3><p>관련 표·그림 후보를 순위화하고 top score, margin, entropy를 계산합니다.</p></div>
+          <div class="arrow">→</div>
+          <div class="branch"><div class="node"><small>충분함</small><b>Cheap 결과 채택</b></div><div class="node primary"><small>불확실함</small><b>Strong visual rescue</b></div></div>
+        </div>
+        <div style="text-align:center;font-size:25px;padding:12px 0">↓</div>
+        <div class="flow-grid">
+          <div class="node"><small>3 · OPTIONAL</small><h3>ColSmol 시각 검색</h3><p>선택된 질문만 이미지 다중 벡터 점수로 재검색합니다.</p></div>
+          <div class="arrow">→</div>
+          <div class="node"><small>4 · MERGE</small><h3>최종 근거 선택</h3><p>라우터 결정에 따라 caption 순위 또는 visual 순위를 사용합니다.</p></div>
+          <div class="arrow">→</div>
+          <div class="node"><small>5 · DOWNSTREAM</small><h3>근거 기반 답변</h3><p>선택한 표·그림과 provenance를 답변 모델에 전달합니다. 현재 연구는 검색 단계 검증에 집중합니다.</p></div>
+        </div>
+      </div>
+      <p class="caption">중요: ColSmol은 PDF parser나 답변 LLM이 아니라, 질문과 페이지 이미지를 비교하는 visual retriever입니다.</p>
+    </section>
+
+    <section>
+      <div class="section-head"><div><div class="kicker">03 · Components</div><h2>각 부품이 실제로 하는 일</h2></div><p>아키텍처 문서의 용어를 구현 단위로 풀어쓴 설명입니다.</p></div>
+      <div class="steps">
+        <article class="step"><div class="step-index">1</div><div><h3>Native PDF scan</h3><p>PyMuPDF로 텍스트 레이어, 페이지 수, 이미지·표 단서를 빠르게 읽습니다. 스캔 PDF가 아닌 born-digital PDF로 범위를 제한합니다.</p></div></article>
+        <article class="step"><div class="step-index">2</div><div><h3>Caption text representation</h3><p>표·그림 캡션을 BGE-small 임베딩으로 바꾸고 질문과의 의미 유사도를 계산합니다. 현재 Cheap 기준선입니다.</p></div></article>
+        <article class="step"><div class="step-index">3</div><div><h3>Visual representation</h3><p>ColSmol-256M이 이미지와 질문을 여러 토큰 벡터로 표현하고 <span class="term" tabindex="0" data-tip="질문의 각 토큰이 문서 토큰 중 가장 비슷한 값과 만나는 점수를 합산하는 방식입니다.">MaxSim</span>으로 순위를 만듭니다.</p></div></article>
+        <article class="step"><div class="step-index">4</div><div><h3>Capability router</h3><p>“질문이 어려운가?”가 아니라 “이 질문에서 visual 결과가 caption보다 나을 것인가?”를 Logistic Regression으로 예측합니다.</p></div></article>
+        <article class="step"><div class="step-index">5</div><div><h3>Policy threshold</h3><p>확률이 0.392054 이상일 때만 ColSmol 결과를 사용합니다. 이 값은 calibration 94문항에서 정하고 certification 전에 잠갔습니다.</p></div></article>
+        <article class="step"><div class="step-index">6</div><div><h3>Canonical result & provenance</h3><p>어느 문서·질문·경로·모델에서 결과가 나왔는지 기록합니다. 동일한 결과를 재사용하도록 inference output을 cache합니다.</p></div></article>
+      </div>
+    </section>
+
+    <section id="router">
+      <div class="section-head"><div><div class="kicker">04 · Router logic</div><h2>라우터는 확률을 어떻게 판단하는가</h2></div><p>정답이나 reference label은 입력으로 사용하지 않습니다. 실제 서비스 시점에도 얻을 수 있는 13개 특징만 사용합니다.</p></div>
+      <div class="formula"><code>p(visual이 도움됨) = sigmoid(w · standardized_features + b)</code></div>
+      <div class="explain">
+        <article class="card"><h3>질문 특징</h3><p>질문 길이, table·figure·graph·chart 같은 표현 포함 여부</p></article>
+        <article class="card"><h3>검색 신뢰도 특징</h3><p>caption과 ColSmol 각각의 1등 점수, 1·2등 점수 차이, 점수 분포 entropy</p></article>
+        <article class="card"><h3>비교 특징</h3><p>두 검색기의 top score·margin·entropy 차이와 후보 이미지 개수</p></article>
+      </div>
+      <div class="formula"><code>if p ≥ 0.392054 → ColSmol 순위 사용<br>else → Caption BGE 순위 사용</code></div>
+      <div class="two">
+        <div class="callout"><strong>왜 margin을 보는가?</strong><p>1등과 2등 점수가 거의 같으면 검색기가 확신하지 못하는 상황일 수 있습니다. 단, margin 하나만으로 결정하지 않고 여러 신호를 함께 봅니다.</p></div>
+        <div class="callout"><strong>왜 threshold를 잠그는가?</strong><p>인증 결과를 본 뒤 기준을 바꾸면 시험 문제에 답을 맞추는 것과 같습니다. Calibration에서 한 번 정하고 certification 결과가 나빠도 수정하지 않습니다.</p></div>
+      </div>
+    </section>
+
+    <section id="experiment">
+      <div class="section-head"><div><div class="kicker">05 · Evaluation design</div><h2>데이터를 왜 세 부분으로 나누는가</h2></div><p>같은 논문의 비슷한 그림이 여러 split에 들어가면 성능이 부풀 수 있습니다. 따라서 질문이 아니라 논문 ID 기준으로 완전히 분리합니다.</p></div>
+      <div class="split"><div>TRAIN 286<span>50 papers · 모델 계수 학습</span></div><div>CAL 94<span>16 papers · threshold 선택</span></div><div>CERT 81<span>13 papers · 마지막 1회 평가</span></div></div>
+      <div class="two" style="margin-top:12px">
+        <div class="callout"><strong>앞선 표본도 분리</strong><p>초기 preflight 50문항·confirmation 100문항의 39개 논문은 확대 실험에서 모두 제외했습니다.</p></div>
+        <div class="callout"><strong>Certification 이후 금지</strong><p>SPIQA test-A의 118개 논문을 모두 사용했으므로 같은 데이터에서 특징·모델·임계값을 다시 조정하지 않습니다.</p></div>
+      </div>
+    </section>
+
+    <section id="results">
+      <div class="section-head"><div><div class="kicker">06 · Measured result</div><h2>무엇이 좋아졌고, 무엇은 아직 모르는가</h2></div><p>인증 표본 81문항의 결과입니다. “Always ColSmol”은 낮지만 필요한 10문항만 선택했을 때 점 추정 성능이 개선됐습니다.</p></div>
+      <div class="status-grid">
+        <div class="metric"><small>Caption R@1</small><b>67.9%</b><span>Cheap baseline</span></div>
+        <div class="metric"><small>Selective R@1</small><b>71.6%</b><span>+3.70%p</span></div>
+        <div class="metric"><small>Strong call</small><b>12.35%</b><span>10 / 81</span></div>
+        <div class="metric"><small>Peak VRAM</small><b>4.03GiB</b><span>RTX 3090 범위 내</span></div>
+      </div>
+      <div class="table-wrap" style="margin-top:13px"><table class="compare"><thead><tr><th>방법</th><th class="num-right">R@1</th><th class="num-right">R@5</th><th class="num-right">MRR</th><th>쉬운 해석</th></tr></thead><tbody>
+        <tr><td>Always Caption BGE</td><td class="num-right">0.679</td><td class="num-right">0.938</td><td class="num-right">0.7978</td><td>빠른 기본 경로</td></tr>
+        <tr><td>Always ColSmol</td><td class="num-right">0.346</td><td class="num-right">0.728</td><td class="num-right">0.4955</td><td>항상 시각 모델은 오히려 나쁨</td></tr>
+        <tr><td>Oracle selective</td><td class="num-right">0.790</td><td class="num-right">1.000</td><td class="num-right">0.8788</td><td>정답을 본 이상적 상한, 실제 성능 아님</td></tr>
+        <tr><td><strong>Locked selector</strong></td><td class="num-right"><strong>0.716</strong></td><td class="num-right"><strong>0.951</strong></td><td class="num-right"><strong>0.8244</strong></td><td>실제 사용 가능한 신호만 사용</td></tr>
+      </tbody></table></div>
+      <div class="callout" style="margin-top:13px"><strong>“성공했다”라고 단정하지 않는 이유</strong><p>R@1 차이의 paired bootstrap 95% 신뢰구간은 -1.23~+9.88%p이고 McNemar p=0.375입니다. 평균은 좋아졌지만 표본이 작아 실제 효과가 0이거나 약간 나쁠 가능성을 아직 배제할 수 없습니다.</p></div>
+    </section>
+
+    <section id="limits">
+      <div class="section-head"><div><div class="kicker">07 · Honest failure map</div><h2>실패가 현재 구조를 어떻게 만들었는가</h2></div><p>이 프로젝트는 결과에 맞춰 기준을 낮추지 않고, 각 Gate 실패가 다음 피봇의 근거가 되도록 기록합니다.</p></div>
+      <div class="timeline">
+        <div class="event"><time>INGESTION ROUTING · FAIL</time><h3>PyMuPDF vs Docling Oracle 절감 9.86%</h3><p>완벽한 라우터를 가정해도 목표 15%를 못 넘어서 페이지 저장 단계 라우팅을 주력에서 내렸습니다.</p></div>
+        <div class="event"><time>QASPER RETRIEVAL · FAIL / CONDITIONAL</time><h3>문단 R@5 Gate 실패, page rescue는 cache 조건부 절감</h3><p>인접 페이지 rescue는 recall 97.06%와 Strong 시간 18.26% 절감을 보였지만 shared cache가 없으면 더 비쌌습니다.</p></div>
+        <div class="event"><time>VISUAL PREFLIGHT · MIXED</time><h3>Visual 단독은 약하지만 Oracle 보완성 발견</h3><p>“Always Visual” 대신 “어떤 질문에서 Visual이 도움되는가?”로 연구 질문을 좁혔습니다.</p></div>
+        <div class="event"><time>INITIAL SELECTOR · FAIL</time><h3>50문항 학습은 100문항에서 R@1 65→62%</h3><p>소표본 과적합을 확인하고 논문 단위 train/calibration/certification을 확대했습니다.</p></div>
+        <div class="event"><time>EXPANDED SELECTOR · CONDITIONAL</time><h3>R@1 67.9→71.6%, 통계는 미확정</h3><p>다음 단계는 같은 SPIQA 반복이 아니라 외부 데이터에서 고정 정책을 검증하는 것입니다.</p></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head"><div><div class="kicker">08 · What happens next</div><h2>다음 단계와 통과 조건</h2></div><p>GPU를 오래 돌리는 것 자체가 목표가 아닙니다. 새로운 독립 증거가 생기는 실험만 실행합니다.</p></div>
+      <div class="two">
+        <div class="callout"><strong>1. External dataset audit</strong><p>영문 scientific paper의 table·figure 질문, 원본 이미지 접근성, 라이선스, 용량을 점검합니다. RTX 3090과 남은 디스크에 맞는 소표본부터 시작합니다.</p></div>
+        <div class="callout"><strong>2. Frozen external certification</strong><p>가능하면 현재 13개 특징과 threshold를 그대로 적용합니다. 불가피한 데이터 매핑 변경은 결과를 보기 전에 문서화합니다.</p></div>
+        <div class="callout"><strong>3. Statistical decision</strong><p>품질 차이의 신뢰구간, McNemar, route rate, GPU 시간과 index storage를 함께 보고 P2/P3 승격을 결정합니다.</p></div>
+        <div class="callout"><strong>중단 조건</strong><p>외부 데이터에서 기준선보다 하락하거나 Strong 호출 비용이 이득을 상쇄하면 현재 모델 조합을 종료합니다. 사후 threshold 완화는 하지 않습니다.</p></div>
+      </div>
+    </section>
+
+    <section id="docs">
+      <div class="section-head"><div><div class="kicker">09 · Source documents</div><h2>더 자세히 확인할 Markdown</h2></div><p>이 HTML은 쉬운 안내서이고, 정확한 계약·수치·결정은 아래 원문 문서를 기준으로 합니다.</p></div>
+      <div class="docs">
+        <a class="doc" href="READING_GUIDE.md"><b>READING_GUIDE.md</b><span>전체 문서 읽기 순서</span></a>
+        <a class="doc" href="CURRENT_RESEARCH_STATUS_AND_NEXT_PLAN.md"><b>CURRENT_RESEARCH_STATUS_AND_NEXT_PLAN.md</b><span>최신 판정과 다음 실험</span></a>
+        <a class="doc" href="ARCHITECTURE.md"><b>ARCHITECTURE.md</b><span>원본 아키텍처 정의</span></a>
+        <a class="doc" href="docs/P1V_SPIQA_PREFLIGHT_REPORT.md"><b>P1V_SPIQA_PREFLIGHT_REPORT.md</b><span>SPIQA·ColSmol 상세 결과</span></a>
+        <a class="doc" href="EXPERIMENT_PROTOCOL.md"><b>EXPERIMENT_PROTOCOL.md</b><span>Gate와 split 규칙</span></a>
+        <a class="doc" href="DECISION_LOG.md"><b>DECISION_LOG.md</b><span>실패·피봇의 시간순 근거</span></a>
+      </div>
+    </section>
+  </main>
+  <footer><div><span>CapRoute · Easy Architecture Guide</span><span><a href="index.html">Research Monitor로 돌아가기</a> · <a href="https://github.com/chjnett/llm_router_rag">GitHub</a></span></div></footer>
+</body>
+</html>

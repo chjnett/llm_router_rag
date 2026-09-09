@@ -4,6 +4,8 @@
 
 > 지금 읽을 문서의 우선순위는 [`READING_GUIDE.md`](READING_GUIDE.md)에 정리되어 있다.
 
+> 전체 아키텍처를 쉬운 말과 그림으로 보려면 [`architecture_explained.html`](architecture_explained.html)을 연다.
+
 ## Project
 
 **CapRoute: Cost-Constrained Capability Routing for Scientific PDF RAG**
