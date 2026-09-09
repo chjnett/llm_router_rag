@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "CapRoute 전체 아키텍처",
+    "output": "caproute_full_architecture.html",
+    "visual_preset": "classic",
+    "quality_profile": "showcase",
+    "viewBox": [1392, 700],
+    "views": [
+      {
+        "id": "offline",
+        "label": "오프라인 문서 준비",
+        "focus": ["scientific_pdf", "cheap_ingestion", "caption_index"],
+        "note": "PDF에서 캡션을 추출하고 모든 질문이 공유하는 Cheap 인덱스를 만듭니다."
+      },
+      {
+        "id": "decision",
+        "label": "질문별 비용 결정",
+        "focus": ["user_query", "caption_retrieval", "early_router", "visual_retrieval"],
+        "note": "Cheap 신호만으로 Strong 시각 검색을 실행할지 먼저 결정합니다."
+      },
+      {
+        "id": "answer",
+        "label": "근거 선택과 답변",
+        "focus": ["caption_retrieval", "visual_retrieval", "evidence_selector", "rag_answer"],
+        "note": "선택된 검색 결과와 출처를 답변 생성 단계에 전달합니다."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "scientific_pdf",
+      "type": "external",
+      "label": "과학 논문 PDF",
+      "sublabel": "영문 born-digital",
+      "pos": [56, 112],
+      "size": [176, 72]
+    },
+    {
+      "id": "cheap_ingestion",
+      "type": "backend",
+      "label": "Cheap 문서 처리",
+      "sublabel": "PyMuPDF · 캡션 추출",
+      "pos": [296, 112],
+      "size": [192, 72]
+    },
+    {
+      "id": "caption_index",
+      "type": "database",
+      "label": "Caption 인덱스",
+      "sublabel": "BGE-small embedding",
+      "pos": [552, 112],
+      "size": [192, 72]
+    },
+    {
+      "id": "user_query",
+      "type": "external",
+      "label": "사용자 질문",
+      "sublabel": "표·그림 근거 질의",
+      "pos": [56, 344],
+      "size": [176, 72]
+    },
+    {
+      "id": "caption_retrieval",
+      "type": "backend",
+      "label": "Caption 검색",
+      "sublabel": "top score · margin · entropy",
+      "pos": [296, 344],
+      "size": [208, 72]
+    },
+    {
+      "id": "early_router",
+      "type": "security",
+      "label": "Cheap-only 조기 라우터",
+      "sublabel": "7 features · threshold 0.328183",
+      "tag": "비용 결정",
+      "pos": [568, 344],
+      "size": [224, 80]
+    },
+    {
+      "id": "visual_retrieval",
+      "type": "backend",
+      "label": "Strong 시각 검색",
+      "sublabel": "ColSmol-256M · MaxSim",
+      "pos": [856, 200],
+      "size": [208, 76]
+    },
+    {
+      "id": "evidence_selector",
+      "type": "database",
+      "label": "최종 근거 선택",
+      "sublabel": "순위 · provenance · cache",
+      "pos": [1128, 344],
+      "size": [200, 76]
+    },
+    {
+      "id": "rag_answer",
+      "type": "frontend",
+      "label": "근거 기반 답변",
+      "sublabel": "RAG answer + 출처",
+      "pos": [1128, 520],
+      "size": [200, 72]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "오프라인 문서 준비",
+      "wraps": ["cheap_ingestion", "caption_index"],
+      "pad": 28
+    },
+    {
+      "kind": "region",
+      "label": "질문별 온라인 처리",
+      "wraps": ["caption_retrieval", "early_router", "visual_retrieval", "evidence_selector", "rag_answer"],
+      "pad": 32
+    }
+  ],
+  "connections": [
+    {
+      "id": "pdf_to_cheap",
+      "from": "scientific_pdf",
+      "to": "cheap_ingestion",
+      "label": "텍스트·캡션 추출",
+      "labelAt": [264, 204]
+    },
+    {
+      "id": "cheap_to_index",
+      "from": "cheap_ingestion",
+      "to": "caption_index",
+      "label": "임베딩 저장"
+    },
+    {
+      "id": "query_to_caption",
+      "from": "user_query",
+      "to": "caption_retrieval",
+      "label": "질문 검색"
+    },
+    {
+      "id": "index_to_caption",
+      "from": "caption_index",
+      "to": "caption_retrieval",
+      "label": "후보 순위",
+      "variant": "dashed"
+    },
+    {
+      "id": "caption_to_router",
+      "from": "caption_retrieval",
+      "to": "early_router",
+      "label": "Cheap 신뢰도",
+      "labelAt": [536, 452]
+    },
+    {
+      "id": "router_to_visual",
+      "from": "early_router",
+      "to": "visual_retrieval",
+      "label": "불확실: Strong 실행",
+      "variant": "emphasis"
+    },
+    {
+      "id": "router_to_evidence",
+      "from": "early_router",
+      "to": "evidence_selector",
+      "label": "충분함: Strong 생략",
+      "labelAt": [928, 456]
+    },
+    {
+      "id": "visual_to_evidence",
+      "from": "visual_retrieval",
+      "to": "evidence_selector",
+      "label": "시각 순위"
+    },
+    {
+      "id": "evidence_to_answer",
+      "from": "evidence_selector",
+      "to": "rag_answer",
+      "label": "근거와 출처",
+      "labelAt": [1368, 472]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "slate",
+      "title": "현재 확인된 강점",
+      "items": ["SciVQA test R@1 54.31% → 57.29%", "MRR 0.6045 → 0.6302", "Peak VRAM 약 4.04 GiB"]
+    },
+    {
+      "dot": "slate",
+      "title": "현재 실패한 기준",
+      "items": ["Strong query 절감 10.35%", "사전 목표 15%에 미달", "동일 test에서 임계값 재조정 금지"]
+    },
+    {
+      "dot": "slate",
+      "title": "다음 연구 단계",
+      "items": ["corpus-size invariant 특징", "cost-sensitive 학습 목표", "새 미개봉 holdout에서 재인증"]
+    }
+  ]
+}
