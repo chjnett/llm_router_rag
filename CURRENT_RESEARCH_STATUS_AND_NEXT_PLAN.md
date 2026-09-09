@@ -4,6 +4,8 @@
 
 Commit `195377d`로 잠근 7-feature Cheap-only early router를 SciVQA test 3,594질의에서 한 번 인증했다. 선택 R@1은 Always Strong `0.5431`보다 높은 `0.5729`, MRR은 `0.6045→0.6302`로 품질 Gate를 통과했다. 그러나 Strong query skip은 `10.35%`로 사전 기준 15%에 미달했다. **최종 판정은 quality PASS / cost FAIL이며, 같은 test에서 재튜닝하지 않는다.**
 
+후속 R5 개발 스크리닝에서는 `candidate_images`를 제거한 corpus-size invariant 라우터가 paper-disjoint calibration 438질의에서 R@1 `0.6370→0.7078`, MRR `0.7028→0.7603`, Strong query saving `21.46%`를 기록했다. 이는 **개발 신호 PASS**이며 외부 인증 결과가 아니다. 정책은 `artifacts/r5_scivqa_invariant_router_policy_lock.json`으로 잠갔으며, 다음 단계는 새 미개봉 holdout을 한 번 평가하는 것이다.
+
 ## 무엇이 확인됐는가
 
 | 단계 | 핵심 결과 | 판정 |

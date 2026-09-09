@@ -1,0 +1,9 @@
+seed: 42
+screen_artifact: artifacts/r5_scivqa_invariant_router_screen.json
+gate:
+  min_r1_retention: 0.95
+  min_mrr_retention: 0.95
+  min_realized_strong_query_saving: 0.15
+  max_peak_vram_bytes: 22000000000
+outputs:
+  policy_lock: artifacts/r5_scivqa_invariant_router_policy_lock.json

@@ -1,0 +1,13 @@
+seed: 42
+development_results: outputs/r3_scivqa_external_retrieval/results.json
+split:
+  train_fraction: 0.70
+screen:
+  regularization_c: [0.10, 0.25, 1.00]
+  positive_class_weight: [1.00, 2.00, 4.00]
+gate:
+  min_r1_retention: 0.95
+  min_mrr_retention: 0.95
+  max_strong_route_rate: 0.85
+outputs:
+  artifact: artifacts/r5_scivqa_invariant_router_screen.json

@@ -157,14 +157,14 @@
 
     <div class="status-row">
       <article class="panel verdict">
-        <span class="badge hold">R4 · QUALITY PASS / COST FAIL</span>
-        <strong>외부 test에서 품질 개선은 재현됐지만 비용 목표는 재현되지 않았다.</strong>
-        <p>R@1 54.31→57.29%, MRR .6045→.6302. 그러나 Strong을 89.65% 호출해 실제 query saving은 10.35%였습니다.</p>
+        <span class="badge hold">R5 · DEVELOPMENT PASS</span>
+        <strong>규모 불변 라우터가 개발 분할에서 품질과 비용 기준을 함께 통과했다.</strong>
+        <p>Paper-disjoint calibration에서 R@1 63.70→70.78%, MRR .7028→.7603, Strong query saving 21.46%입니다. 아직 외부 인증 결과는 아닙니다.</p>
       </article>
       <aside class="panel next">
         <span class="eyebrow">Next action</span>
-        <div class="step">New Dev + Holdout</div>
-        <p>같은 test를 재튜닝하지 않습니다. 새 개발 corpus에서 규모 불변 특징과 비용 인식 목표를 설계한 뒤 새로운 holdout으로 인증합니다.</p>
+        <div class="step">Freeze + New Holdout</div>
+        <p>기존 SciVQA test를 재사용하지 않습니다. R5 후보를 잠근 뒤 새로운 미개봉 외부 holdout에서 한 번만 인증합니다.</p>
       </aside>
     </div>
 
@@ -222,7 +222,7 @@
         <div class="phase"><span class="id">P1 · FAIL / REPAIR</span><strong>Capability / Oracle</strong><p>Oracle 절감 9.86%. 파서 조합 개선 후 재검증.</p></div>
         <div class="phase complete"><span class="id">R0 · PASS</span><strong>QASPER Evidence Audit</strong><p>100 usable, exact paragraph mapping 93.68%.</p></div>
         <div class="phase complete"><span class="id">R1 · COMPLETE</span><strong>Retrieval Baselines</strong><p>Dense R@5 54.14%; RRF 49.78%.</p></div>
-        <div class="phase active"><span class="id">R4 · FAIL</span><strong>Router Re-design</strong><p>외부 품질 PASS, 비용 FAIL. 새 development/holdout 필요.</p></div>
+        <div class="phase active"><span class="id">R5 · DEV PASS</span><strong>Invariant Router</strong><p>후보 수 의존 제거. 새 unopened holdout 인증 필요.</p></div>
       </div>
     </section>
 
@@ -292,6 +292,7 @@
     <section id="log">
       <div class="section-head"><div><span class="eyebrow">Experiment log</span><h2>무슨 일이 있었는가</h2></div><p>실패와 protocol 차이를 포함한 요약 로그입니다.</p></div>
       <div class="log">
+        <div class="log-row"><time>09-09</time><span class="kind">R5 DEV PASS</span><span>Paper-disjoint 438q: R@1 63.70→70.78%, MRR .7028→.7603, Strong skip 21.46%. 외부 인증 전.</span></div>
         <div class="log-row"><time>09-09</time><span class="kind">R4 COST FAIL</span><span>SciVQA test 3,594q: R@1 54.31→57.29%, MRR .6045→.6302; Strong skip 10.35%로 15% Gate 실패.</span></div>
         <div class="log-row"><time>09-09</time><span class="kind">SHIFT FOUND</span><span>SPIQA candidate 1–29 대비 SciVQA test 599. candidate_log와 Caption score 분포 이동으로 Strong route가 89.65%까지 증가.</span></div>
         <div class="log-row"><time>09-09</time><span class="kind">EARLY LOCK</span><span>Cheap-only 7-feature policy threshold 0.328183 동결. Calibration R@1 75.53%, Strong route 38.30%, 실제 query saving 61.70%.</span></div>

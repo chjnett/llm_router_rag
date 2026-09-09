@@ -1,0 +1,70 @@
+{
+  "status": "frozen_before_external_holdout",
+  "config": {
+    "seed": 42,
+    "screen_artifact": "artifacts/r5_scivqa_invariant_router_screen.json",
+    "gate": {
+      "min_r1_retention": 0.95,
+      "min_mrr_retention": 0.95,
+      "min_realized_strong_query_saving": 0.15,
+      "max_peak_vram_bytes": 22000000000
+    },
+    "outputs": {
+      "policy_lock": "artifacts/r5_scivqa_invariant_router_policy_lock.json"
+    }
+  },
+  "config_sha256": "86b56795a894fea4835cdc02b895e6916194b345707c6d5c95ed4a13210207e7",
+  "screen_artifact_sha256": "f98ab548d391621b9eac37de6d3de1cb82e57b97971bd5052f235ba50bcc2c33",
+  "development_results_sha256": "e5148793e57c92600333206c90acb274bdce56b2ac5ccf62681b1a82a0ba3d0c",
+  "feature_names": [
+    "question_log_tokens",
+    "question_token_diversity",
+    "mentions_table",
+    "mentions_visual",
+    "caption_top",
+    "caption_margin",
+    "caption_entropy"
+  ],
+  "causal_contract": "No corpus size or Strong-derived feature is consumed before routing.",
+  "regularization_c": 0.1,
+  "positive_class_weight": 1.0,
+  "scaler_mean": [
+    2.6735743780522543,
+    0.8966377008975929,
+    0.007984031936127744,
+    0.25149700598802394,
+    0.6801739487046016,
+    0.03728413971479305,
+    0.999795123789276
+  ],
+  "scaler_scale": [
+    0.3374933703257007,
+    0.09224803993122473,
+    0.08899599524793632,
+    0.4338735552751306,
+    0.06466406233409024,
+    0.04549634294831621,
+    4.006280680294201e-05
+  ],
+  "coefficients": [
+    -0.1374345717172717,
+    -0.27139802364314103,
+    -0.037948333986124204,
+    -0.029235049960369526,
+    -0.6243957349278036,
+    -1.160206150681986,
+    0.10938917716738357
+  ],
+  "intercept": 0.059150396732853945,
+  "threshold": 0.2817383583665185,
+  "frozen_gate": {
+    "min_r1_retention": 0.95,
+    "min_mrr_retention": 0.95,
+    "min_realized_strong_query_saving": 0.15,
+    "max_peak_vram_bytes": 22000000000
+  },
+  "prohibitions": [
+    "Do not evaluate or tune this policy on the previously opened SciVQA test.",
+    "Do not change features, coefficients, threshold, or gates after opening the new holdout."
+  ]
+}
