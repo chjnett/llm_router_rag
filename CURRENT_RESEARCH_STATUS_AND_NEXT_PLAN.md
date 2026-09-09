@@ -121,3 +121,16 @@ Logistic Regression → ExtraTrees → XGBoost 순서다. Calibration/Certificat
 > English born-digital scientific PDFs에서 query와 page capability에 따라 Cheap text representation과 Strong/visual processing을 선택하면, Always Strong/Visual 대비 retrieval·QA 품질을 유지하면서 실제 GPU 시간, latency 및 index storage를 줄일 수 있는가?
 
 이 질문은 기존 핵심인 `Cheap Document Processing -> Strong Document Processing`을 유지하면서, 실패한 ingestion-only parser pair에 연구 전체를 묶지 않는다.
+
+## 2026-09-09 입력 해상도 공학 스크리닝
+
+새 모델을 내려받기 전에 기존 ColSmol-256M의 224×224 입력이 병목인지 동결된 초기 preflight 50문항에서 확인했다. 이 표본은 모델·해상도 공학용 개발 표본이며 certification 성능으로 재사용하지 않는다.
+
+| ColSmol-256M 입력 | R@1 | R@5 | MRR | 표 R@1 | 그림 R@1 | Indexing | Peak VRAM |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 224px 정사각 이미지 | 0.360 | 0.940 | 0.5727 | 0.520 | 0.200 | 35.16 s | 4.01 GiB |
+| 원본 해상도 이미지 | **0.580** | 0.940 | **0.7209** | **0.800** | **0.360** | 23.92 s | 3.92 GiB |
+
+해상도만 바꿔 R@1이 +22%p, MRR이 +0.1481 개선됐다. 특히 표 R@1은 +28%p다. 그림은 +16%p 개선됐지만 0.36으로 여전히 약하다. 원본 이미지 중앙값은 502×252, 최대는 1097×1411이며 기존 파일은 모두 224×224였다.
+
+이는 더 큰 모델을 바로 쓰기 전에 입력 전처리 손실을 제거해야 한다는 강한 공학적 신호다. 다음으로 동일 50문항·원본 해상도에서 ColSmol-500M을 한 번 비교한다. 500M 채택 기준은 256M 원본 대비 R@1 또는 MRR 개선, RTX 3090 peak VRAM 22GB 이하, 저장공간·시간 측정 완료다. 이 선택이 끝난 뒤에는 SPIQA test-A에서 추가 튜닝하지 않고 외부 데이터 검증으로 이동한다.

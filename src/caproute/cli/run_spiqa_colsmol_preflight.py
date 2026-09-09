@@ -39,6 +39,9 @@ def main() -> None:
     paper_cache = {}
     indexing_seconds = query_seconds = 0.0
     details = []
+    image_archive_prefix = str(
+        config["dataset"].get("image_archive_prefix", "SPIQA_testA_Images_224px")
+    ).rstrip("/")
 
     with zipfile.ZipFile(config["dataset"]["images_zip"]) as archive:
         archive_names = set(archive.namelist())
@@ -46,10 +49,10 @@ def main() -> None:
             paper_id = row["paper_id"]
             if paper_id not in paper_cache:
                 references = [name for name in sorted(dataset[paper_id]["all_figures"])
-                              if f"SPIQA_testA_Images_224px/{paper_id}/{name}" in archive_names]
+                              if f"{image_archive_prefix}/{paper_id}/{name}" in archive_names]
                 images = []
                 for reference in references:
-                    raw = archive.read(f"SPIQA_testA_Images_224px/{paper_id}/{reference}")
+                    raw = archive.read(f"{image_archive_prefix}/{paper_id}/{reference}")
                     with Image.open(io.BytesIO(raw)) as image:
                         images.append(image.convert("RGB"))
                 started = time.perf_counter()

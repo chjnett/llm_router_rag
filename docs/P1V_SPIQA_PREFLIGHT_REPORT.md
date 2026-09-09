@@ -25,6 +25,17 @@ SPIQA test-A의 224px 이미지와 메타데이터만 사용했다. 첫 50문항
 | Caption/CLIP oracle | 0.880 | 0.960 | 0.9154 | 0.9230 |
 | Caption/ColSmol oracle | 0.920 | 0.980 | 0.9419 | 0.9490 |
 
+### Input-resolution engineering screen
+
+같은 동결 50문항과 ColSmol-256M을 유지하고 이미지만 224×224에서 원본 해상도로 교체했다. 이 결과는 모델 선택용 development evidence이며 certification 결과가 아니다.
+
+| Input | ColSmol R@1 | R@5 | MRR | Table R@1 | Figure R@1 |
+|---|---:|---:|---:|---:|---:|
+| 224px | 0.360 | 0.940 | 0.5727 | 0.520 | 0.200 |
+| Original resolution | **0.580** | 0.940 | **0.7209** | **0.800** | **0.360** |
+
+R@1은 +22%p, MRR은 +0.1481 개선됐다. 원본 이미지의 중앙 크기는 502×252이고 최대 크기는 1097×1411이다. 표 검색 개선은 크지만 figure R@1 0.36은 아직 낮아 500M 모델 비교의 명시적 분석 축으로 남긴다.
+
 ### 100-question paper-disjoint confirmation
 
 | Method | R@1 | R@5 | MRR | nDCG@5 |
@@ -55,6 +66,7 @@ Visual 모델을 항상 사용하는 것은 caption baseline보다 명확히 나
 | CLIP, 50q/98 images | 0.76 GiB | 0.47 s | 0.50 s |
 | CLIP, 100q/221 images | 0.75 GiB | 0.88 s | 1.30 s |
 | ColSmol, 50q/98 images | 4.01 GiB | 35.16 s | 3.85 s |
+| ColSmol original resolution, 50q/98 images | 3.92 GiB | 23.92 s | 4.01 s |
 | ColSmol, 100q/221 images | 4.04 GiB | 79.14 s | 7.18 s |
 
 ColSmol compressed document index는 50문항 표본 26.7MB, 확인 표본 60.2MB다.
@@ -64,7 +76,7 @@ ColSmol compressed document index는 50문항 표본 26.7MB, 확인 표본 60.2M
 - OpenAI CLIP `.bin` 로드는 Torch 2.5.1 환경의 보안 제한으로 거부되어 safetensors LAION CLIP으로 교체했다. 제한을 우회하지 않았다.
 - full ColPali는 약 5.85GB base weights와 현재 디스크 여유를 고려해 다운로드하지 않고 ColSmol-256M으로 대체했다.
 - ColSmol은 Transformers 5.15 이상을 요구해 격리 환경 `.venv-colsmol`을 사용했다. main 환경은 변경하지 않았다.
-- 어댑터가 base model 식별자를 확인하므로 현재 실행에는 Hugging Face 메타데이터 접근이 필요하다. 가중치는 로컬 cache를 사용한다.
+- 최초 어댑터 로드는 base model 식별자 확인 단계에서 장시간 정지했다. adapter와 base snapshot을 오프라인 runtime으로 고정하고 `local_files_only`로 재실행했으며, 중복 Hugging Face cache는 오프라인 로드 검증 후 삭제했다.
 - 최초 저장에서 bfloat16→NumPy 직렬화 오류가 발생했으며 float32 저장으로 수정했다. metric 계산은 바뀌지 않았다.
 
 ## Decision and next unlock condition
@@ -93,6 +105,7 @@ Certification에서 R@1은 +3.70%p, R@5는 +1.23%p, MRR은 +0.0266 개선됐다.
 .venv\Scripts\python.exe -m caproute.cli.run_spiqa_clip_preflight --config configs\p1v_spiqa_clip_preflight.yaml
 .venv\Scripts\python.exe -m caproute.cli.run_spiqa_clip_preflight --config configs\p1v_spiqa_clip_confirmation.yaml
 .venv-colsmol\Scripts\python.exe -m caproute.cli.run_spiqa_colsmol_preflight --config configs\p1v_spiqa_colsmol_preflight.yaml
+.venv-colsmol\Scripts\python.exe -m caproute.cli.run_spiqa_colsmol_preflight --config configs\p1v_spiqa_colsmol_preflight_fullres.yaml
 .venv-colsmol\Scripts\python.exe -m caproute.cli.run_spiqa_colsmol_preflight --config configs\p1v_spiqa_colsmol_confirmation.yaml
 .venv\Scripts\python.exe -m caproute.cli.evaluate_spiqa_selector --config configs\p1v_spiqa_colsmol_selector.yaml
 .venv\Scripts\python.exe -m caproute.cli.freeze_spiqa_router_splits --config configs\p1v_spiqa_router_splits.yaml

@@ -136,15 +136,17 @@
         <div class="event"><time>VISUAL PREFLIGHT · MIXED</time><h3>Visual 단독은 약하지만 Oracle 보완성 발견</h3><p>“Always Visual” 대신 “어떤 질문에서 Visual이 도움되는가?”로 연구 질문을 좁혔습니다.</p></div>
         <div class="event"><time>INITIAL SELECTOR · FAIL</time><h3>50문항 학습은 100문항에서 R@1 65→62%</h3><p>소표본 과적합을 확인하고 논문 단위 train/calibration/certification을 확대했습니다.</p></div>
         <div class="event"><time>EXPANDED SELECTOR · CONDITIONAL</time><h3>R@1 67.9→71.6%, 통계는 미확정</h3><p>다음 단계는 같은 SPIQA 반복이 아니라 외부 데이터에서 고정 정책을 검증하는 것입니다.</p></div>
+        <div class="event"><time>INPUT RESOLUTION · PASS</time><h3>ColSmol R@1 36→58%, MRR .573→.721</h3><p>같은 256M 모델에서 224px 대신 원본 이미지를 사용하자 표 R@1이 52→80%로 상승했습니다. 모델 크기 전에 전처리 손실을 확인해야 한다는 근거입니다.</p></div>
       </div>
     </section>
 
     <section>
       <div class="section-head"><div><div class="kicker">08 · What happens next</div><h2>다음 단계와 통과 조건</h2></div><p>GPU를 오래 돌리는 것 자체가 목표가 아닙니다. 새로운 독립 증거가 생기는 실험만 실행합니다.</p></div>
       <div class="two">
-        <div class="callout"><strong>1. External dataset audit</strong><p>영문 scientific paper의 table·figure 질문, 원본 이미지 접근성, 라이선스, 용량을 점검합니다. RTX 3090과 남은 디스크에 맞는 소표본부터 시작합니다.</p></div>
-        <div class="callout"><strong>2. Frozen external certification</strong><p>가능하면 현재 13개 특징과 threshold를 그대로 적용합니다. 불가피한 데이터 매핑 변경은 결과를 보기 전에 문서화합니다.</p></div>
-        <div class="callout"><strong>3. Statistical decision</strong><p>품질 차이의 신뢰구간, McNemar, route rate, GPU 시간과 index storage를 함께 보고 P2/P3 승격을 결정합니다.</p></div>
+        <div class="callout"><strong>1. 500M engineering screen</strong><p>동일 개발 50문항·원본 해상도에서 ColSmol-500M을 한 번 비교합니다. R@1/MRR 개선과 VRAM·시간을 함께 봅니다.</p></div>
+        <div class="callout"><strong>2. External dataset audit</strong><p>영문 scientific paper의 table·figure 질문, 원본 이미지 접근성, 라이선스, 용량을 점검합니다. RTX 3090과 남은 디스크에 맞는 소표본부터 시작합니다.</p></div>
+        <div class="callout"><strong>3. Frozen external certification</strong><p>선택한 representation과 정책은 외부 데이터에서 고정해 평가합니다. 불가피한 데이터 매핑 변경은 결과를 보기 전에 문서화합니다.</p></div>
+        <div class="callout"><strong>4. Statistical decision</strong><p>품질 차이의 신뢰구간, McNemar, route rate, GPU 시간과 index storage를 함께 보고 P2/P3 승격을 결정합니다.</p></div>
         <div class="callout"><strong>중단 조건</strong><p>외부 데이터에서 기준선보다 하락하거나 Strong 호출 비용이 이득을 상쇄하면 현재 모델 조합을 종료합니다. 사후 threshold 완화는 하지 않습니다.</p></div>
       </div>
     </section>
