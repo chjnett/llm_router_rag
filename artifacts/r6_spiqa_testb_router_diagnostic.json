@@ -1,0 +1,81 @@
+{
+  "status": "diagnostic_only",
+  "reason": "The frozen retrieval-readiness gate failed before routing.",
+  "config_sha256": "8ee542a440565d2c81e2c1c4d81f7671237e8695ec7b1d7e669806aac2df8ecb",
+  "policy_lock_sha256": "cf8cf46b7e876ddf8f6b48baba16469dd792f3f9645881233927142388fc3f11",
+  "retrieval_results_sha256": "1aa9b63499344efba75f48e25061ea5a964573fce54abe5eebff7a3129c50267",
+  "questions": 228,
+  "threshold": 0.2817383583665185,
+  "retrieval_summary": {
+    "questions": 228,
+    "papers": 65,
+    "images_indexed": 794,
+    "indexing_seconds": 180.55030170001555,
+    "query_seconds": 1.3935096999630332,
+    "peak_vram_allocated_bytes": 4342687744,
+    "compressed_document_index_bytes": 142224828,
+    "methods": {
+      "caption": {
+        "recall_at_1": 0.16864035087719295,
+        "recall_at_5": 0.34035087719298257,
+        "recall_at_10": 0.4317251461988305,
+        "mrr": 0.326825927654689,
+        "ndcg_at_5": 0.286049462758753
+      },
+      "colsmol": {
+        "recall_at_1": 0.10881370091896408,
+        "recall_at_5": 0.2574665831244779,
+        "recall_at_10": 0.33056599832915623,
+        "mrr": 0.2232836699500827,
+        "ndcg_at_5": 0.19766475907990133
+      },
+      "oracle_selective": {
+        "recall_at_1": 0.22518796992481202,
+        "recall_at_5": 0.45052213868003343,
+        "recall_at_10": 0.5645572263993316,
+        "mrr": 0.4221250645258968,
+        "ndcg_at_5": 0.3767075488417275
+      }
+    },
+    "by_question_signal": {
+      "visual": {
+        "caption": {},
+        "colsmol": {},
+        "oracle_selective": {}
+      },
+      "non_visual": {
+        "caption": {},
+        "colsmol": {},
+        "oracle_selective": {}
+      }
+    },
+    "gate_passed": false
+  },
+  "caption": {
+    "recall_at_1": 0.16864035087719295,
+    "recall_at_5": 0.34035087719298257,
+    "recall_at_10": 0.4317251461988305,
+    "mrr": 0.326825927654689,
+    "ndcg_at_5": 0.286049462758753
+  },
+  "always_strong": {
+    "recall_at_1": 0.10881370091896408,
+    "recall_at_5": 0.2574665831244779,
+    "recall_at_10": 0.33056599832915623,
+    "mrr": 0.2232836699500827,
+    "ndcg_at_5": 0.19766475907990133
+  },
+  "selected": {
+    "recall_at_1": 0.14901837928153713,
+    "recall_at_5": 0.2984022556390978,
+    "recall_at_10": 0.37954260651629074,
+    "mrr": 0.2750125663894195,
+    "ndcg_at_5": 0.24198869029646417
+  },
+  "strong_route_rate": 0.8508771929824561,
+  "realized_strong_query_saving": 0.14912280701754388,
+  "quality_gate_passed": true,
+  "cost_gate_passed": false,
+  "retrieval_readiness_gate_passed": false,
+  "certification_gate_passed": false
+}

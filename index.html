@@ -157,22 +157,22 @@
 
     <div class="status-row">
       <article class="panel verdict">
-        <span class="badge hold">R5 · DEVELOPMENT PASS</span>
-        <strong>규모 불변 라우터가 개발 분할에서 품질과 비용 기준을 함께 통과했다.</strong>
-        <p>Paper-disjoint calibration에서 R@1 63.70→70.78%, MRR .7028→.7603, Strong query saving 21.46%입니다. 아직 외부 인증 결과는 아닙니다.</p>
+        <span class="badge hold">R6 · EXTERNAL FAIL</span>
+        <strong>SPIQA test-B 외부 평가는 검색 준비 단계에서 실패했다.</strong>
+        <p>Caption/ColSmol R@5가 34.04%/25.75%로 50% Gate에 미달했습니다. 잠긴 라우터의 Strong saving도 14.91%로 15%에 0.09%p 부족했습니다.</p>
       </article>
       <aside class="panel next">
         <span class="eyebrow">Next action</span>
-        <div class="step">Freeze + New Holdout</div>
-        <p>기존 SciVQA test를 재사용하지 않습니다. R5 후보를 잠근 뒤 새로운 미개봉 외부 holdout에서 한 번만 인증합니다.</p>
+        <div class="step">Stop tuning this holdout</div>
+        <p>SPIQA test-B의 threshold를 수정하지 않습니다. 다음은 single-image retrieval과 holistic multi-image QA의 task mismatch를 분리하는 진단입니다.</p>
       </aside>
     </div>
 
     <div class="metrics" aria-label="핵심 지표">
-      <div class="metric"><small>Test selected R@1</small><strong>57.29%</strong><span>Always Strong 54.31%</span></div>
-      <div class="metric"><small>Test selected MRR</small><strong>0.6302</strong><span>Always Strong 0.6045</span></div>
-      <div class="metric"><small>Strong route</small><strong>89.65%</strong><span>3,594 external queries</span></div>
-      <div class="metric"><small>Real query saving</small><strong>10.35%</strong><span>목표 15% · FAIL</span></div>
+      <div class="metric"><small>R6 diagnostic R@1</small><strong>14.90%</strong><span>Always Strong 10.88%</span></div>
+      <div class="metric"><small>R6 diagnostic MRR</small><strong>0.2750</strong><span>Always Strong 0.2233</span></div>
+      <div class="metric"><small>Strong route</small><strong>85.09%</strong><span>228 external queries</span></div>
+      <div class="metric"><small>Real query saving</small><strong>14.91%</strong><span>목표 15% · near-miss FAIL</span></div>
     </div>
 
     <section id="reading">
@@ -180,11 +180,12 @@
       <div class="table-wrap"><table><thead><tr><th class="num">순서</th><th>문서</th><th class="num">시간</th><th>핵심 목적</th></tr></thead><tbody>
         <tr><td class="num">1</td><td><a href="README.md">README.md</a></td><td class="num">5분</td><td>연구 범위와 핵심 원칙</td></tr>
         <tr><td class="num">2</td><td><a href="CURRENT_RESEARCH_STATUS_AND_NEXT_PLAN.md">CURRENT_RESEARCH_STATUS_AND_NEXT_PLAN.md</a></td><td class="num">10분</td><td>최신 결과와 다음 방향</td></tr>
-        <tr><td class="num">3</td><td><a href="docs/R4_SCIVQA_EARLY_ROUTER_CERTIFICATION.md">R4_SCIVQA_EARLY_ROUTER_CERTIFICATION.md</a></td><td class="num">10분</td><td>최신 외부 품질 PASS·비용 FAIL</td></tr>
-        <tr><td class="num">4</td><td><a href="docs/R4_EARLY_ROUTER_POLICY_LOCK.md">R4_EARLY_ROUTER_POLICY_LOCK.md</a></td><td class="num">5분</td><td>test 전에 잠근 정책 계약</td></tr>
-        <tr><td class="num">5</td><td><a href="ARCHITECTURE.md">ARCHITECTURE.md</a></td><td class="num">10분</td><td>Cheap→Strong 처리 구조</td></tr>
-        <tr><td class="num">6</td><td><a href="DECISION_LOG.md">DECISION_LOG.md</a></td><td class="num">10분</td><td>실패·피벗 결정의 근거</td></tr>
-        <tr><td class="num">7</td><td><a href="TODO_ROADMAP.md">TODO_ROADMAP.md</a></td><td class="num">5분</td><td>완료·잠금·다음 작업</td></tr>
+        <tr><td class="num">3</td><td><a href="docs/R6_SPIQA_TESTB_EXTERNAL_REPORT.md">R6_SPIQA_TESTB_EXTERNAL_REPORT.md</a></td><td class="num">5분</td><td>최신 외부 retrieval·비용 실패</td></tr>
+        <tr><td class="num">4</td><td><a href="docs/R4_SCIVQA_EARLY_ROUTER_CERTIFICATION.md">R4_SCIVQA_EARLY_ROUTER_CERTIFICATION.md</a></td><td class="num">10분</td><td>이전 외부 품질 PASS·비용 FAIL</td></tr>
+        <tr><td class="num">5</td><td><a href="docs/R4_EARLY_ROUTER_POLICY_LOCK.md">R4_EARLY_ROUTER_POLICY_LOCK.md</a></td><td class="num">5분</td><td>test 전에 잠근 정책 계약</td></tr>
+        <tr><td class="num">6</td><td><a href="ARCHITECTURE.md">ARCHITECTURE.md</a></td><td class="num">10분</td><td>Cheap→Strong 처리 구조</td></tr>
+        <tr><td class="num">7</td><td><a href="DECISION_LOG.md">DECISION_LOG.md</a></td><td class="num">10분</td><td>실패·피벗 결정의 근거</td></tr>
+        <tr><td class="num">8</td><td><a href="TODO_ROADMAP.md">TODO_ROADMAP.md</a></td><td class="num">5분</td><td>완료·잠금·다음 작업</td></tr>
       </tbody></table></div>
     </section>
 
@@ -222,7 +223,7 @@
         <div class="phase"><span class="id">P1 · FAIL / REPAIR</span><strong>Capability / Oracle</strong><p>Oracle 절감 9.86%. 파서 조합 개선 후 재검증.</p></div>
         <div class="phase complete"><span class="id">R0 · PASS</span><strong>QASPER Evidence Audit</strong><p>100 usable, exact paragraph mapping 93.68%.</p></div>
         <div class="phase complete"><span class="id">R1 · COMPLETE</span><strong>Retrieval Baselines</strong><p>Dense R@5 54.14%; RRF 49.78%.</p></div>
-        <div class="phase active"><span class="id">R5 · DEV PASS</span><strong>Invariant Router</strong><p>후보 수 의존 제거. 새 unopened holdout 인증 필요.</p></div>
+        <div class="phase active"><span class="id">R6 · FAIL</span><strong>External Holdout</strong><p>Retrieval readiness 실패. 동일 holdout 튜닝 금지.</p></div>
       </div>
     </section>
 
@@ -292,6 +293,7 @@
     <section id="log">
       <div class="section-head"><div><span class="eyebrow">Experiment log</span><h2>무슨 일이 있었는가</h2></div><p>실패와 protocol 차이를 포함한 요약 로그입니다.</p></div>
       <div class="log">
+        <div class="log-row"><time>09-09</time><span class="kind">R6 EXT FAIL</span><span>SPIQA test-B 228q: retrieval R@5 Gate 실패, 잠긴 router Strong skip 14.91%로 15% near-miss.</span></div>
         <div class="log-row"><time>09-09</time><span class="kind">R5 DEV PASS</span><span>Paper-disjoint 438q: R@1 63.70→70.78%, MRR .7028→.7603, Strong skip 21.46%. 외부 인증 전.</span></div>
         <div class="log-row"><time>09-09</time><span class="kind">R4 COST FAIL</span><span>SciVQA test 3,594q: R@1 54.31→57.29%, MRR .6045→.6302; Strong skip 10.35%로 15% Gate 실패.</span></div>
         <div class="log-row"><time>09-09</time><span class="kind">SHIFT FOUND</span><span>SPIQA candidate 1–29 대비 SciVQA test 599. candidate_log와 Caption score 분포 이동으로 Strong route가 89.65%까지 증가.</span></div>

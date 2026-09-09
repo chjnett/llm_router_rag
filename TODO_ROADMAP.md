@@ -112,7 +112,7 @@ Frozen rule: exact table count AND GriTS-Top ≥ 0.80 AND GriTS-Loc ≥ 0.50.
 - [x] SciVQA test one-shot compute-aware certification — **FAIL** (quality PASS, Strong skip 10.35% < 15%)
 - [x] 새 development corpus에서 corpus-size invariant early features 설계 — SciVQA validation paper-disjoint R5 개발 PASS
 - [x] cost-sensitive/coverage-regularized router 비교 — class weight 1/2/4 차이 미미, 단순 unweighted 후보 유지
-- [ ] 새로운 unopened external holdout 확보 후 재인증
+- [x] 새로운 unopened external holdout 확보 후 1회 평가 — SPIQA test-B retrieval FAIL / router cost near-miss FAIL
 - [ ] Strong both-fail repair 후보 평가 (RAG retrieval 차이 확인 전 보류)
 
 ---

@@ -1,0 +1,4 @@
+policy_lock: artifacts/r5_scivqa_invariant_router_policy_lock.json
+retrieval_results: outputs/r6_spiqa_testb_retrieval/results.json
+outputs:
+  artifact: artifacts/r6_spiqa_testb_router_diagnostic.json
