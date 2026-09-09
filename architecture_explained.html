@@ -76,6 +76,18 @@
       <div class="callout" style="margin-top:13px"><strong>인과 구조는 수리했지만 비용 일반화는 실패</strong><p>Early router는 실제로 Strong 계산을 건너뛸 수 있고 외부 품질도 개선했습니다. 다만 SciVQA test에서 Strong skip이 10.35%에 그쳐 사전 목표 15%를 통과하지 못했습니다.</p></div>
     </section>
 
+    <section id="difference">
+      <div class="section-head"><div><div class="kicker">Difference · General RAG vs CapRoute</div><h2>일반 RAG와 무엇이 다른가</h2></div><p>답변 생성 구조 자체보다, 검색 근거를 만드는 데 얼마만큼의 처리를 사용할지 질문별로 선택한다는 점이 핵심입니다.</p></div>
+      <div class="table-wrap"><table class="compare"><thead><tr><th>비교 항목</th><th>일반 RAG</th><th>CapRoute</th></tr></thead><tbody>
+        <tr><td>검색 경로</td><td>모든 질문에 같은 retriever 사용</td><td>Cheap 검색 후 필요한 질문만 Strong 시각 검색</td></tr>
+        <tr><td>판단 시점</td><td>검색 방식이 배포 전에 고정됨</td><td>질문과 Cheap 검색 결과를 본 뒤 실시간 결정</td></tr>
+        <tr><td>비용 구조</td><td>질문 난이도와 무관하게 거의 일정</td><td>쉬운 질문은 GPU 경로를 생략해 실제 연산 절감</td></tr>
+        <tr><td>최적화 목표</td><td>Recall·MRR 같은 검색 품질 중심</td><td>품질 유지율과 GPU 시간·호출률을 함께 최적화</td></tr>
+        <tr><td>실패 처리</td><td>전체 평균 성능으로 보고하기 쉬움</td><td>사전 Gate와 미개봉 holdout으로 비용·품질 실패를 분리</td></tr>
+      </tbody></table></div>
+      <div class="callout" style="margin-top:13px"><strong>한 문장으로 정리</strong><p>일반 RAG가 “어떤 문서를 찾을까?”에 집중한다면, CapRoute는 그 앞에 “이 질문에 비싼 시각 처리가 정말 필요한가?”라는 결정을 추가합니다.</p></div>
+    </section>
+
     <section>
       <div class="section-head"><div><div class="kicker">03 · Components</div><h2>각 부품이 실제로 하는 일</h2></div><p>아키텍처 문서의 용어를 구현 단위로 풀어쓴 설명입니다.</p></div>
       <div class="steps">
@@ -83,7 +95,7 @@
         <article class="step"><div class="step-index">2</div><div><h3>Caption text representation</h3><p>표·그림 캡션을 BGE-small 임베딩으로 바꾸고 질문과의 의미 유사도를 계산합니다. 현재 Cheap 기준선입니다.</p></div></article>
         <article class="step"><div class="step-index">3</div><div><h3>Visual representation</h3><p>ColSmol-256M이 이미지와 질문을 여러 토큰 벡터로 표현하고 <span class="term" tabindex="0" data-tip="질문의 각 토큰이 문서 토큰 중 가장 비슷한 값과 만나는 점수를 합산하는 방식입니다.">MaxSim</span>으로 순위를 만듭니다.</p></div></article>
         <article class="step"><div class="step-index">4</div><div><h3>Capability router</h3><p>“질문이 어려운가?”가 아니라 “이 질문에서 visual 결과가 caption보다 나을 것인가?”를 Logistic Regression으로 예측합니다.</p></div></article>
-        <article class="step"><div class="step-index">5</div><div><h3>Early policy threshold</h3><p>Cheap-only 확률이 0.328183 이상일 때만 ColSmol을 실행합니다. SPIQA calibration 94문항에서 정하고 SciVQA test를 열기 전에 잠갔습니다.</p></div></article>
+        <article class="step"><div class="step-index">5</div><div><h3>Early policy threshold</h3><p>규모 불변 Cheap-only 확률이 0.281738 이상일 때만 ColSmol을 실행합니다. SciVQA validation의 paper-disjoint 개발 분할에서 정하고 SPIQA test-B를 열기 전에 잠갔습니다.</p></div></article>
         <article class="step"><div class="step-index">6</div><div><h3>Canonical result & provenance</h3><p>어느 문서·질문·경로·모델에서 결과가 나왔는지 기록합니다. 동일한 결과를 재사용하도록 inference output을 cache합니다.</p></div></article>
       </div>
     </section>
@@ -94,9 +106,9 @@
       <div class="explain">
         <article class="card"><h3>질문 특징</h3><p>질문 길이, table·figure·graph·chart 같은 표현 포함 여부</p></article>
         <article class="card"><h3>Cheap 검색 신뢰도</h3><p>Caption의 1등 점수, 1·2등 점수 차이, 점수 분포 entropy</p></article>
-        <article class="card"><h3>문서 후보 특징</h3><p>후보 이미지 개수의 로그. ColSmol 파생 점수나 두 검색기의 차이는 사용하지 않습니다.</p></article>
+        <article class="card"><h3>규모 불변 특징</h3><p>질문 토큰 다양도를 사용하고 후보 이미지 개수는 제거했습니다. ColSmol 파생 점수도 사용하지 않습니다.</p></article>
       </div>
-      <div class="formula"><code>if p ≥ 0.328183 → ColSmol 실행 후 그 순위 사용<br>else → ColSmol 생략, Caption BGE 순위 사용</code></div>
+      <div class="formula"><code>if p ≥ 0.281738 → ColSmol 실행 후 그 순위 사용<br>else → ColSmol 생략, Caption BGE 순위 사용</code></div>
       <div class="callout"><strong>이제 호출 절감률을 직접 셀 수 있다</strong><p>p 계산에 ColSmol 값이 전혀 필요하지 않습니다. 따라서 Caption 경로를 고르면 Strong query encoding과 MaxSim을 실제로 생략합니다. 기존 13-feature 모델은 비용 라우터가 아니라 선택적 late fuser로만 남깁니다.</p></div>
       <div class="two">
         <div class="callout"><strong>왜 margin을 보는가?</strong><p>1등과 2등 점수가 거의 같으면 검색기가 확신하지 못하는 상황일 수 있습니다. 단, margin 하나만으로 결정하지 않고 여러 신호를 함께 봅니다.</p></div>

@@ -25,6 +25,12 @@
         "label": "근거 선택과 답변",
         "focus": ["caption_retrieval", "visual_retrieval", "evidence_selector", "rag_answer"],
         "note": "선택된 검색 결과와 출처를 답변 생성 단계에 전달합니다."
+      },
+      {
+        "id": "difference",
+        "label": "일반 RAG와 차이",
+        "focus": ["caption_retrieval", "early_router", "visual_retrieval", "evidence_selector"],
+        "note": "일반 RAG는 모든 질문에 같은 검색 경로를 쓰지만, CapRoute는 Cheap 결과의 신뢰도를 보고 Strong 시각 검색 실행 여부를 질문별로 결정합니다."
       }
     ]
   },
@@ -73,7 +79,7 @@
       "id": "early_router",
       "type": "security",
       "label": "Cheap-only 조기 라우터",
-      "sublabel": "7 features · threshold 0.328183",
+      "sublabel": "7 features · threshold 0.281738",
       "tag": "비용 결정",
       "pos": [568, 344],
       "size": [224, 80]
@@ -182,18 +188,18 @@
   "cards": [
     {
       "dot": "slate",
-      "title": "현재 확인된 강점",
-      "items": ["SciVQA test R@1 54.31% → 57.29%", "MRR 0.6045 → 0.6302", "Peak VRAM 약 4.04 GiB"]
+      "title": "일반 RAG",
+      "items": ["모든 질문에 같은 검색 파이프라인", "Retriever와 처리 비용이 고정", "어려운 질문과 쉬운 질문을 동일 처리"]
     },
     {
       "dot": "slate",
-      "title": "현재 실패한 기준",
-      "items": ["Strong query 절감 10.35%", "사전 목표 15%에 미달", "동일 test에서 임계값 재조정 금지"]
+      "title": "CapRoute",
+      "items": ["Caption 기반 Cheap 검색을 먼저 수행", "질문별 신뢰도로 Strong 실행 결정", "필요한 경우에만 시각 검색 비용 지불"]
     },
     {
       "dot": "slate",
-      "title": "다음 연구 단계",
-      "items": ["corpus-size invariant 특징", "cost-sensitive 학습 목표", "새 미개봉 holdout에서 재인증"]
+      "title": "핵심 연구 차이",
+      "items": ["검색 정확도만이 아니라 처리 경로를 최적화", "품질 유지율과 실제 GPU 절감을 함께 검증", "Gate 실패 시 같은 test 재튜닝 금지"]
     }
   ]
 }

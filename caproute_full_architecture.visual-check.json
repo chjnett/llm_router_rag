@@ -7,8 +7,8 @@
   "visualReview": "pending",
   "artifact": {
     "path": "C:\\llm_models\\caproute-rag\\caproute_full_architecture.html",
-    "sha256": "48186f89fcbd3ee6cd969e05306b6fcbe67fc9205bcadf7ef43a23274a590979",
-    "bytes": 813671
+    "sha256": "8600e3f3ddde6776130f3785f2bac96e06894ac1cf17a386871e4590448d1628",
+    "bytes": 813708
   },
   "state": {
     "detail": "read",
