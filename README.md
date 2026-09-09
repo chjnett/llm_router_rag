@@ -2,6 +2,8 @@
 
 > 현재 연구 상태와 실험 결과는 브라우저에서 [`index.html`](index.html)을 열어 확인한다.
 
+> 지금 읽을 문서의 우선순위는 [`READING_GUIDE.md`](READING_GUIDE.md)에 정리되어 있다.
+
 ## Project
 
 **CapRoute: Cost-Constrained Capability Routing for Scientific PDF RAG**
