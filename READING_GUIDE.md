@@ -2,6 +2,8 @@
 
 Markdown을 읽기 전에 전체 흐름을 쉬운 말로 보고 싶다면 [architecture_explained.html](architecture_explained.html)을 먼저 연다.
 
+아직 최종 연구 주제를 정하기 전의 후보·질문·반증·피벗은 [docs/research_incubation/README.md](docs/research_incubation/README.md)에서 관리한다. 이 폴더의 상태가 `OPEN`인 동안 후보 방향을 확정된 연구 결론으로 인용하지 않는다.
+
 ## 제조업 피벗 설계
 
 MME-Industry를 이용한 산업 멀티모달 라우팅 후보는 [MME_INDUSTRY_RESEARCH_DESIGN.md](MME_INDUSTRY_RESEARCH_DESIGN.md)에 별도로 고정했다. 이 문서는 아직 실행 결과가 아니라, 연구질문·분할·모델 역할·Gate·통계·중단 조건을 정의한 설계 초안이다.
