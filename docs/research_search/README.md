@@ -14,6 +14,8 @@
 | 2 | [02_INDUSTRIAL_RAG_PRIOR_WORK.md](02_INDUSTRIAL_RAG_PRIOR_WORK.md) | 이미 나온 연구와 어디서 겹치는가? |
 | 3 | [03_NOVELTY_GAP_AND_RESEARCH_DIRECTION.md](03_NOVELTY_GAP_AND_RESEARCH_DIRECTION.md) | 논문에서 방어 가능한 새 기여는 무엇인가? |
 | 4 | [04_SEARCH_PROTOCOL_AND_UPDATE_LOG.md](04_SEARCH_PROTOCOL_AND_UPDATE_LOG.md) | 검색을 어떻게 재현하고 갱신하는가? |
+| 5 | [05_ALTERNATIVE_DOMAIN_SCAN.md](05_ALTERNATIVE_DOMAIN_SCAN.md) | 제조업 외에 더 실행하기 좋은 도메인은 무엇인가? |
+| 6 | [06_ROUTING_NOVELTY_UPDATE.md](06_ROUTING_NOVELTY_UPDATE.md) | 2026년 직접 경쟁 연구가 기존 주장을 어떻게 약화하는가? |
 
 실험 설계와 Gate는 [../../MME_INDUSTRY_RESEARCH_DESIGN.md](../../MME_INDUSTRY_RESEARCH_DESIGN.md)를 따른다.
 
@@ -21,8 +23,8 @@
 
 1. MME-Industry는 **산업 매뉴얼 RAG가 아니라 산업 이미지 객관식 QA**이다.
 2. 따라서 MME-Industry는 Cheap/Strong/Abstain 라우팅의 저비용 preflight로 쓴다.
-3. “질문 복잡도 라우팅”이나 “모달리티 라우팅”만으로는 새롭지 않다.
-4. 방어 가능한 핵심은 **Strong 출력을 보지 않는 조기 라우팅 + 보지 않은 산업군 평가 + 실제 GPU 비용 + 위험 보정 보류**의 결합이다.
+3. “질문 복잡도·모달리티·retriever capability·위험 보정 라우팅”만으로는 새롭지 않다.
+4. 방어 가능한 후보는 **증거 요구 유형에 따른 처리 경로 선택 + Strong 출력을 보지 않는 조기 판단 + 보지 않은 도메인 평가 + 실제 GPU 비용**의 결합이다.
 5. 최종 제조업 RAG 논문은 매뉴얼의 알람 코드·절차·표·도면을 대상으로 한 별도 retrieval benchmark가 필요하다.
 
 ## 증거 표기

@@ -16,6 +16,10 @@
 | D2 | 산업 이미지 Cheap/Strong/Abstain | 산업 이미지마다 필요한 VLM 능력이 다름 | MME-Industry | 정답 라벨과 산업군 분리가 명확함 | 매뉴얼 RAG가 아니라 image QA임 | PREFLIGHT |
 | D3 | 산업 매뉴얼 troubleshooting RAG | 알람·증상·표·도면에 맞는 처리 경로 선택 | 공개 매뉴얼 + 자체 gold QA 필요 | 사용 문제와 기존 CapRoute가 직접 연결됨 | 라벨 구축과 전문가 검증 비용이 큼 | EXPLORE |
 | D4 | 산업 telemetry reasoning routing | 상태 확인과 반사실/조치 판단에 필요한 능력이 다름 | FactoryBench 후보 | 난이도·인과 수준이 명시됨 | PDF/RAG 중심 관심에서 멀어지고 데이터 무결성 확인이 필요함 | HOLD |
+| D5 | 기술지원 evidence-aware RAG | 오류 코드·증상·다중 원인에 같은 검색 비용을 쓰는 낭비 | TechQA, TechQA-RAG-Eval | 실제 사용자 질문·gold 문서·낮은 윤리 부담 | 오래된 단일 기업 corpus와 대규모 색인 | PREFLIGHT |
+| D6 | 규제 문서 capability routing | 단일 의무 검색과 multi-passage 해석의 비용 차이 | ObliQA, LegalBench-RAG | gold passage/span과 결정론적 retrieval 평가 | 이미 강한 LTR/hybrid 연구, 법률 전문성 필요 | EXPLORE |
+| D7 | 기업 지식 path routing | 제품·기술·재무 문서 질문별 처리 요구 차이 | EKRAG | 실제 기업 문서와 multi-hop 질문 | judge 의존 평가와 배포 라이선스 확인 필요 | HOLD |
+| D8 | CTI knowledge routing | exact CVE/CWE와 multi-source 위협 분석의 능력 차이 | CTIBench, CTIConnect | task label과 실용성이 높음 | 직접 RAG benchmark가 이미 존재하고 dual-use 위험 | HOLD |
 
 ## 비교 기준
 
@@ -29,7 +33,7 @@
 
 ## 다음 비교 행동
 
-D2의 데이터 무결성과 Cheap–Strong capability gap을 먼저 측정한다. 이 preflight는 D2를 자동 채택하는 절차가 아니라, D3로 넘어가기 전에 산업 도메인에서 routing signal이 존재하는지 확인하는 저비용 제거 실험이다.
+D2와 D5의 데이터 접근성부터 CPU로 비교한다. 이후 각각 100개 이내에서 Cheap–Strong capability gap과 oracle saving을 측정한다. 이 preflight는 후보를 자동 채택하는 절차가 아니라, 긴 GPU 실험 전에 신호가 없는 방향을 제거하는 과정이다.
 
 ## 새 후보 템플릿
 

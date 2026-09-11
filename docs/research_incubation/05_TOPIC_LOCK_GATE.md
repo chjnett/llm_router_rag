@@ -14,6 +14,10 @@
 | D2 산업 image QA routing | ? | ? | ? | ? | ? | preflight 전 |
 | D3 산업 manual RAG routing | ? | ? | ? | ? | ? | 데이터 feasibility 전 |
 | D4 telemetry reasoning routing | ? | ? | ? | ? | ? | 데이터 무결성 전 |
+| D5 기술지원 evidence-aware RAG | ? | ? | ? | ? | ? | corpus coverage 감사 전 |
+| D6 규제 문서 capability routing | ? | ? | ? | ? | ? | direct novelty 감사 전 |
+| D7 기업 지식 path routing | ? | ? | ? | ? | ? | 데이터·라이선스 확인 전 |
+| D8 CTI knowledge routing | ? | ? | ? | ? | ? | 직접 경쟁·dual-use 검토 전 |
 
 ## 필수 잠금 조건
 

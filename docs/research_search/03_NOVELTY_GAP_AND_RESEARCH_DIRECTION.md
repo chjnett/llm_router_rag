@@ -2,7 +2,7 @@
 
 ## 1. 보수적 결론
 
-이 연구는 **아키텍처만으로는 약하지만, 제조업의 서로 다른 처리 능력과 안전한 보류를 실측 비용 아래에서 선택하는 문제로 좁히면 논문 가치가 있다.** MME-Industry 하나만으로 산업 매뉴얼 RAG를 주장해서는 안 된다.
+이 연구는 **아키텍처만으로는 약하다.** 2026년에는 retriever capability routing과 cascaded RAG risk calibration까지 직접 선행연구가 나왔다. 따라서 제조업이라는 이름을 붙이는 것만으로는 부족하며, 도메인의 증거 요구 유형에 따라 parser·retriever·reranker·generator 경로 전체를 선택하는 문제로 좁혀야 한다. MME-Industry 하나만으로 산업 매뉴얼 RAG를 주장해서는 안 된다.
 
 ## 2. 새롭다고 주장하면 안 되는 것
 
@@ -13,22 +13,29 @@
 | 작은 모델과 큰 모델을 라우팅한다 | RouteLLM 계열 선행 |
 | 제조업 문서에 RAG를 쓴다 | 안전·고장·공정 규격 연구 선행 |
 | 문서 페이지를 이미지로 검색한다 | ColPali 계열 선행 |
+| retriever capability에 따라 경로를 고른다 | R³AG 선행 |
+| cascade 임계값을 목표 위험에 맞춰 보정한다 | BalanceRAG 선행(preprint) |
+| 근거가 불충분하면 답변을 보류한다 | RC-RAG, SURE-RAG 선행 |
 
 ## 3. 방어 가능한 기여 묶음
 
-### 기여 1 — Causal early routing
+### 기여 1 — Evidence-requirement-aware processing
+
+exact code, semantic symptom, table/figure, multi-document conflict처럼 질문에 필요한 증거 처리 능력을 정의하고, 단일 모델이 아니라 parser–retriever–reranker–generator 경로를 선택한다.
+
+### 기여 2 — Causal early routing
 
 라우팅 시점에 Cheap 결과와 입력 메타데이터만 사용한다. Strong 결과·Strong score·Strong latency를 feature로 쓰지 않는다. 그래야 Strong 호출 생략이 실제 절감이다.
 
-### 기여 2 — Cross-industry generalization
+### 기여 3 — Cross-domain generalization
 
 문항을 무작위로 나누지 않고 산업 분야 자체를 development/calibration/certification으로 분리한다. 이는 동일 이미지·유사 문항 누수보다 어려운 “보지 않은 산업” 일반화를 측정한다.
 
-### 기여 3 — Risk-calibrated abstention
+### 기여 4 — Risk-calibrated abstention
 
 정확도 평균만 높이는 대신 Cheap 오답 수락률의 신뢰구간 상한을 제한한다. 데이터셋 답 `E`와 시스템 보류를 분리하고, 안전성이 낮으면 사람에게 전달한다.
 
-### 기여 4 — Measured compute
+### 기여 5 — Measured compute
 
 비용을 모델 파라미터나 API 가격으로 가정하지 않고 같은 RTX 3090에서 GPU time, end-to-end latency, peak VRAM, Strong 호출률을 측정한다.
 

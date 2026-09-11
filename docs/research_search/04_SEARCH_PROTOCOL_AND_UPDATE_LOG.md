@@ -25,6 +25,11 @@ visual document retrieval ColPali
 layout-aware graph multimodal RAG
 industrial process specification tree RAG
 selective prediction abstention risk calibration RAG
+retriever capability routing RAG contrastive
+cascaded RAG joint risk calibration
+technical support QA technote retrieval benchmark
+regulatory multi-passage RAG benchmark
+enterprise knowledge RAG benchmark
 industrial multimodal benchmark expert labeled QA
 robot telemetry causal reasoning benchmark LLM
 ```
@@ -70,6 +75,8 @@ robot telemetry causal reasoning benchmark LLM
 | 2026-09-12 | MME-Industry, FactoryBench, adaptive/multimodal/industrial RAG 1차 스크리닝 | MME를 final manual RAG가 아닌 preflight로 제한 |
 | 2026-09-12 | UniversalRAG와 Adaptive-RAG 확인 | 일반 modality/complexity routing을 novelty에서 제외 |
 | 2026-09-12 | 제조 안전·고장 절차·공정 규격 RAG 확인 | 제조업 적용 자체 대신 causal early routing과 risk certification으로 중심 이동 |
+| 2026-09-12 | R³AG, RC-RAG, BalanceRAG, SURE-RAG 확인 | capability routing·risk calibration·abstention 자체를 novelty에서 제외 |
+| 2026-09-12 | TechQA, ObliQA, EKRAG, FinQA, CTIBench 계열 비교 | 기술지원과 규제 문서를 우선 대체 도메인으로 등록 |
 
 ## 8. AI 사용 고지
 

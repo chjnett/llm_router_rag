@@ -16,6 +16,9 @@
 | 2026-09-12 | D2 MME-Industry | KEEP | 정답 라벨과 산업군이 있어 routing signal을 싸게 검증 가능 | Cheap/Strong/Abstain 설계 | 데이터 감사와 capability gap |
 | 2026-09-12 | D3 산업 매뉴얼 RAG | HOLD | 실제 문제 적합성은 높지만 gold QA와 전문가 검증이 아직 없음 | 문서 routing 경험과 retrieval 평가 코드 | 공개 문서 feasibility |
 | 2026-09-12 | 최종 주제 | HOLD | 후보 간 핵심 Gate가 아직 미측정 | 모든 후보 문서 | Topic Lock Gate |
+| 2026-09-12 | 전체 novelty | REFINE | R³AG와 BalanceRAG가 capability routing·risk calibration을 직접 다룸 | causal timing, 실측 비용, domain-heldout 원칙 | evidence-requirement path의 직접 중복 검사 |
+| 2026-09-12 | D5 기술지원 | KEEP | 실제 질문·gold Technote·공개 baseline이 있고 자연어 RAG 적합성이 높음 | 기존 retrieval harness | 소규모 corpus coverage audit |
+| 2026-09-12 | D6 규제 문서 | KEEP | gold passage/span과 single/multi-passage 난이도층이 명확함 | risk/coverage 평가 코드 | direct routing novelty 감사 |
 
 ## 피벗을 발생시키는 조건
 

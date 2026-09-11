@@ -16,6 +16,10 @@
 | Q-003 | SEARCH | 산업 매뉴얼 RAG에서 risk-calibrated early routing을 직접 평가한 선행연구가 있는가? | 검색식 확장 후 핵심 논문 전문 확인 | D3 novelty | OPEN |
 | Q-004 | SEARCH | 공개 영문 제조 매뉴얼로 근거 페이지가 있는 QA를 합법적으로 구축할 수 있는가? | 라이선스·문서 구조·정답 가능성 감사 | D3 data feasibility | OPEN |
 | Q-005 | EXPERIMENT | FactoryBench 파일과 split이 카드 설명대로 재현 가능한가? | checksum, row count, duplicate audit | D4 유지 여부 | HOLD |
+| Q-006 | SEARCH | TechQA-RAG-Eval만으로 full-corpus retrieval을 왜곡하지 않는 preflight가 가능한가? | corpus 구성과 gold 문서 coverage 감사 | D5 실험 가능성 | OPEN |
+| Q-007 | EXPERIMENT | TechQA에서 exact/lexical 질문과 semantic/multi-document 질문의 최적 경로가 실제로 다른가? | 100개 BM25 vs dense+rereanker paired run | D5 capability signal | WAIT-Q006 |
+| Q-008 | EXPERIMENT | ObliQA의 single/multi-passage 구분이 Cheap/Strong 경로 승패를 예측하는가? | 계층별 100개 paired baseline | D6 capability signal | OPEN |
+| Q-009 | SEARCH | R³AG·BalanceRAG와 구별되는 최소 claim은 무엇인가? | 두 원문 방법·평가·feature 표 비교 | 전체 novelty | OPEN |
 
 ## 사용자에게만 물어야 하는 질문
 
